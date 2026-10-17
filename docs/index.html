@@ -131,7 +131,7 @@
 <script>
 // Where the Python backend runs. Empty = same server (local use).
 // For GitHub Pages, set this to your backend URL, e.g. 'https://supervisor-finder.onrender.com'
-const API_BASE = '';
+const API_BASE = 'https://supervisor-finder.onrender.com';
 
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const safeUrl = u => /^https?:\/\//.test(u) ? esc(u) : '#';
