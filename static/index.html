@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Supervisor Finder</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper:#F4F5F2; --card:#FFFFFF; --ink:#17202A; --muted:#5E6A71; --line:#DADED8;
+    --accent:#1F4E5F; --accent-ink:#FFFFFF; --accent-soft:#E2EBEB; --mark:#A9861A; --mark-soft:#F3ECD3;
+    --error:#B3261E;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper:#121618; --card:#1A2023; --ink:#E6EAE8; --muted:#97A3A8; --line:#2B3438;
+      --accent:#7FB3C2; --accent-ink:#0E1A1F; --accent-soft:#1E2C30; --mark:#D6B44A; --mark-soft:#2D2816;
+      --error:#F2948D;
+    }
+  }
+  * { box-sizing:border-box; }
+  html, body { margin:0; background:var(--paper); color:var(--ink); }
+  body { font:16px/1.6 "Instrument Sans", system-ui, sans-serif; }
+  a { color:var(--accent); }
+  :focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+
+  /* top bar */
+  .top { position:sticky; top:0; z-index:2; background:var(--paper); border-bottom:1px solid var(--line); }
+  .top-inner { max-width:760px; margin:0 auto; padding:12px 16px; display:flex; justify-content:space-between; align-items:center; }
+  .brand { font-weight:700; letter-spacing:-.01em; }
+  .ghost { background:none; border:1px solid var(--line); color:var(--ink); border-radius:8px; padding:6px 12px; font:inherit; font-size:.9rem; cursor:pointer; }
+  .ghost:hover { border-color:var(--muted); }
+
+  main { max-width:760px; margin:0 auto; padding:24px 16px 160px; }
+
+  /* empty state */
+  .empty { padding:12vh 0 0; }
+  .empty h1 { font-size:clamp(1.9rem, 5vw, 2.6rem); line-height:1.15; letter-spacing:-.025em; margin:0 0 12px; max-width:18ch; }
+  .empty p { color:var(--muted); margin:0; max-width:52ch; }
+
+  /* messages */
+  .turn { margin-top:28px; }
+  .you { display:flex; justify-content:flex-end; }
+  .you div { background:var(--accent); color:var(--accent-ink); padding:10px 16px; border-radius:16px 16px 4px 16px;
+             max-width:80%; white-space:pre-wrap; }
+  .reply { margin-top:18px; }
+  .reply > p { margin:0 0 14px; max-width:65ch; }
+  .error { color:var(--error); }
+  .mentions { display:flex; flex-wrap:wrap; gap:8px; margin:4px 0 0; }
+  .mention { font-size:.9rem; font-weight:600; text-decoration:none; padding:5px 12px; border-radius:8px;
+             border:1px solid var(--line); background:var(--card); }
+  .mention:hover { border-color:var(--accent); }
+
+  /* typing dots */
+  .typing { display:inline-flex; gap:5px; padding:12px 4px; }
+  .typing span { width:7px; height:7px; border-radius:50%; background:var(--muted); animation:blink 1.2s infinite ease-in-out; }
+  .typing span:nth-child(2) { animation-delay:.15s; }
+  .typing span:nth-child(3) { animation-delay:.3s; }
+  @keyframes blink { 0%, 80%, 100% { opacity:.25; transform:translateY(0); } 40% { opacity:1; transform:translateY(-3px); } }
+  @media (prefers-reduced-motion: reduce) { .typing span { animation:none; opacity:.6; } }
+
+  /* supervisor card */
+  .card { background:var(--card); border:1px solid var(--line); border-left:4px solid var(--accent);
+          border-radius:4px 12px 12px 4px; padding:18px 20px; margin-top:12px; }
+  .card.co { border-left-color:var(--mark); }
+  .card-head { display:flex; justify-content:space-between; gap:12px; align-items:start; }
+  .name { font-size:1.3rem; font-weight:700; letter-spacing:-.015em; line-height:1.25; margin:0; }
+  .title { color:var(--muted); margin:2px 0 0; font-size:.95rem; }
+  .badge { flex:none; font-size:.8rem; font-weight:600; padding:3px 10px; border-radius:999px;
+           background:var(--accent-soft); color:var(--accent); white-space:nowrap; }
+  .badge.best { background:var(--mark-soft); color:var(--mark); }
+  .chips { display:flex; flex-wrap:wrap; gap:6px; margin:14px 0 0; padding:0; list-style:none; }
+  .chips li { font-size:.85rem; padding:3px 10px; border-radius:6px; background:var(--accent-soft); }
+  .card h3 { font-size:.95rem; font-weight:600; margin:16px 0 4px; }
+  .card p { margin:0; max-width:65ch; }
+  .card ul.ideas { margin:0; padding-left:20px; }
+  .card ul.ideas li { margin:3px 0; }
+  .card-foot { display:flex; flex-wrap:wrap; gap:10px 16px; align-items:center; margin-top:18px;
+               padding-top:14px; border-top:1px solid var(--line); font-size:.9rem; }
+  .btn { display:inline-block; background:var(--accent); color:var(--accent-ink); text-decoration:none;
+         padding:7px 14px; border-radius:8px; font-weight:600; }
+  .btn:hover { filter:brightness(1.1); }
+  .src { color:var(--muted); margin-left:auto; }
+  .snippet { color:var(--muted); font-size:.92rem; margin-top:6px; }
+
+  /* composer */
+  form { position:fixed; left:0; right:0; bottom:0; background:linear-gradient(transparent, var(--paper) 30%); padding:28px 16px 18px; }
+  .composer { max-width:760px; margin:0 auto; display:flex; gap:8px; align-items:end; background:var(--card);
+              border:1px solid var(--line); border-radius:14px; padding:8px 8px 8px 14px; }
+  .composer:focus-within { border-color:var(--accent); }
+  textarea { flex:1; border:0; outline:0; resize:none; background:transparent; color:var(--ink); font:inherit;
+             min-height:28px; max-height:160px; padding:6px 0; }
+  textarea:focus-visible { outline:none; }  /* the composer border shows focus instead */
+  .send { border:0; border-radius:10px; background:var(--accent); color:var(--accent-ink); font:inherit; font-weight:600;
+          padding:8px 16px; cursor:pointer; }
+  .send:disabled { opacity:.45; cursor:default; }
+  .hint { max-width:760px; margin:6px auto 0; color:var(--muted); font-size:.78rem; text-align:center; }
+
+  @media (max-width:520px) {
+    .card { padding:16px; }
+    .card-head { flex-direction:column; }
+    .src { margin-left:0; }
+  }
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="top-inner">
+    <span class="brand">Supervisor Finder</span>
+    <button class="ghost" id="reset" type="button">New chat</button>
+  </div>
+</header>
+
+<main id="chat">
+  <section class="empty" id="empty">
+    <h1>What do you want to write your thesis about?</h1>
+    <p>Describe your idea and your background. You'll get supervisors whose research fits, with thesis ideas and a link to their profile. Keep chatting to narrow it down or change direction.</p>
+  </section>
+</main>
+
+<form id="form">
+  <div class="composer">
+    <textarea id="q" rows="1" placeholder="For example: I want to use LLMs in robotics. My background is software development." aria-label="Your message"></textarea>
+    <button class="send" id="go">Send</button>
+  </div>
+  <p class="hint">Suggestions come from the staff list. Check a supervisor's profile before contacting them.</p>
+</form>
+
+<script>
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const safeUrl = u => /^https?:\/\//.test(u) ? esc(u) : '#';
+const pdfLink = s => `/pdfs/${encodeURIComponent(s.file)}#page=${s.page}`;
+const chat = document.getElementById('chat'), q = document.getElementById('q'), btn = document.getElementById('go');
+let history = [];  // [{role, content}] sent every turn; the server keeps no state
+
+function card(s, i, arr) {
+  const co = s.role === 'co-supervisor';
+  const badge = co ? '<span class="badge">Co-supervisor</span>' : (i === 0 && arr.length > 1 ? '<span class="badge best">Best match</span>' : '');
+  const chips = String(s.focus || '').split(',').map(t => t.trim()).filter(Boolean).slice(0, 6);
+  const ideas = Array.isArray(s.ideas) ? s.ideas.filter(Boolean) : [];
+  return `
+    <article class="card${co ? ' co' : ''}">
+      <div class="card-head">
+        <div><h2 class="name">${esc(s.name)}</h2><p class="title">${esc(s.title)}</p></div>
+        ${badge}
+      </div>
+      ${chips.length ? `<ul class="chips">${chips.map(c => `<li>${esc(c)}</li>`).join('')}</ul>` : ''}
+      ${s.fit ? `<h3>Why it fits you</h3><p>${esc(s.fit)}</p>` : ''}
+      ${ideas.length ? `<h3>Thesis ideas</h3><ul class="ideas">${ideas.map(x => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}
+      <div class="card-foot">
+        ${s.urls?.[0] ? `<a class="btn" href="${safeUrl(s.urls[0])}" target="_blank" rel="noopener">Open profile</a>` : ''}
+        ${(s.emails || []).map(e => `<a href="mailto:${esc(e)}">${esc(e)}</a>`).join('')}
+        <a class="src" href="${pdfLink(s)}" target="_blank">${esc(s.file)}, page ${s.page}</a>
+      </div>
+    </article>`;
+}
+
+function match(s) {  // search-only mode (no API key)
+  return `
+    <article class="card">
+      <p class="snippet">${esc(s.snippet)}</p>
+      <div class="card-foot">
+        ${s.urls?.[0] ? `<a class="btn" href="${safeUrl(s.urls[0])}" target="_blank" rel="noopener">Open profile</a>` : ''}
+        <a class="src" href="${pdfLink(s)}" target="_blank">${esc(s.file)}, page ${s.page}</a>
+      </div>
+    </article>`;
+}
+
+function render(data) {
+  if (data.message === null) {
+    return '<p>No language model is connected, so here are the closest matches from the staff list.</p>'
+      + data.matches.map(match).join('');
+  }
+  // the reply text can be several paragraphs (follow-up answers)
+  const paras = String(data.message || '').replace(/\s*\[S\d+\]/g, '').split(/\n\s*\n/).map(p => p.trim()).filter(Boolean)
+    .map(p => `<p>${esc(p)}</p>`).join('');
+  const links = (data.mentions || []).filter(m => m.urls?.[0]).map(m =>
+    `<a class="mention" href="${safeUrl(m.urls[0])}" target="_blank" rel="noopener">${esc(m.name)}'s profile</a>`).join('');
+  return paras + (links ? `<div class="mentions">${links}</div>` : '') + data.supervisors.map(card).join('');
+}
+
+async function send(e) {
+  e.preventDefault();
+  const text = q.value.trim();
+  if (!text || btn.disabled) return;
+  document.getElementById('empty')?.remove();
+  q.value = ''; grow();
+  btn.disabled = true;
+
+  const turn = document.createElement('section');
+  turn.className = 'turn';
+  turn.innerHTML = `<div class="you"><div>${esc(text)}</div></div>
+    <div class="reply"><div class="typing" aria-label="Finding supervisors"><span></span><span></span><span></span></div></div>`;
+  chat.appendChild(turn);
+  turn.scrollIntoView({behavior:'smooth', block:'start'});
+  const reply = turn.querySelector('.reply');
+  history.push({role:'user', content:text});
+
+  try {
+    const r = await fetch('/api/chat', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({messages: history.slice(-20)})
+    });
+    const data = await r.json();
+    if (!r.ok) throw new Error(typeof data.detail === 'string' ? data.detail : JSON.stringify(data.detail));
+    console.log('Searched for:', data.query);  // hidden from students; see it with F12 > Console
+    reply.innerHTML = render(data);
+    history.push({role:'assistant', content:data.history});
+  } catch (err) {
+    reply.innerHTML = `<p class="error">Couldn't get an answer: ${esc(err.message)}. Check the terminal running the server, then send your message again.</p>`;
+    history.pop();
+  } finally {
+    btn.disabled = false;
+    q.focus();
+  }
+}
+
+function grow() { q.style.height = 'auto'; q.style.height = Math.min(q.scrollHeight, 160) + 'px'; }
+q.addEventListener('input', grow);
+q.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) send(e); });  // Shift+Enter = new line
+document.getElementById('form').addEventListener('submit', send);
+document.getElementById('reset').onclick = () => location.reload();
+</script>
+</body>
+</html>
