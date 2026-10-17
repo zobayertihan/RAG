@@ -129,9 +129,13 @@
 </form>
 
 <script>
+// Where the Python backend runs. Empty = same server (local use).
+// For GitHub Pages, set this to your backend URL, e.g. 'https://supervisor-finder.onrender.com'
+const API_BASE = '';
+
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const safeUrl = u => /^https?:\/\//.test(u) ? esc(u) : '#';
-const pdfLink = s => `/pdfs/${encodeURIComponent(s.file)}#page=${s.page}`;
+const pdfLink = s => `${API_BASE}/pdfs/${encodeURIComponent(s.file)}#page=${s.page}`;
 const chat = document.getElementById('chat'), q = document.getElementById('q'), btn = document.getElementById('go');
 let history = [];  // [{role, content}] sent every turn; the server keeps no state
 
@@ -199,7 +203,7 @@ async function send(e) {
   history.push({role:'user', content:text});
 
   try {
-    const r = await fetch('/api/chat', {
+    const r = await fetch(`${API_BASE}/api/chat`, {
       method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({messages: history.slice(-20)})
     });

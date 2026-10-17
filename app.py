@@ -6,9 +6,11 @@ Web server. Start with:
 then open http://127.0.0.1:8000
 """
 
+import os
 from typing import Literal
 
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
@@ -16,6 +18,12 @@ from pydantic import BaseModel, Field
 from rag import BASE_DIR, PDF_DIR, Index, answer, history_text, search_query
 
 app = FastAPI(title="Supervisor Finder")
+
+# Lets a page hosted elsewhere (e.g. GitHub Pages) call this API.
+# Set ALLOWED_ORIGINS on the host, e.g. https://zobayertihan.github.io
+origins = [o.strip() for o in os.getenv("ALLOWED_ORIGINS", "").split(",") if o.strip()]
+if origins:
+    app.add_middleware(CORSMiddleware, allow_origins=origins, allow_methods=["POST"], allow_headers=["Content-Type"])
 index = Index()
 
 SEARCH_ONLY_SHOWN = 3  # sources shown when there's no LLM to pick them
