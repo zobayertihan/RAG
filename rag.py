@@ -29,6 +29,10 @@ MANIFEST = INDEX_DIR / "manifest.json"
 EMBED_MODEL = os.getenv("EMBED_MODEL", "BAAI/bge-small-en-v1.5")
 CHUNK_CHARS = int(os.getenv("CHUNK_CHARS", "1200"))
 TOP_K = int(os.getenv("TOP_K", "10"))
+# vector = embeddings only (the original behavior), bm25 = keywords only,
+# hybrid = both merged. Run eval/run_eval.py before switching the default.
+SEARCH_MODE = os.getenv("SEARCH_MODE", "vector")
+RRF_K = 60  # standard constant for reciprocal rank fusion
 CHUNKER_VERSION = "4"  # bump when pdf_to_chunks or records_to_chunks change, forces re-processing
 
 # Positions that can supervise. Everyone else stays in supervisors.json (for the
@@ -289,6 +293,27 @@ def build_index() -> dict:
     return stats
 
 
+_WORD_RE = re.compile(r"[a-z0-9][a-z0-9+/&.-]*[a-z0-9+]|[a-z0-9]")
+# Field labels and filler words that appear in every record; they carry no meaning for search.
+_STOPWORDS = {
+    "name", "position", "area", "of", "interest", "requirements", "and", "the", "a", "an", "in", "for",
+    "on", "to", "with", "or", "i", "my", "me", "want", "work", "use", "using", "about", "is", "are",
+}
+
+
+def _stem(w: str) -> str:
+    # Light, symmetric stemming so "robots" matches "robot" and "networks" matches "network".
+    return w[:-1] if len(w) > 3 and w.endswith("s") and not w.endswith("ss") else w
+
+
+def _tokens(text: str) -> list[str]:
+    out = []
+    for w in _WORD_RE.findall(text.lower()):
+        parts = [w] + (w.split("/") if "/" in w else [])  # "ar/vr" also counts as "ar" and "vr"
+        out += [_stem(p) for p in parts if p and p not in _STOPWORDS]
+    return out
+
+
 class Index:
     def __init__(self):
         if not MANIFEST.exists():
@@ -301,14 +326,49 @@ class Index:
             self.chunks += json.loads((CACHE_DIR / f"{f['key']}.json").read_text(encoding="utf-8"))
             vecs.append(np.load(CACHE_DIR / f"{f['key']}.npy"))
         self.vecs = np.vstack(vecs) if vecs else np.zeros((0, 1), dtype=np.float32)
-        print(f"Index loaded: {len(manifest['files'])} files, {len(self.chunks)} chunks")
+        self.bm25 = None
+        if self.chunks:
+            from rank_bm25 import BM25Okapi  # keyword index, built in memory at startup
+            self.bm25 = BM25Okapi([_tokens(c["text"]) for c in self.chunks])
+        print(f"Index loaded: {len(manifest['files'])} files, {len(self.chunks)} chunks, search mode {SEARCH_MODE}")
 
-    def search(self, query: str, k: int = TOP_K) -> list[dict]:
+    def _vector_ranking(self, query: str) -> np.ndarray:
+        return self.vecs @ embed_query(query)  # cosine similarity (vectors are normalized)
+
+    def _bm25_ranking(self, query: str) -> np.ndarray:
+        return np.asarray(self.bm25.get_scores(_tokens(query)), dtype=np.float32)
+
+    def search(self, query: str, k: int = TOP_K, mode: str | None = None) -> list[dict]:
+        """
+        Returns the k best chunks. Each hit keeps "score" = cosine similarity (as before,
+        for logs and display) and adds "bm25" and "rank_score" (what the order is based on).
+        """
         if not self.chunks:
             return []
-        scores = self.vecs @ embed_query(query)  # cosine similarity (vectors are normalized)
-        top = np.argsort(-scores)[:k]
-        return [{**self.chunks[i], "score": round(float(scores[i]), 3)} for i in top]
+        mode = mode or SEARCH_MODE
+        cos = self._vector_ranking(query) if mode in ("vector", "hybrid") else np.zeros(len(self.chunks))
+        kw = self._bm25_ranking(query) if mode in ("bm25", "hybrid") else np.zeros(len(self.chunks))
+
+        if mode == "vector":
+            rank_score = cos
+        elif mode == "bm25":
+            rank_score = kw
+        elif mode == "hybrid":
+            # Reciprocal rank fusion: each list votes by position, not by raw score,
+            # so cosine (0 to 1) and BM25 (unbounded) don't need to be on the same scale.
+            # Records with no keyword overlap get no keyword vote.
+            rank_score = np.zeros(len(self.chunks))
+            for scores, use_all in ((cos, True), (kw, False)):
+                order = np.argsort(-scores, kind="stable")
+                for pos, i in enumerate(order):
+                    if use_all or scores[i] > 0:
+                        rank_score[i] += 1.0 / (RRF_K + pos + 1)
+        else:
+            raise ValueError(f"Unknown search mode {mode!r}; use vector, bm25 or hybrid")
+
+        top = np.argsort(-rank_score, kind="stable")[:k]
+        return [{**self.chunks[i], "score": round(float(cos[i]), 3), "bm25": round(float(kw[i]), 3),
+                 "rank_score": round(float(rank_score[i]), 5)} for i in top]
 
 
 # ---------------------------------------------------------------- LLM (chat)

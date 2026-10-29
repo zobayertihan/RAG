@@ -1,0 +1,234 @@
+{
+  "about": "Test set for the supervisor finder. 'expected' = supervisors an expert would accept for the topic. [] = nobody fits (the answer should be none). null = not judged yet, skipped in scoring. Names must match data/supervisors.json exactly.",
+  "version": 1,
+  "created": "2026-10-30",
+  "cases": [
+    {
+      "id": "mp-iot",
+      "query": "Internet of Things",
+      "source": "Mirko Presser test",
+      "reviewer_note": "Best match right in his opinion; one of the three suggestions a bit off",
+      "expected": [
+        "Mirko Presser",
+        "Michail Beliatis",
+        "Ulrich Schou Bjerre",
+        "Fabien Rezac",
+        "Parwinder Singh"
+      ]
+    },
+    {
+      "id": "mp-vr-robotics",
+      "query": "Virtual Reality and Robotics",
+      "source": "Mirko Presser test",
+      "reviewer_note": "Best match right in his opinion; one of the three suggestions a bit off",
+      "expected": [
+        "Francesco Chinello",
+        "Syed Ali Hassan",
+        "Konstantinos Koumaditis",
+        "Lasse Lui Frost-Frandsen",
+        "Unnikrishnan Radhakrishnan"
+      ]
+    },
+    {
+      "id": "mp-food",
+      "query": "Food Technology",
+      "source": "Mirko Presser test",
+      "reviewer_note": "He would not have picked it himself but called it a good choice; which person was returned is unknown",
+      "expected": null
+    },
+    {
+      "id": "mp-vet",
+      "query": "Vetenary Sciences",
+      "source": "Mirko Presser test (his spelling kept)",
+      "reviewer_note": "System correctly returned none",
+      "expected": []
+    },
+    {
+      "id": "jbm-forecasting",
+      "query": "the use of AI in designing models for forecasting in operations management",
+      "source": "John Bang Mathiasen test",
+      "reviewer_note": "Three well-selected suggestions",
+      "expected": [
+        "Johan Clausen",
+        "Linda Englyst",
+        "John Bang Mathiasen",
+        "Henning de Haas",
+        "Robert Alphinas",
+        "Tharsika Pakeerathan Srirajan"
+      ]
+    },
+    {
+      "id": "jbm-shopfloor",
+      "query": "digitalisation of shop floor activities",
+      "source": "John Bang Mathiasen test",
+      "reviewer_note": "Agreed with the first; the other two only a partial match",
+      "expected": [
+        "Pernille Agerskov Clausen",
+        "Johan Clausen",
+        "Ulrich Schou Bjerre"
+      ]
+    },
+    {
+      "id": "jbm-marketing",
+      "query": "marketing and consumer behaviour",
+      "source": "John Bang Mathiasen test (his exact wording unknown; paraphrased)",
+      "reviewer_note": "All three suggestions came from AIROD, none from EngTech",
+      "expected": [
+        "Lars Bjerregaard Mikkelsen",
+        "Jean-Paul de Cros Peronard"
+      ]
+    },
+    {
+      "id": "rag-dss",
+      "query": "retrieval-augmented generation and decision support systems",
+      "source": "our judgment, to be confirmed",
+      "expected": [
+        "Michael Lystbæk",
+        "Martin Olsen",
+        "Tharsika Pakeerathan Srirajan"
+      ]
+    },
+    {
+      "id": "renewables",
+      "query": "renewable energy and the energy transition",
+      "source": "our judgment, to be confirmed",
+      "expected": [
+        "Benjamin Sovacool",
+        "Peter Enevoldsen",
+        "Georgios Fotis",
+        "S Jarjees Ul Hassan"
+      ]
+    },
+    {
+      "id": "smart-grids",
+      "query": "smart grids and energy management",
+      "source": "our judgment, to be confirmed",
+      "expected": [
+        "S Jarjees Ul Hassan",
+        "Georgios Fotis"
+      ]
+    },
+    {
+      "id": "bmi-entrepreneurship",
+      "query": "business model innovation and sustainable entrepreneurship",
+      "source": "our judgment, to be confirmed",
+      "expected": [
+        "Fabien Rezac",
+        "Emma Lappi",
+        "Jan Kvist Martinsen",
+        "Jeanette Ejsing Møberg",
+        "Eva Sørum Poulsen"
+      ]
+    },
+    {
+      "id": "supply-chain",
+      "query": "supply chain management and logistics",
+      "source": "our judgment, to be confirmed",
+      "expected": [
+        "Britta Linnea Gammelgaard",
+        "Linda Englyst",
+        "Henning de Haas",
+        "John Bang Mathiasen",
+        "Torben Tambo",
+        "Sanne Wøhlk"
+      ]
+    },
+    {
+      "id": "agile-pm",
+      "query": "agile project management",
+      "source": "our judgment, to be confirmed",
+      "expected": [
+        "Lars Kristian Hansen",
+        "Maja Due Kadenic",
+        "Konstantinos Koumaditis",
+        "Lise Tordrup",
+        "Jeanette Ejsing Møberg"
+      ]
+    },
+    {
+      "id": "circular",
+      "query": "circular economy and life-cycle assessment",
+      "source": "our judgment, to be confirmed",
+      "expected": [
+        "Henning de Haas"
+      ]
+    },
+    {
+      "id": "digital-transformation",
+      "query": "digital transformation and organisational change",
+      "source": "our judgment, to be confirmed",
+      "expected": [
+        "Sven Kunisch",
+        "Lars Kristian Hansen",
+        "Maja Due Kadenic",
+        "Pernille Agerskov Clausen",
+        "Anne-Christine Rosfeldt Lorentzen",
+        "Michael Nørager",
+        "Christian Tang Lystbæk"
+      ]
+    },
+    {
+      "id": "responsible-ai",
+      "query": "natural language processing and responsible AI",
+      "source": "our judgment, to be confirmed",
+      "expected": [
+        "Parwinder Singh",
+        "Nidhi"
+      ]
+    },
+    {
+      "id": "xr-training",
+      "query": "extended reality for industrial training",
+      "source": "our judgment, to be confirmed",
+      "expected": [
+        "Konstantinos Koumaditis",
+        "Unnikrishnan Radhakrishnan",
+        "Lasse Lui Frost-Frandsen"
+      ]
+    },
+    {
+      "id": "carbon-removal",
+      "query": "carbon removal and climate policy",
+      "source": "our judgment, to be confirmed",
+      "expected": [
+        "Chad M. Baum",
+        "Nick Fitzpatrick",
+        "Lucilla Losi"
+      ]
+    },
+    {
+      "id": "routing",
+      "query": "operations research and vehicle routing",
+      "source": "our judgment, to be confirmed",
+      "expected": [
+        "Sanne Wøhlk",
+        "Martin Olsen"
+      ]
+    },
+    {
+      "id": "quality-lean",
+      "query": "quality management and lean production",
+      "source": "our judgment, to be confirmed",
+      "expected": [
+        "Mikkel Lund Nüssler",
+        "Birgitte Wiwe Lund"
+      ]
+    },
+    {
+      "id": "public-sector",
+      "query": "public sector innovation and e-government",
+      "source": "our judgment, to be confirmed",
+      "expected": [
+        "Keld Pedersen",
+        "Madalina Pop"
+      ]
+    },
+    {
+      "id": "cybersecurity",
+      "query": "cybersecurity and data privacy",
+      "source": "our judgment, to be confirmed",
+      "reviewer_note": "Nobody lists security; expected answer is none or a clearly flagged partial match",
+      "expected": []
+    }
+  ]
+}
