@@ -136,6 +136,10 @@ const API_BASE = '';
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const safeUrl = u => /^https?:\/\//.test(u) ? esc(u) : '#';
 const pdfLink = s => `${API_BASE}/pdfs/${encodeURIComponent(s.file)}#page=${s.page}`;
+// PDF sources link to their page; staff records show where they come from instead
+const srcLine = s => s.page
+  ? `<a class="src" href="${pdfLink(s)}" target="_blank">${esc(s.file)}, page ${s.page}</a>`
+  : `<span class="src">Staff list${s.updated_at ? `, updated ${esc(s.updated_at)}` : ''}</span>`;
 const chat = document.getElementById('chat'), q = document.getElementById('q'), btn = document.getElementById('go');
 let history = [];  // [{role, content}] sent every turn; the server keeps no state
 
@@ -156,7 +160,8 @@ function card(s, i, arr) {
       <div class="card-foot">
         ${s.urls?.[0] ? `<a class="btn" href="${safeUrl(s.urls[0])}" target="_blank" rel="noopener">Open profile</a>` : ''}
         ${(s.emails || []).map(e => `<a href="mailto:${esc(e)}">${esc(e)}</a>`).join('')}
-        <a class="src" href="${pdfLink(s)}" target="_blank">${esc(s.file)}, page ${s.page}</a>
+        ${s.room ? `<span>Room ${esc(s.room)}</span>` : ''}
+        ${srcLine(s)}
       </div>
     </article>`;
 }
@@ -167,7 +172,8 @@ function match(s) {  // search-only mode (no API key)
       <p class="snippet">${esc(s.snippet)}</p>
       <div class="card-foot">
         ${s.urls?.[0] ? `<a class="btn" href="${safeUrl(s.urls[0])}" target="_blank" rel="noopener">Open profile</a>` : ''}
-        <a class="src" href="${pdfLink(s)}" target="_blank">${esc(s.file)}, page ${s.page}</a>
+        ${s.room ? `<span>Room ${esc(s.room)}</span>` : ''}
+        ${srcLine(s)}
       </div>
     </article>`;
 }

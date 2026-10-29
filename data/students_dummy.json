@@ -1,0 +1,564 @@
+[
+  {
+    "id": "student-001",
+    "name": "Amina Rahman",
+    "programme": "MSc Technology-Based Business Development",
+    "skills": [
+      "Python",
+      "RAG",
+      "LLMs",
+      "FastAPI"
+    ],
+    "past_projects": [
+      "Document-question-answering prototype",
+      "Research-paper semantic search"
+    ],
+    "interest": [
+      "Retrieval-augmented generation",
+      "Decision support systems",
+      "AI explainability"
+    ],
+    "email": "student001@example.com",
+    "synthetic": true
+  },
+  {
+    "id": "student-002",
+    "name": "Oliver Nielsen",
+    "programme": "MSc Mechanical Engineering",
+    "skills": [
+      "CAD",
+      "SolidWorks",
+      "FEA"
+    ],
+    "past_projects": [
+      "Lightweight bracket optimisation",
+      "3D-printed joint testing"
+    ],
+    "interest": [
+      "Additive manufacturing",
+      "Mechanical design"
+    ],
+    "email": "student002@example.com",
+    "synthetic": true
+  },
+  {
+    "id": "student-003",
+    "name": "Sara Ahmed",
+    "programme": "MSc Innovation Management",
+    "skills": [
+      "Business models",
+      "Interviewing",
+      "Design thinking"
+    ],
+    "past_projects": [
+      "Circular startup feasibility",
+      "Customer discovery study"
+    ],
+    "interest": [
+      "Sustainable entrepreneurship",
+      "Business model innovation"
+    ],
+    "email": "student003@example.com",
+    "synthetic": true
+  },
+  {
+    "id": "student-004",
+    "name": "Lucas Petersen",
+    "programme": "MSc Computer Science",
+    "skills": [
+      "PyTorch",
+      "Computer vision",
+      "Python"
+    ],
+    "past_projects": [
+      "Defect detection on assembly-line images",
+      "Image classification benchmark"
+    ],
+    "interest": [
+      "Deep learning",
+      "Industrial quality control"
+    ],
+    "email": "student004@example.com",
+    "synthetic": true
+  },
+  {
+    "id": "student-005",
+    "name": "Nadia Karim",
+    "programme": "MSc Sustainable Energy",
+    "skills": [
+      "Energy modelling",
+      "Excel",
+      "Python"
+    ],
+    "past_projects": [
+      "Rooftop solar feasibility",
+      "District heating comparison"
+    ],
+    "interest": [
+      "Renewable energy",
+      "Energy transition"
+    ],
+    "email": "student005@example.com",
+    "synthetic": true
+  },
+  {
+    "id": "student-006",
+    "name": "Emil Sørensen",
+    "programme": "MSc Technology-Based Business Development",
+    "skills": [
+      "SQL",
+      "Power BI",
+      "ETL"
+    ],
+    "past_projects": [
+      "Retail KPI dashboard",
+      "Inventory data warehouse"
+    ],
+    "interest": [
+      "Business intelligence",
+      "Data-driven management"
+    ],
+    "email": "student006@example.com",
+    "synthetic": true
+  },
+  {
+    "id": "student-007",
+    "name": "Priya Menon",
+    "programme": "MSc Industrial Engineering",
+    "skills": [
+      "Lean",
+      "Simulation",
+      "Operations research"
+    ],
+    "past_projects": [
+      "Factory bottleneck simulation",
+      "Production line balancing"
+    ],
+    "interest": [
+      "Manufacturing optimisation",
+      "Supply chains"
+    ],
+    "email": "student007@example.com",
+    "synthetic": true
+  },
+  {
+    "id": "student-008",
+    "name": "Jonas Mikkelsen",
+    "programme": "MSc Technology-Based Business Development",
+    "skills": [
+      "Next.js",
+      "TypeScript",
+      "PostgreSQL"
+    ],
+    "past_projects": [
+      "Startup marketplace MVP",
+      "Customer portal"
+    ],
+    "interest": [
+      "Digital platforms",
+      "SaaS product development"
+    ],
+    "email": "student008@example.com",
+    "synthetic": true
+  },
+  {
+    "id": "student-009",
+    "name": "Fatima Chowdhury",
+    "programme": "MSc Business Administration",
+    "skills": [
+      "Qualitative analysis",
+      "Stakeholder mapping",
+      "Surveys"
+    ],
+    "past_projects": [
+      "Employee digital-adoption interviews",
+      "Change readiness assessment"
+    ],
+    "interest": [
+      "Organisational change",
+      "Digital transformation"
+    ],
+    "email": "student009@example.com",
+    "synthetic": true
+  },
+  {
+    "id": "student-010",
+    "name": "Frederik Holm",
+    "programme": "MSc Electrical Engineering",
+    "skills": [
+      "MATLAB",
+      "Power systems",
+      "Control"
+    ],
+    "past_projects": [
+      "Smart inverter simulation",
+      "Grid stability model"
+    ],
+    "interest": [
+      "Smart grids",
+      "Energy management"
+    ],
+    "email": "student010@example.com",
+    "synthetic": true
+  },
+  {
+    "id": "student-011",
+    "name": "Mei Chen",
+    "programme": "MSc Computer Science",
+    "skills": [
+      "NLP",
+      "Transformers",
+      "Evaluation"
+    ],
+    "past_projects": [
+      "Danish sentiment classifier",
+      "Multilingual chatbot tests"
+    ],
+    "interest": [
+      "Natural language processing",
+      "Responsible AI"
+    ],
+    "email": "student011@example.com",
+    "synthetic": true
+  },
+  {
+    "id": "student-012",
+    "name": "Daniel Okafor",
+    "programme": "MSc Technology-Based Business Development",
+    "skills": [
+      "IoT",
+      "MQTT",
+      "Python"
+    ],
+    "past_projects": [
+      "Warehouse sensor prototype",
+      "Predictive maintenance dashboard"
+    ],
+    "interest": [
+      "Industrial IoT",
+      "Cyber-physical systems"
+    ],
+    "email": "student012@example.com",
+    "synthetic": true
+  },
+  {
+    "id": "student-013",
+    "name": "Sofia Larsen",
+    "programme": "MSc Marketing",
+    "skills": [
+      "Consumer research",
+      "SPSS",
+      "Survey design"
+    ],
+    "past_projects": [
+      "Green-product buying survey",
+      "Digital campaign analysis"
+    ],
+    "interest": [
+      "Consumer behaviour",
+      "Sustainable marketing"
+    ],
+    "email": "student013@example.com",
+    "synthetic": true
+  },
+  {
+    "id": "student-014",
+    "name": "Arjun Patel",
+    "programme": "MSc Robotics",
+    "skills": [
+      "ROS2",
+      "SLAM",
+      "C++"
+    ],
+    "past_projects": [
+      "Indoor autonomous navigation",
+      "Mobile robot mapping"
+    ],
+    "interest": [
+      "Autonomous systems",
+      "Human-robot interaction"
+    ],
+    "email": "student014@example.com",
+    "synthetic": true
+  },
+  {
+    "id": "student-015",
+    "name": "Emma Kristensen",
+    "programme": "MSc Technology-Based Business Development",
+    "skills": [
+      "Project management",
+      "Scrum",
+      "Risk analysis"
+    ],
+    "past_projects": [
+      "Agile delivery comparison",
+      "Technology roadmap"
+    ],
+    "interest": [
+      "Engineering project management",
+      "Agile methods"
+    ],
+    "email": "student015@example.com",
+    "synthetic": true
+  },
+  {
+    "id": "student-016",
+    "name": "Yusuf Ali",
+    "programme": "MSc Data Science",
+    "skills": [
+      "scikit-learn",
+      "Statistics",
+      "Time series"
+    ],
+    "past_projects": [
+      "Demand forecasting",
+      "Churn prediction"
+    ],
+    "interest": [
+      "Predictive analytics",
+      "Machine learning operations"
+    ],
+    "email": "student016@example.com",
+    "synthetic": true
+  },
+  {
+    "id": "student-017",
+    "name": "Clara Berg",
+    "programme": "MSc Environmental Engineering",
+    "skills": [
+      "LCA",
+      "GIS",
+      "Material flows"
+    ],
+    "past_projects": [
+      "Packaging footprint study",
+      "Urban waste mapping"
+    ],
+    "interest": [
+      "Circular economy",
+      "Life-cycle assessment"
+    ],
+    "email": "student017@example.com",
+    "synthetic": true
+  },
+  {
+    "id": "student-018",
+    "name": "Noah Jensen",
+    "programme": "MSc Technology-Based Business Development",
+    "skills": [
+      "Cybersecurity",
+      "Threat modelling",
+      "GDPR"
+    ],
+    "past_projects": [
+      "SME security assessment",
+      "Access-control design"
+    ],
+    "interest": [
+      "Digital trust",
+      "Data privacy"
+    ],
+    "email": "student018@example.com",
+    "synthetic": true
+  },
+  {
+    "id": "student-019",
+    "name": "Isabella Rossi",
+    "programme": "MSc Supply Chain Management",
+    "skills": [
+      "Forecasting",
+      "ERP",
+      "Optimisation"
+    ],
+    "past_projects": [
+      "Supplier risk scorecard",
+      "Last-mile logistics study"
+    ],
+    "interest": [
+      "Resilient supply chains",
+      "Logistics analytics"
+    ],
+    "email": "student019@example.com",
+    "synthetic": true
+  },
+  {
+    "id": "student-020",
+    "name": "Rafiq Hasan",
+    "programme": "MSc Computer Science",
+    "skills": [
+      "Graph databases",
+      "Knowledge graphs",
+      "Python"
+    ],
+    "past_projects": [
+      "Scholarly knowledge graph",
+      "Entity-resolution pipeline"
+    ],
+    "interest": [
+      "Semantic technologies",
+      "Knowledge representation"
+    ],
+    "email": "student020@example.com",
+    "synthetic": true
+  },
+  {
+    "id": "student-021",
+    "name": "Maja Andersen",
+    "programme": "MSc Technology-Based Business Development",
+    "skills": [
+      "UX research",
+      "Figma",
+      "Prototyping"
+    ],
+    "past_projects": [
+      "Healthcare appointment interface",
+      "Usability evaluation"
+    ],
+    "interest": [
+      "Human-centred design",
+      "Digital health"
+    ],
+    "email": "student021@example.com",
+    "synthetic": true
+  },
+  {
+    "id": "student-022",
+    "name": "Victor Schmidt",
+    "programme": "MSc Energy Engineering",
+    "skills": [
+      "Heat pumps",
+      "Thermodynamics",
+      "Time-series analysis"
+    ],
+    "past_projects": [
+      "Residential heat-pump sizing",
+      "Smart meter load profiling"
+    ],
+    "interest": [
+      "Building energy optimisation",
+      "Demand response"
+    ],
+    "email": "student022@example.com",
+    "synthetic": true
+  },
+  {
+    "id": "student-023",
+    "name": "Lina Haddad",
+    "programme": "MSc Business Development",
+    "skills": [
+      "Strategy",
+      "Competitive analysis",
+      "Business modelling"
+    ],
+    "past_projects": [
+      "Market-entry strategy",
+      "Platform ecosystem assessment"
+    ],
+    "interest": [
+      "Technology strategy",
+      "Entrepreneurship"
+    ],
+    "email": "student023@example.com",
+    "synthetic": true
+  },
+  {
+    "id": "student-024",
+    "name": "Thomas Nguyen",
+    "programme": "MSc Software Engineering",
+    "skills": [
+      "Docker",
+      "CI/CD",
+      "Kubernetes"
+    ],
+    "past_projects": [
+      "Cloud-native API deployment",
+      "Automated testing pipeline"
+    ],
+    "interest": [
+      "Cloud infrastructure",
+      "DevOps"
+    ],
+    "email": "student024@example.com",
+    "synthetic": true
+  },
+  {
+    "id": "student-025",
+    "name": "Elena Popescu",
+    "programme": "MSc Technology-Based Business Development",
+    "skills": [
+      "Mixed methods",
+      "Ethics assessment",
+      "Interviews"
+    ],
+    "past_projects": [
+      "AI governance framework",
+      "Algorithmic accountability study"
+    ],
+    "interest": [
+      "Responsible innovation",
+      "Corporate digital responsibility"
+    ],
+    "email": "student025@example.com",
+    "synthetic": true
+  },
+  {
+    "id": "student-026",
+    "name": "Hassan Mahmoud",
+    "programme": "MSc Biomedical Engineering",
+    "skills": [
+      "Signal processing",
+      "Python",
+      "Statistics"
+    ],
+    "past_projects": [
+      "Wearable sensor data analysis",
+      "Clinical signal filtering"
+    ],
+    "interest": [
+      "Digital diagnostics",
+      "Health technologies"
+    ],
+    "email": "student026@example.com",
+    "synthetic": true
+  },
+  {
+    "id": "student-027",
+    "name": "Freja Møller",
+    "programme": "MSc Technology-Based Business Development",
+    "skills": [
+      "VR",
+      "Unity",
+      "3D modelling"
+    ],
+    "past_projects": [
+      "Virtual factory walkthrough",
+      "Immersive training concept"
+    ],
+    "interest": [
+      "Extended reality",
+      "Industrial training"
+    ],
+    "email": "student027@example.com",
+    "synthetic": true
+  },
+  {
+    "id": "student-028",
+    "name": "Gabriel Silva",
+    "programme": "MSc Applied Mathematics",
+    "skills": [
+      "Optimisation",
+      "Python",
+      "Monte Carlo"
+    ],
+    "past_projects": [
+      "Wind farm scenario analysis",
+      "Stochastic scheduling model"
+    ],
+    "interest": [
+      "Decision modelling",
+      "Uncertainty quantification"
+    ],
+    "email": "student028@example.com",
+    "synthetic": true
+  }
+]

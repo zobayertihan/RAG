@@ -21,6 +21,7 @@ load_dotenv()
 
 BASE_DIR = Path(__file__).parent
 PDF_DIR = BASE_DIR / "data" / "pdfs"
+SUPERVISORS_JSON = BASE_DIR / "data" / "supervisors.json"
 INDEX_DIR = BASE_DIR / "data" / "index"
 CACHE_DIR = INDEX_DIR / "cache"
 MANIFEST = INDEX_DIR / "manifest.json"
@@ -28,7 +29,14 @@ MANIFEST = INDEX_DIR / "manifest.json"
 EMBED_MODEL = os.getenv("EMBED_MODEL", "BAAI/bge-small-en-v1.5")
 CHUNK_CHARS = int(os.getenv("CHUNK_CHARS", "1200"))
 TOP_K = int(os.getenv("TOP_K", "10"))
-CHUNKER_VERSION = "3"  # bump when pdf_to_chunks changes, forces re-processing
+CHUNKER_VERSION = "4"  # bump when pdf_to_chunks or records_to_chunks change, forces re-processing
+
+# Positions that can supervise. Everyone else stays in supervisors.json (for the
+# admin later) but is not searchable as a supervisor.
+SUPERVISOR_POSITIONS = {
+    "Distinguished Professor", "Professor", "Professor (Docent)",
+    "Associate Professor", "Assistant Professor", "Postdoc",
+}
 
 EMAIL_RE = re.compile(r"[\w.+-]+@[\w-]+(?:\.[\w-]+)+")
 URL_RE = re.compile(r"https?://[^\s<>\"')\]]+")
@@ -194,44 +202,87 @@ def pdf_to_chunks(pdf_path: Path) -> list[dict]:
     return chunks
 
 
+# ---------------------------------------------------------------- records -> chunks
+
+
+def records_to_chunks(json_path: Path) -> list[dict]:
+    """
+    One chunk per supervisor record. Only people who can supervise AND have at
+    least one research interest are searchable; a record with no interests
+    cannot be matched to anything.
+    """
+    records = json.loads(json_path.read_text(encoding="utf-8"))
+    chunks, skipped = [], {"position": 0, "no_interests": 0}
+    for r in records:
+        if r.get("position") not in SUPERVISOR_POSITIONS:
+            skipped["position"] += 1
+            continue
+        interests = [i.strip() for i in r.get("interests") or [] if i.strip()]
+        if not interests:
+            skipped["no_interests"] += 1
+            continue
+        # The text is what gets embedded and what the LLM reads: research content only.
+        # Group, type and room stay as metadata (for display and filters), so they don't
+        # pull search results toward a group name.
+        text = f"Name: {r['name']}; Position: {r['position']}; Area of interest: {', '.join(interests)}"
+        if r.get("requirements"):
+            text += f"; Requirements: {', '.join(r['requirements'])}"
+        chunks.append({
+            "file": json_path.name,
+            "page": None,
+            "record_id": r["id"],
+            "text": text,
+            "urls": [r["profile_url"]] if r.get("profile_url") else [],
+            "emails": [r["email"]] if r.get("email") else [],
+            "position": r["position"],
+            "research_group": r.get("research_group") or "",
+            "type": r.get("type") or "",
+            "room": r.get("room") or "",
+            "updated_at": r.get("updated_at"),
+        })
+    print(f"  {json_path.name}: {len(chunks)} searchable, "
+          f"{skipped['position']} skipped (position), {skipped['no_interests']} skipped (no interests)")
+    return chunks
+
+
 # ---------------------------------------------------------------- index
 
 
-def _file_key(pdf_path: Path) -> str:
-    h = hashlib.sha256(pdf_path.read_bytes())
+def _file_key(path: Path) -> str:
+    h = hashlib.sha256(path.read_bytes())
     h.update(EMBED_MODEL.encode())  # changing the model invalidates the cache
-    h.update(CHUNKER_VERSION.encode())  # so does changing how PDFs are split
+    h.update(CHUNKER_VERSION.encode())  # so does changing how files are split
     return h.hexdigest()[:20]
 
 
 def build_index() -> dict:
     """
-    Process every PDF in data/pdfs. Only new or changed PDFs get embedded;
-    unchanged ones are loaded from cache. Deleted PDFs drop out automatically.
+    Index data/supervisors.json plus every PDF in data/pdfs. Only new or changed
+    files get embedded; unchanged ones are loaded from cache. Removed files drop out.
     """
     CACHE_DIR.mkdir(parents=True, exist_ok=True)
-    pdfs = sorted(PDF_DIR.glob("*.pdf"))
+    sources = ([SUPERVISORS_JSON] if SUPERVISORS_JSON.exists() else []) + sorted(PDF_DIR.glob("*.pdf"))
     manifest = {"model": EMBED_MODEL, "files": []}
     stats = {"new": 0, "cached": 0, "chunks": 0}
 
-    for pdf in pdfs:
-        key = _file_key(pdf)
+    for src in sources:
+        key = _file_key(src)
         meta_path, vec_path = CACHE_DIR / f"{key}.json", CACHE_DIR / f"{key}.npy"
         if meta_path.exists() and vec_path.exists():
             stats["cached"] += 1
             n = len(json.loads(meta_path.read_text(encoding="utf-8")))
         else:
-            print(f"  processing {pdf.name}")
-            chunks = pdf_to_chunks(pdf)
+            print(f"  processing {src.name}")
+            chunks = records_to_chunks(src) if src.suffix == ".json" else pdf_to_chunks(src)
             if not chunks:
-                print(f"  WARNING: no text found in {pdf.name} (scanned image PDF?)")
+                print(f"  WARNING: nothing to index in {src.name}")
                 continue
             vecs = embed_passages([c["text"] for c in chunks])
             meta_path.write_text(json.dumps(chunks, ensure_ascii=False, indent=1), encoding="utf-8")
             np.save(vec_path, vecs)
             stats["new"] += 1
             n = len(chunks)
-        manifest["files"].append({"file": pdf.name, "key": key, "chunks": n})
+        manifest["files"].append({"file": src.name, "key": key, "chunks": n})
         stats["chunks"] += n
 
     MANIFEST.write_text(json.dumps(manifest, indent=1), encoding="utf-8")
@@ -250,7 +301,7 @@ class Index:
             self.chunks += json.loads((CACHE_DIR / f"{f['key']}.json").read_text(encoding="utf-8"))
             vecs.append(np.load(CACHE_DIR / f"{f['key']}.npy"))
         self.vecs = np.vstack(vecs) if vecs else np.zeros((0, 1), dtype=np.float32)
-        print(f"Index loaded: {len(manifest['files'])} PDFs, {len(self.chunks)} chunks")
+        print(f"Index loaded: {len(manifest['files'])} files, {len(self.chunks)} chunks")
 
     def search(self, query: str, k: int = TOP_K) -> list[dict]:
         if not self.chunks:
@@ -266,7 +317,7 @@ HISTORY_TURNS = 8  # how many earlier messages the LLM sees
 
 SYSTEM_PROMPT = """You help university students find a suitable thesis supervisor, in a conversation.
 The student may refine their idea, combine fields, or change direction completely.
-Each time you get numbered SOURCES extracted from PDF documents, retrieved for the student's latest message.
+Each time you get numbered SOURCES (staff records and documents), retrieved for the student's latest message.
 
 Keep two kinds of content strictly apart:
 1. FACTS about a person (name, title, research areas): ONLY from the SOURCES. Never invent or
@@ -396,7 +447,7 @@ def answer(messages: list[dict], hits: list[dict]) -> dict | None:
     """
     if not os.getenv("LLM_API_KEY"):
         return None
-    sources = "\n\n".join(f"[S{i}] (file: {h['file']}, page {h['page']})\n{h['text']}"
+    sources = "\n\n".join(f"[S{i}] ({h['file']}" + (f", page {h['page']}" if h['page'] else "") + f")\n{h['text']}"
                            for i, h in enumerate(hits, 1))
     resp = _client().chat.completions.create(
         model=_model(), temperature=0.1,

@@ -56,7 +56,9 @@ def chat(body: Chat):
 
     sources = {
         f"S{i}": {"file": h["file"], "page": h["page"], "score": h["score"],
-                  "emails": h["emails"], "urls": h["urls"], "snippet": h["text"][:400]}
+                  "emails": h["emails"], "urls": h["urls"], "snippet": h["text"][:400],
+                  "room": h.get("room", ""), "research_group": h.get("research_group", ""),
+                  "updated_at": h.get("updated_at")}
         for i, h in enumerate(hits, 1)
     }
     if data is None:  # no API key: show the best raw matches
