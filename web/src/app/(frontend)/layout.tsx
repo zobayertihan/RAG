@@ -2,18 +2,19 @@ import React from 'react'
 import './styles.css'
 
 export const metadata = {
-  description: 'Supervisor Finder for BTECH students, supervisors and admins.',
+  description: 'Find a thesis or project supervisor at BTECH, Aarhus University.',
   title: 'Supervisor Finder',
 }
 
-export default async function RootLayout(props: { children: React.ReactNode }) {
-  const { children } = props
-
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body>
-        <main>{children}</main>
-      </body>
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+        <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+      </head>
+      <body>{children}</body>
     </html>
   )
 }

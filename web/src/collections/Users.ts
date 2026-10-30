@@ -7,6 +7,9 @@ export const Users: CollectionConfig = {
   admin: { useAsTitle: 'email', defaultColumns: ['email', 'name', 'role'] },
   auth: true,
   access: {
+    // The Payload admin panel is for admins (and supervisors until their own page exists in
+    // Phase 6). Students use the student pages only.
+    admin: ({ req }) => roleOf(req) === 'admin' || roleOf(req) === 'supervisor',
     // Only admins create accounts. Payload still lets the very first user sign up at /admin.
     create: isAdmin,
     read: ({ req }) => (roleOf(req) === 'admin' ? true : req.user ? { id: { equals: req.user.id } } : false),

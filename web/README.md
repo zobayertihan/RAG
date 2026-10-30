@@ -1,4 +1,4 @@
-# Supervisor Finder: web app (Phase 4)
+# Supervisor Finder: web app
 
 Next.js + Payload app for students, supervisors and admins. Search and all LLM work
 stay in the Python service one folder up (`../app.py`); this app calls it.
@@ -12,7 +12,7 @@ stay in the Python service one folder up (`../app.py`); this app calls it.
    (the same SERVICE_KEY as in the Python `.env`).
 4. `npm install`
 5. `npm run seed`   (creates the database and the demo logins)
-6. `npm run dev`, then open http://localhost:3000/admin
+6. `npm run dev`, then open http://localhost:3000 (it sends you to the login page)
 
 ## Demo logins (local only)
 
@@ -31,3 +31,12 @@ Password: `SEED_PASSWORD` from `.env` (default `demo-password-1`).
 - At most 3 open requests per student, one per supervisor.
 - Accepting a supervision request is blocked when the supervisor has no slots left.
 - Every supervisor profile change keeps the old values in Profile versions and updates search right away.
+
+## Pages
+
+| Address | Who | What |
+|---|---|---|
+| /login | everyone | sign in; sends you to your own area |
+| /student | students | chat with search options, cards with slots and a Contact button |
+| /student/requests | students | the requests you sent and their status |
+| /admin | admins (and supervisors until Phase 6) | Payload admin panel |
