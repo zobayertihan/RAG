@@ -669,12 +669,15 @@ def summarize_note(note: str, supervisor_areas: str, request_type: str = "") -> 
     return (resp.choices[0].message.content or "").strip() or None
 
 
-EMAIL_ACTIONS = ("accept", "reject", "ask_details")
+EMAIL_ACTIONS = ("accept", "accept_discuss", "reject", "ask_details")
 
 EMAIL_TEMPLATES = {
     "accept": ("Supervision request: accepted",
                "Dear {student},\n\nThank you for your request. I am happy to supervise your project{topic_part}. "
                "Please send me a few dates for a first meeting.\n\nBest regards,\n{supervisor}"),
+    "accept_discuss": ("Your idea: let's talk",
+                       "Dear {student},\n\nThank you for your message{topic_part}. I am happy to discuss your idea. "
+                       "Please send me a few dates for a short meeting.\n\nBest regards,\n{supervisor}"),
     "reject": ("Supervision request",
                "Dear {student},\n\nThank you for your request{topic_part}. Unfortunately I cannot take it on. "
                "I recommend contacting other supervisors whose areas are closer to your idea.\n\nBest regards,\n{supervisor}"),
@@ -689,7 +692,8 @@ Decision: {action_text}. Base it on the template below, and mention one concrete
 student's note if it helps. Don't add promises, dates or facts that aren't given. Plain text, under 120 words.
 Reply with JSON: {{"subject": "...", "body": "..."}}"""
 
-_ACTION_TEXT = {"accept": "accept the request", "reject": "decline the request",
+_ACTION_TEXT = {"accept": "accept the request", "accept_discuss": "agree to meet and discuss the idea (this is not yet a supervision agreement)",
+                "reject": "decline the request",
                 "ask_details": "ask for more details before deciding"}
 
 

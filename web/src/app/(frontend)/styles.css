@@ -142,3 +142,38 @@ h1, h2, h3 { text-wrap: balance; }
 .pill.good { background: var(--good-soft); color: var(--good); }
 .pill.warn { background: var(--warn-soft); color: var(--warn); }
 .pill.bad { background: var(--bad-soft); color: var(--bad); }
+
+/* supervisor pages */
+.stats { display: flex; flex-wrap: wrap; gap: 12px; margin: 18px 0 8px; }
+.stats div { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 12px 16px; display: grid; flex: 0 1 200px; min-width: 140px; }
+.stats strong { font-size: 1.5rem; font-variant-numeric: tabular-nums; line-height: 1.2; }
+.stats span { color: var(--muted); font-size: .85rem; }
+.tabs { display: flex; gap: 4px; margin-top: 20px; border-bottom: 1px solid var(--line); }
+.tabs button { font: inherit; background: none; border: 0; border-bottom: 2px solid transparent; padding: 8px 12px; color: var(--muted); cursor: pointer; font-weight: 500; }
+.tabs button.on { color: var(--ink); border-bottom-color: var(--accent); }
+.summary { margin: 12px 0 0; padding: 10px 12px; border-radius: 8px; background: var(--accent-soft); font-size: .92rem; }
+.summary span { display: block; font-size: .72rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--accent); margin-bottom: 2px; }
+.req .chips { margin-top: 10px; }
+.actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+.draft { margin-top: 14px; padding: 14px; border-radius: 10px; background: var(--paper); border: 1px solid var(--line); }
+.draft-head { margin: 0 0 10px; font-weight: 500; }
+.draft-meta { margin: 2px 0; font-size: .92rem; }
+.draft-body { white-space: pre-wrap; font: inherit; font-size: .92rem; background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; margin: 10px 0 0; }
+
+/* profile form */
+.profile { display: grid; gap: 22px; margin-top: 20px; max-width: 640px; }
+.readonly { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; display: grid; gap: 4px; }
+.readonly div span { display: inline-block; min-width: 90px; color: var(--muted); font-size: .88rem; }
+.field { border: 0; padding: 0; margin: 0; display: grid; gap: 6px; }
+.field legend, .field label { font-weight: 600; padding: 0; }
+.field .hint { margin: 0; }
+.field input, .add-row input { font: inherit; padding: 8px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--card); color: var(--ink); }
+.field input[type=number] { max-width: 120px; font-variant-numeric: tabular-nums; }
+.edit-chips { list-style: none; padding: 0; margin: 4px 0 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.edit-chips li { display: inline-flex; align-items: center; gap: 4px; background: var(--accent-soft); border-radius: 6px; padding: 3px 4px 3px 10px; font-size: .9rem; }
+.edit-chips li.none { background: none; color: var(--muted); padding-left: 0; }
+.edit-chips button { border: 0; background: none; color: var(--muted); font-size: 1.05rem; line-height: 1; cursor: pointer; padding: 0 6px; border-radius: 4px; }
+.edit-chips button:hover { color: var(--ink); background: var(--line); }
+.add-row { display: flex; gap: 8px; }
+.add-row input { flex: 1; min-width: 0; }
+.profile > .btn { justify-self: start; }

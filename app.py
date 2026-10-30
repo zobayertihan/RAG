@@ -15,7 +15,7 @@ SERVICE_KEY is not set:
   POST /api/reindex/supervisors       save one supervisor record and update search
   DELETE /api/reindex/supervisors/{id}  remove one supervisor from search
   POST /api/summarize-note            two-sentence summary of a student's note
-  POST /api/draft-email               accept / reject / ask-for-details email draft
+  POST /api/draft-email               accept / agree-to-meet / reject / ask-for-details email draft
 """
 
 import hmac
@@ -190,7 +190,7 @@ def summarize(body: NoteRequest):
 
 
 class EmailRequest(BaseModel):
-    action: Literal["accept", "reject", "ask_details"]
+    action: Literal["accept", "accept_discuss", "reject", "ask_details"]
     student_name: str = Field(min_length=1, max_length=200)
     supervisor_name: str = Field(min_length=1, max_length=200)
     note: str = Field(default="", max_length=4000)

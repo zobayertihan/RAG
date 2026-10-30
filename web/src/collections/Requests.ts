@@ -52,6 +52,29 @@ export const Requests: CollectionConfig = {
     { name: 'answeredAt', type: 'date', admin: { readOnly: true } },
   ],
   hooks: {
+    afterChange: [
+      async ({ doc, operation, req, context }) => {
+        // Tell the supervisor a new request has arrived. Without an email setup (the prototype),
+        // Payload prints the email in the terminal instead of sending it.
+        if (operation !== 'create' || context.skipSideEffects) return doc
+        try {
+          const sup = await req.payload.findByID({ collection: 'supervisors', id: relId(doc.supervisor) as number, depth: 0, overrideAccess: true, req })
+          const stu = await req.payload.findByID({ collection: 'students', id: relId(doc.student) as number, depth: 0, overrideAccess: true, req })
+          if (sup.email) {
+            const base = process.env.WEB_URL || 'http://localhost:3000'
+            await req.payload.sendEmail({
+              to: sup.email,
+              subject: `New ${doc.type === 'supervision' ? 'supervision request' : 'request to discuss an idea'} from ${stu.name}`,
+              text: `${stu.name} (${stu.programme || 'programme not given'}) wrote:\n\n${doc.note}\n\n` +
+                `${doc.noteSummary ? `Summary: ${doc.noteSummary}\n\n` : ''}Answer it here: ${base}/supervisor`,
+            })
+          }
+        } catch (e) {
+          req.payload.logger.warn(`Request notice not sent: ${(e as Error).message}`)
+        }
+        return doc
+      },
+    ],
     beforeChange: [
       async ({ data, operation, originalDoc, req, context }) => {
         const payload = req.payload

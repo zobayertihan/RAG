@@ -48,7 +48,7 @@ export const summarizeNote = (note: string, supervisorRecordId: string, requestT
   })
 
 export const draftEmail = (body: {
-  action: 'accept' | 'reject' | 'ask_details'
+  action: 'accept' | 'accept_discuss' | 'reject' | 'ask_details'
   student_name: string
   supervisor_name: string
   note?: string

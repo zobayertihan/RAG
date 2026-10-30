@@ -19,8 +19,7 @@ export async function getSession() {
   return { payload, user: user as unknown as SessionUser | null }
 }
 
-// Supervisors use the admin panel until their own page arrives in Phase 6.
-export const homeFor = (role?: string) => (role === 'student' ? '/student' : '/admin')
+export const homeFor = (role?: string) => (role === 'student' ? '/student' : role === 'supervisor' ? '/supervisor' : '/admin')
 
 /** Server-side guard for a page: sends people who aren't signed in, or have another role, away. */
 export async function requireRole(...roles: NonNullable<SessionUser['role']>[]) {

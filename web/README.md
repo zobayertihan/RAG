@@ -39,4 +39,8 @@ Password: `SEED_PASSWORD` from `.env` (default `demo-password-1`).
 | /login | everyone | sign in; sends you to your own area |
 | /student | students | chat with search options, cards with slots and a Contact button |
 | /student/requests | students | the requests you sent and their status |
-| /admin | admins (and supervisors until Phase 6) | Payload admin panel |
+| /supervisor | supervisors | requests with the note summary; accept, decline or ask for details, then an email draft to open in Outlook |
+| /supervisor/profile | supervisors | edit research areas, expectations, room; lower slots |
+| /admin | admins only | Payload admin panel |
+
+New requests send the supervisor an email notice. With no email adapter set up, the notice is printed in the web terminal instead (look for "Email attempted").
