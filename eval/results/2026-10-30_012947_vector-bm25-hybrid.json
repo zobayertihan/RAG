@@ -1,0 +1,1331 @@
+{
+ "time": "2026-10-30T01:29:46",
+ "embed_model": "BAAI/bge-small-en-v1.5",
+ "test_set_version": 1,
+ "rewrite": false,
+ "modes": {
+  "vector": {
+   "average": {
+    "hit@1": 0.947,
+    "good@3": 0.754,
+    "recall@10": 0.917
+   },
+   "scored_cases": 19,
+   "cases": {
+    "mp-iot": {
+     "query": "Internet of Things",
+     "top10": [
+      "Mirko Presser",
+      "Michail Beliatis",
+      "Fabien Rezac",
+      "Nidhi",
+      "Parwinder Singh",
+      "S Jarjees Ul Hassan",
+      "Tharsika Pakeerathan Srirajan",
+      "Ulrich Schou Bjerre",
+      "Syed Ali Hassan",
+      "Justina Karpavice"
+     ],
+     "top_cosine": 0.693,
+     "top_bm25": 0.0,
+     "hit@1": 1.0,
+     "good@3": 1.0,
+     "recall@10": 1.0
+    },
+    "mp-vr-robotics": {
+     "query": "Virtual Reality and Robotics",
+     "top10": [
+      "Francesco Chinello",
+      "Unnikrishnan Radhakrishnan",
+      "Lasse Lui Frost-Frandsen",
+      "Ulrich Schou Bjerre",
+      "Konstantinos Koumaditis",
+      "Syed Ali Hassan",
+      "Michail Beliatis",
+      "Michael Lystbæk",
+      "Mirko Presser",
+      "Hans Henrik Hansen"
+     ],
+     "top_cosine": 0.711,
+     "top_bm25": 0.0,
+     "hit@1": 1.0,
+     "good@3": 1.0,
+     "recall@10": 1.0
+    },
+    "mp-food": {
+     "query": "Food Technology",
+     "top10": [
+      "Justina Karpavice",
+      "Michail Beliatis",
+      "S Jarjees Ul Hassan",
+      "Ulrich Schou Bjerre",
+      "Mirko Presser",
+      "Francesco Chinello",
+      "Hans Henrik Hansen",
+      "Britta Linnea Gammelgaard",
+      "Birgitte Wiwe Lund",
+      "Henning de Haas"
+     ],
+     "top_cosine": 0.596,
+     "top_bm25": 0.0
+    },
+    "mp-vet": {
+     "query": "Vetenary Sciences",
+     "top10": [
+      "Henning de Haas",
+      "Konstantinos Koumaditis",
+      "Georgios Fotis",
+      "Peter Enevoldsen",
+      "Lise Tordrup",
+      "Jean-Paul de Cros Peronard",
+      "Sanne Wøhlk",
+      "Martin Olsen",
+      "Christian Tang Lystbæk",
+      "Birgitte Wiwe Lund"
+     ],
+     "top_cosine": 0.618,
+     "top_bm25": 0.0
+    },
+    "jbm-forecasting": {
+     "query": "the use of AI in designing models for forecasting in operations management",
+     "top10": [
+      "Martin Olsen",
+      "Michael Lystbæk",
+      "Tharsika Pakeerathan Srirajan",
+      "Johan Clausen",
+      "Mirko Presser",
+      "Robert Alphinas",
+      "Henning de Haas",
+      "Parwinder Singh",
+      "Konstantinos Koumaditis",
+      "Michail Beliatis"
+     ],
+     "top_cosine": 0.604,
+     "top_bm25": 0.0,
+     "hit@1": 0.0,
+     "good@3": 0.3333333333333333,
+     "recall@10": 0.6666666666666666
+    },
+    "jbm-shopfloor": {
+     "query": "digitalisation of shop floor activities",
+     "top10": [
+      "Pernille Agerskov Clausen",
+      "Francesco Chinello",
+      "Justina Karpavice",
+      "Ulrich Schou Bjerre",
+      "Mirko Presser",
+      "Johan Clausen",
+      "Michael Lystbæk",
+      "Sven Kunisch",
+      "Maja Due Kadenic",
+      "Birgitte Wiwe Lund"
+     ],
+     "top_cosine": 0.639,
+     "top_bm25": 0.0,
+     "hit@1": 1.0,
+     "good@3": 0.3333333333333333,
+     "recall@10": 1.0
+    },
+    "jbm-marketing": {
+     "query": "marketing and consumer behaviour",
+     "top10": [
+      "Jean-Paul de Cros Peronard",
+      "Christian Tang Lystbæk",
+      "Fabien Rezac",
+      "John Vestergaard Olesen",
+      "Madalina Pop",
+      "Henning de Haas",
+      "Lars Bjerregaard Mikkelsen",
+      "Amjad Naveed",
+      "Johan Clausen",
+      "Eva Sørum Poulsen"
+     ],
+     "top_cosine": 0.636,
+     "top_bm25": 0.0,
+     "hit@1": 1.0,
+     "good@3": 0.5,
+     "recall@10": 1.0
+    },
+    "rag-dss": {
+     "query": "retrieval-augmented generation and decision support systems",
+     "top10": [
+      "Martin Olsen",
+      "Robert Alphinas",
+      "Tharsika Pakeerathan Srirajan",
+      "Michael Lystbæk",
+      "Johan Clausen",
+      "Eva Sørum Poulsen",
+      "Mirko Presser",
+      "S Jarjees Ul Hassan",
+      "Lise Tordrup",
+      "Lars Kristian Hansen"
+     ],
+     "top_cosine": 0.601,
+     "top_bm25": 0.0,
+     "hit@1": 1.0,
+     "good@3": 0.6666666666666666,
+     "recall@10": 1.0
+    },
+    "renewables": {
+     "query": "renewable energy and the energy transition",
+     "top10": [
+      "S Jarjees Ul Hassan",
+      "Peter Enevoldsen",
+      "Georgios Fotis",
+      "Benjamin Sovacool",
+      "Henning de Haas",
+      "Christian Tang Lystbæk",
+      "Tharsika Pakeerathan Srirajan",
+      "Lucilla Losi",
+      "Torben Tambo",
+      "Sven Kunisch"
+     ],
+     "top_cosine": 0.66,
+     "top_bm25": 0.0,
+     "hit@1": 1.0,
+     "good@3": 1.0,
+     "recall@10": 1.0
+    },
+    "smart-grids": {
+     "query": "smart grids and energy management",
+     "top10": [
+      "S Jarjees Ul Hassan",
+      "Tharsika Pakeerathan Srirajan",
+      "Georgios Fotis",
+      "Peter Enevoldsen",
+      "Michail Beliatis",
+      "Parwinder Singh",
+      "Madalina Pop",
+      "Fabien Rezac",
+      "Henning de Haas",
+      "Nidhi"
+     ],
+     "top_cosine": 0.679,
+     "top_bm25": 0.0,
+     "hit@1": 1.0,
+     "good@3": 1.0,
+     "recall@10": 1.0
+    },
+    "bmi-entrepreneurship": {
+     "query": "business model innovation and sustainable entrepreneurship",
+     "top10": [
+      "Fabien Rezac",
+      "Henning de Haas",
+      "Lars Kristian Hansen",
+      "Christian Tang Lystbæk",
+      "Hans Henrik Hansen",
+      "Sven Kunisch",
+      "Amjad Naveed",
+      "Madalina Pop",
+      "Lars Bjerregaard Mikkelsen",
+      "Ulrich Schou Bjerre"
+     ],
+     "top_cosine": 0.643,
+     "top_bm25": 0.0,
+     "hit@1": 1.0,
+     "good@3": 0.3333333333333333,
+     "recall@10": 0.2
+    },
+    "supply-chain": {
+     "query": "supply chain management and logistics",
+     "top10": [
+      "Henning de Haas",
+      "Mikkel Lund Nüssler",
+      "Lars Bjerregaard Mikkelsen",
+      "Linda Englyst",
+      "Maja Due Kadenic",
+      "Torben Tambo",
+      "John Bang Mathiasen",
+      "Christian Tang Lystbæk",
+      "Sanne Wøhlk",
+      "Fabien Rezac"
+     ],
+     "top_cosine": 0.706,
+     "top_bm25": 0.0,
+     "hit@1": 1.0,
+     "good@3": 0.3333333333333333,
+     "recall@10": 0.8333333333333334
+    },
+    "agile-pm": {
+     "query": "agile project management",
+     "top10": [
+      "Lars Kristian Hansen",
+      "Lise Tordrup",
+      "Maja Due Kadenic",
+      "Konstantinos Koumaditis",
+      "Jeanette Ejsing Møberg",
+      "Fabien Rezac",
+      "Torben Tambo",
+      "Hans Henrik Hansen",
+      "Michael Nørager",
+      "Mikkel Lund Nüssler"
+     ],
+     "top_cosine": 0.658,
+     "top_bm25": 0.0,
+     "hit@1": 1.0,
+     "good@3": 1.0,
+     "recall@10": 1.0
+    },
+    "circular": {
+     "query": "circular economy and life-cycle assessment",
+     "top10": [
+      "Henning de Haas",
+      "Ulrich Schou Bjerre",
+      "Sven Kunisch",
+      "S Jarjees Ul Hassan",
+      "Christian Tang Lystbæk",
+      "Jean-Paul de Cros Peronard",
+      "Fabien Rezac",
+      "Sanne Wøhlk",
+      "Torben Tambo",
+      "Lars Kristian Hansen"
+     ],
+     "top_cosine": 0.609,
+     "top_bm25": 0.0,
+     "hit@1": 1.0,
+     "good@3": 1.0,
+     "recall@10": 1.0
+    },
+    "digital-transformation": {
+     "query": "digital transformation and organisational change",
+     "top10": [
+      "Sven Kunisch",
+      "Lars Kristian Hansen",
+      "Keld Pedersen",
+      "Anne-Christine Rosfeldt Lorentzen",
+      "Eva Sørum Poulsen",
+      "Hans Henrik Hansen",
+      "Christian Tang Lystbæk",
+      "Michael Nørager",
+      "Fabien Rezac",
+      "Jean-Paul de Cros Peronard"
+     ],
+     "top_cosine": 0.657,
+     "top_bm25": 0.0,
+     "hit@1": 1.0,
+     "good@3": 0.6666666666666666,
+     "recall@10": 0.7142857142857143
+    },
+    "responsible-ai": {
+     "query": "natural language processing and responsible AI",
+     "top10": [
+      "Parwinder Singh",
+      "Michael Lystbæk",
+      "Martin Olsen",
+      "Mirko Presser",
+      "Michail Beliatis",
+      "Lasse Lui Frost-Frandsen",
+      "Johan Clausen",
+      "Nidhi",
+      "Tharsika Pakeerathan Srirajan",
+      "Lise Tordrup"
+     ],
+     "top_cosine": 0.63,
+     "top_bm25": 0.0,
+     "hit@1": 1.0,
+     "good@3": 0.5,
+     "recall@10": 1.0
+    },
+    "xr-training": {
+     "query": "extended reality for industrial training",
+     "top10": [
+      "Unnikrishnan Radhakrishnan",
+      "Francesco Chinello",
+      "Konstantinos Koumaditis",
+      "Lasse Lui Frost-Frandsen",
+      "Syed Ali Hassan",
+      "Ulrich Schou Bjerre",
+      "Hans Henrik Hansen",
+      "Michael Lystbæk",
+      "Michail Beliatis",
+      "S Jarjees Ul Hassan"
+     ],
+     "top_cosine": 0.663,
+     "top_bm25": 0.0,
+     "hit@1": 1.0,
+     "good@3": 0.6666666666666666,
+     "recall@10": 1.0
+    },
+    "carbon-removal": {
+     "query": "carbon removal and climate policy",
+     "top10": [
+      "Chad M. Baum",
+      "Lucilla Losi",
+      "Nick Fitzpatrick",
+      "Benjamin Sovacool",
+      "Peter Enevoldsen",
+      "Henning de Haas",
+      "Sven Kunisch",
+      "Anne Gammelgaard Ballantyne",
+      "Christian Tang Lystbæk",
+      "S Jarjees Ul Hassan"
+     ],
+     "top_cosine": 0.677,
+     "top_bm25": 0.0,
+     "hit@1": 1.0,
+     "good@3": 1.0,
+     "recall@10": 1.0
+    },
+    "routing": {
+     "query": "operations research and vehicle routing",
+     "top10": [
+      "Sanne Wøhlk",
+      "Martin Olsen",
+      "Henning de Haas",
+      "Michail Beliatis",
+      "Mirko Presser",
+      "Parwinder Singh",
+      "Johan Clausen",
+      "John Bang Mathiasen",
+      "Konstantinos Koumaditis",
+      "Amjad Naveed"
+     ],
+     "top_cosine": 0.641,
+     "top_bm25": 0.0,
+     "hit@1": 1.0,
+     "good@3": 1.0,
+     "recall@10": 1.0
+    },
+    "quality-lean": {
+     "query": "quality management and lean production",
+     "top10": [
+      "Mikkel Lund Nüssler",
+      "Henning de Haas",
+      "Birgitte Wiwe Lund",
+      "John Vestergaard Olesen",
+      "John Bang Mathiasen",
+      "Ulrich Schou Bjerre",
+      "Maja Due Kadenic",
+      "Lars Kristian Hansen",
+      "Torben Tambo",
+      "Christian Tang Lystbæk"
+     ],
+     "top_cosine": 0.643,
+     "top_bm25": 0.0,
+     "hit@1": 1.0,
+     "good@3": 1.0,
+     "recall@10": 1.0
+    },
+    "public-sector": {
+     "query": "public sector innovation and e-government",
+     "top10": [
+      "Keld Pedersen",
+      "Madalina Pop",
+      "Lars Kristian Hansen",
+      "Sven Kunisch",
+      "Hans Henrik Hansen",
+      "Christian Tang Lystbæk",
+      "Eva Sørum Poulsen",
+      "Michael Lystbæk",
+      "Parwinder Singh",
+      "Jean-Paul de Cros Peronard"
+     ],
+     "top_cosine": 0.658,
+     "top_bm25": 0.0,
+     "hit@1": 1.0,
+     "good@3": 1.0,
+     "recall@10": 1.0
+    },
+    "cybersecurity": {
+     "query": "cybersecurity and data privacy",
+     "top10": [
+      "Mirko Presser",
+      "Parwinder Singh",
+      "Michail Beliatis",
+      "Maria Jensen",
+      "Nidhi",
+      "Fabien Rezac",
+      "Robert Alphinas",
+      "Tharsika Pakeerathan Srirajan",
+      "Johan Clausen",
+      "Martin Olsen"
+     ],
+     "top_cosine": 0.628,
+     "top_bm25": 0.0
+    }
+   }
+  },
+  "bm25": {
+   "average": {
+    "hit@1": 0.947,
+    "good@3": 0.763,
+    "recall@10": 0.803
+   },
+   "scored_cases": 19,
+   "cases": {
+    "mp-iot": {
+     "query": "Internet of Things",
+     "top10": [
+      "Michail Beliatis",
+      "Fabien Rezac",
+      "Mirko Presser",
+      "Benjamin Sovacool",
+      "Peter Enevoldsen",
+      "Britta Linnea Gammelgaard",
+      "Sven Kunisch",
+      "Sanne Wøhlk",
+      "Jan Laursen",
+      "John Bang Mathiasen"
+     ],
+     "top_cosine": 0.0,
+     "top_bm25": 5.503,
+     "hit@1": 1.0,
+     "good@3": 1.0,
+     "recall@10": 0.6
+    },
+    "mp-vr-robotics": {
+     "query": "Virtual Reality and Robotics",
+     "top10": [
+      "Francesco Chinello",
+      "Syed Ali Hassan",
+      "Lasse Lui Frost-Frandsen",
+      "Konstantinos Koumaditis",
+      "Benjamin Sovacool",
+      "Peter Enevoldsen",
+      "Britta Linnea Gammelgaard",
+      "Sven Kunisch",
+      "Mirko Presser",
+      "Sanne Wøhlk"
+     ],
+     "top_cosine": 0.0,
+     "top_bm25": 8.642,
+     "hit@1": 1.0,
+     "good@3": 1.0,
+     "recall@10": 0.8
+    },
+    "mp-food": {
+     "query": "Food Technology",
+     "top10": [
+      "Torben Tambo",
+      "Justina Karpavice",
+      "Benjamin Sovacool",
+      "Peter Enevoldsen",
+      "Britta Linnea Gammelgaard",
+      "Sven Kunisch",
+      "Mirko Presser",
+      "Sanne Wøhlk",
+      "Jan Laursen",
+      "John Bang Mathiasen"
+     ],
+     "top_cosine": 0.0,
+     "top_bm25": 4.445
+    },
+    "mp-vet": {
+     "query": "Vetenary Sciences",
+     "top10": [
+      "Benjamin Sovacool",
+      "Peter Enevoldsen",
+      "Britta Linnea Gammelgaard",
+      "Sven Kunisch",
+      "Mirko Presser",
+      "Sanne Wøhlk",
+      "Jan Laursen",
+      "John Bang Mathiasen",
+      "Robert Alphinas",
+      "Torben Andersen"
+     ],
+     "top_cosine": 0.0,
+     "top_bm25": 0.0
+    },
+    "jbm-forecasting": {
+     "query": "the use of AI in designing models for forecasting in operations management",
+     "top10": [
+      "Linda Englyst",
+      "Fabien Rezac",
+      "John Bang Mathiasen",
+      "Henning de Haas",
+      "Birgitte Wiwe Lund",
+      "Mikkel Lund Nüssler",
+      "Sanne Wøhlk",
+      "Michail Beliatis",
+      "Martin Olsen",
+      "Lasse Lui Frost-Frandsen"
+     ],
+     "top_cosine": 0.0,
+     "top_bm25": 3.69,
+     "hit@1": 1.0,
+     "good@3": 0.6666666666666666,
+     "recall@10": 0.5
+    },
+    "jbm-shopfloor": {
+     "query": "digitalisation of shop floor activities",
+     "top10": [
+      "Pernille Agerskov Clausen",
+      "Michael Lystbæk",
+      "Johan Clausen",
+      "Anne Gammelgaard Ballantyne",
+      "Justina Karpavice",
+      "Jean-Paul de Cros Peronard",
+      "Benjamin Sovacool",
+      "Peter Enevoldsen",
+      "Britta Linnea Gammelgaard",
+      "Sven Kunisch"
+     ],
+     "top_cosine": 0.0,
+     "top_bm25": 8.69,
+     "hit@1": 1.0,
+     "good@3": 0.6666666666666666,
+     "recall@10": 0.6666666666666666
+    },
+    "jbm-marketing": {
+     "query": "marketing and consumer behaviour",
+     "top10": [
+      "Jean-Paul de Cros Peronard",
+      "Lars Bjerregaard Mikkelsen",
+      "Keld Pedersen",
+      "Benjamin Sovacool",
+      "Peter Enevoldsen",
+      "Britta Linnea Gammelgaard",
+      "Sven Kunisch",
+      "Mirko Presser",
+      "Sanne Wøhlk",
+      "Jan Laursen"
+     ],
+     "top_cosine": 0.0,
+     "top_bm25": 9.495,
+     "hit@1": 1.0,
+     "good@3": 1.0,
+     "recall@10": 1.0
+    },
+    "rag-dss": {
+     "query": "retrieval-augmented generation and decision support systems",
+     "top10": [
+      "Michael Lystbæk",
+      "Robert Alphinas",
+      "Michail Beliatis",
+      "Georgios Fotis",
+      "Parwinder Singh",
+      "Mirko Presser",
+      "S Jarjees Ul Hassan",
+      "Eva Sørum Poulsen",
+      "Benjamin Sovacool",
+      "Peter Enevoldsen"
+     ],
+     "top_cosine": 0.0,
+     "top_bm25": 3.624,
+     "hit@1": 1.0,
+     "good@3": 0.3333333333333333,
+     "recall@10": 0.3333333333333333
+    },
+    "renewables": {
+     "query": "renewable energy and the energy transition",
+     "top10": [
+      "Benjamin Sovacool",
+      "Peter Enevoldsen",
+      "Georgios Fotis",
+      "S Jarjees Ul Hassan",
+      "Amjad Naveed",
+      "Tharsika Pakeerathan Srirajan",
+      "Britta Linnea Gammelgaard",
+      "Sven Kunisch",
+      "Mirko Presser",
+      "Sanne Wøhlk"
+     ],
+     "top_cosine": 0.0,
+     "top_bm25": 9.7,
+     "hit@1": 1.0,
+     "good@3": 1.0,
+     "recall@10": 1.0
+    },
+    "smart-grids": {
+     "query": "smart grids and energy management",
+     "top10": [
+      "S Jarjees Ul Hassan",
+      "Benjamin Sovacool",
+      "Peter Enevoldsen",
+      "Georgios Fotis",
+      "Justina Karpavice",
+      "Ulrich Schou Bjerre",
+      "Madalina Pop",
+      "Amjad Naveed",
+      "Tharsika Pakeerathan Srirajan",
+      "Linda Englyst"
+     ],
+     "top_cosine": 0.0,
+     "top_bm25": 8.555,
+     "hit@1": 1.0,
+     "good@3": 0.5,
+     "recall@10": 1.0
+    },
+    "bmi-entrepreneurship": {
+     "query": "business model innovation and sustainable entrepreneurship",
+     "top10": [
+      "Fabien Rezac",
+      "Amjad Naveed",
+      "Eva Sørum Poulsen",
+      "Peter Enevoldsen",
+      "Lars Bjerregaard Mikkelsen",
+      "Jan Kvist Martinsen",
+      "Emma Lappi",
+      "Jan Laursen",
+      "Birke Dorothea Otto",
+      "Jeanette Ejsing Møberg"
+     ],
+     "top_cosine": 0.0,
+     "top_bm25": 10.737,
+     "hit@1": 1.0,
+     "good@3": 0.6666666666666666,
+     "recall@10": 1.0
+    },
+    "supply-chain": {
+     "query": "supply chain management and logistics",
+     "top10": [
+      "Linda Englyst",
+      "Britta Linnea Gammelgaard",
+      "John Bang Mathiasen",
+      "Henning de Haas",
+      "Torben Tambo",
+      "Sanne Wøhlk",
+      "Martin Olsen",
+      "Jakob Mathias Lund Liboriussen",
+      "Michael Nørager",
+      "Torben Andersen"
+     ],
+     "top_cosine": 0.0,
+     "top_bm25": 6.327,
+     "hit@1": 1.0,
+     "good@3": 1.0,
+     "recall@10": 1.0
+    },
+    "agile-pm": {
+     "query": "agile project management",
+     "top10": [
+      "Lars Kristian Hansen",
+      "Konstantinos Koumaditis",
+      "Lise Tordrup",
+      "Jeanette Ejsing Møberg",
+      "Maja Due Kadenic",
+      "Maria Jensen",
+      "Linda Englyst",
+      "Jakob Mathias Lund Liboriussen",
+      "Michael Nørager",
+      "John Bang Mathiasen"
+     ],
+     "top_cosine": 0.0,
+     "top_bm25": 5.729,
+     "hit@1": 1.0,
+     "good@3": 1.0,
+     "recall@10": 1.0
+    },
+    "circular": {
+     "query": "circular economy and life-cycle assessment",
+     "top10": [
+      "Mads Kock Skøtt",
+      "Benjamin Sovacool",
+      "Peter Enevoldsen",
+      "Britta Linnea Gammelgaard",
+      "Sven Kunisch",
+      "Mirko Presser",
+      "Sanne Wøhlk",
+      "Jan Laursen",
+      "John Bang Mathiasen",
+      "Robert Alphinas"
+     ],
+     "top_cosine": 0.0,
+     "top_bm25": 3.624,
+     "hit@1": 0.0,
+     "good@3": 0.0,
+     "recall@10": 0.0
+    },
+    "digital-transformation": {
+     "query": "digital transformation and organisational change",
+     "top10": [
+      "Anne-Christine Rosfeldt Lorentzen",
+      "Sven Kunisch",
+      "Christian Tang Lystbæk",
+      "Lars Kristian Hansen",
+      "Pernille Agerskov Clausen",
+      "Maja Due Kadenic",
+      "Keld Pedersen",
+      "Torben Andersen",
+      "Mads Kock Skøtt",
+      "Britta Linnea Gammelgaard"
+     ],
+     "top_cosine": 0.0,
+     "top_bm25": 6.774,
+     "hit@1": 1.0,
+     "good@3": 1.0,
+     "recall@10": 0.8571428571428571
+    },
+    "responsible-ai": {
+     "query": "natural language processing and responsible AI",
+     "top10": [
+      "Parwinder Singh",
+      "Michail Beliatis",
+      "Martin Olsen",
+      "Lasse Lui Frost-Frandsen",
+      "Michael Lystbæk",
+      "Jean-Paul de Cros Peronard",
+      "Tharsika Pakeerathan Srirajan",
+      "Nidhi",
+      "S Jarjees Ul Hassan",
+      "Benjamin Sovacool"
+     ],
+     "top_cosine": 0.0,
+     "top_bm25": 5.277,
+     "hit@1": 1.0,
+     "good@3": 0.5,
+     "recall@10": 1.0
+    },
+    "xr-training": {
+     "query": "extended reality for industrial training",
+     "top10": [
+      "Konstantinos Koumaditis",
+      "Unnikrishnan Radhakrishnan",
+      "Francesco Chinello",
+      "Syed Ali Hassan",
+      "Lasse Lui Frost-Frandsen",
+      "Benjamin Sovacool",
+      "Peter Enevoldsen",
+      "Britta Linnea Gammelgaard",
+      "Sven Kunisch",
+      "Mirko Presser"
+     ],
+     "top_cosine": 0.0,
+     "top_bm25": 8.9,
+     "hit@1": 1.0,
+     "good@3": 0.6666666666666666,
+     "recall@10": 1.0
+    },
+    "carbon-removal": {
+     "query": "carbon removal and climate policy",
+     "top10": [
+      "Nick Fitzpatrick",
+      "Lucilla Losi",
+      "Chad M. Baum",
+      "Benjamin Sovacool",
+      "Anne Gammelgaard Ballantyne",
+      "Peter Enevoldsen",
+      "Britta Linnea Gammelgaard",
+      "Sven Kunisch",
+      "Mirko Presser",
+      "Sanne Wøhlk"
+     ],
+     "top_cosine": 0.0,
+     "top_bm25": 11.927,
+     "hit@1": 1.0,
+     "good@3": 1.0,
+     "recall@10": 1.0
+    },
+    "routing": {
+     "query": "operations research and vehicle routing",
+     "top10": [
+      "Sanne Wøhlk",
+      "Linda Englyst",
+      "John Bang Mathiasen",
+      "Henning de Haas",
+      "Birgitte Wiwe Lund",
+      "Mikkel Lund Nüssler",
+      "Benjamin Sovacool",
+      "Peter Enevoldsen",
+      "Britta Linnea Gammelgaard",
+      "Sven Kunisch"
+     ],
+     "top_cosine": 0.0,
+     "top_bm25": 12.958,
+     "hit@1": 1.0,
+     "good@3": 0.5,
+     "recall@10": 0.5
+    },
+    "quality-lean": {
+     "query": "quality management and lean production",
+     "top10": [
+      "Mikkel Lund Nüssler",
+      "Birgitte Wiwe Lund",
+      "Linda Englyst",
+      "Jakob Mathias Lund Liboriussen",
+      "Michael Nørager",
+      "John Bang Mathiasen",
+      "Henning de Haas",
+      "Britta Linnea Gammelgaard",
+      "Torben Andersen",
+      "Torben Tambo"
+     ],
+     "top_cosine": 0.0,
+     "top_bm25": 7.425,
+     "hit@1": 1.0,
+     "good@3": 1.0,
+     "recall@10": 1.0
+    },
+    "public-sector": {
+     "query": "public sector innovation and e-government",
+     "top10": [
+      "Keld Pedersen",
+      "Madalina Pop",
+      "Lucilla Losi",
+      "Chad M. Baum",
+      "Birke Dorothea Otto",
+      "Michael Nørager",
+      "Fabien Rezac",
+      "Amjad Naveed",
+      "Benjamin Sovacool",
+      "Peter Enevoldsen"
+     ],
+     "top_cosine": 0.0,
+     "top_bm25": 11.297,
+     "hit@1": 1.0,
+     "good@3": 1.0,
+     "recall@10": 1.0
+    },
+    "cybersecurity": {
+     "query": "cybersecurity and data privacy",
+     "top10": [
+      "Maria Jensen",
+      "Tharsika Pakeerathan Srirajan",
+      "Nidhi",
+      "Benjamin Sovacool",
+      "Peter Enevoldsen",
+      "Britta Linnea Gammelgaard",
+      "Sven Kunisch",
+      "Mirko Presser",
+      "Sanne Wøhlk",
+      "Jan Laursen"
+     ],
+     "top_cosine": 0.0,
+     "top_bm25": 3.943
+    }
+   }
+  },
+  "hybrid": {
+   "average": {
+    "hit@1": 0.842,
+    "good@3": 0.789,
+    "recall@10": 0.974
+   },
+   "scored_cases": 19,
+   "cases": {
+    "mp-iot": {
+     "query": "Internet of Things",
+     "top10": [
+      "Michail Beliatis",
+      "Mirko Presser",
+      "Fabien Rezac",
+      "Nidhi",
+      "Parwinder Singh",
+      "S Jarjees Ul Hassan",
+      "Tharsika Pakeerathan Srirajan",
+      "Ulrich Schou Bjerre",
+      "Syed Ali Hassan",
+      "Justina Karpavice"
+     ],
+     "top_cosine": 0.68,
+     "top_bm25": 5.503,
+     "hit@1": 1.0,
+     "good@3": 1.0,
+     "recall@10": 1.0
+    },
+    "mp-vr-robotics": {
+     "query": "Virtual Reality and Robotics",
+     "top10": [
+      "Francesco Chinello",
+      "Lasse Lui Frost-Frandsen",
+      "Syed Ali Hassan",
+      "Konstantinos Koumaditis",
+      "Unnikrishnan Radhakrishnan",
+      "Ulrich Schou Bjerre",
+      "Michail Beliatis",
+      "Michael Lystbæk",
+      "Mirko Presser",
+      "Hans Henrik Hansen"
+     ],
+     "top_cosine": 0.711,
+     "top_bm25": 8.642,
+     "hit@1": 1.0,
+     "good@3": 1.0,
+     "recall@10": 1.0
+    },
+    "mp-food": {
+     "query": "Food Technology",
+     "top10": [
+      "Justina Karpavice",
+      "Torben Tambo",
+      "Michail Beliatis",
+      "S Jarjees Ul Hassan",
+      "Ulrich Schou Bjerre",
+      "Mirko Presser",
+      "Francesco Chinello",
+      "Hans Henrik Hansen",
+      "Britta Linnea Gammelgaard",
+      "Birgitte Wiwe Lund"
+     ],
+     "top_cosine": 0.596,
+     "top_bm25": 3.102
+    },
+    "mp-vet": {
+     "query": "Vetenary Sciences",
+     "top10": [
+      "Henning de Haas",
+      "Konstantinos Koumaditis",
+      "Georgios Fotis",
+      "Peter Enevoldsen",
+      "Lise Tordrup",
+      "Jean-Paul de Cros Peronard",
+      "Sanne Wøhlk",
+      "Martin Olsen",
+      "Christian Tang Lystbæk",
+      "Birgitte Wiwe Lund"
+     ],
+     "top_cosine": 0.618,
+     "top_bm25": 0.0
+    },
+    "jbm-forecasting": {
+     "query": "the use of AI in designing models for forecasting in operations management",
+     "top10": [
+      "Martin Olsen",
+      "Henning de Haas",
+      "Michael Lystbæk",
+      "Tharsika Pakeerathan Srirajan",
+      "Mikkel Lund Nüssler",
+      "Michail Beliatis",
+      "Parwinder Singh",
+      "Linda Englyst",
+      "Fabien Rezac",
+      "Sanne Wøhlk"
+     ],
+     "top_cosine": 0.604,
+     "top_bm25": 1.653,
+     "hit@1": 0.0,
+     "good@3": 0.3333333333333333,
+     "recall@10": 0.5
+    },
+    "jbm-shopfloor": {
+     "query": "digitalisation of shop floor activities",
+     "top10": [
+      "Pernille Agerskov Clausen",
+      "Justina Karpavice",
+      "Michael Lystbæk",
+      "Johan Clausen",
+      "Jean-Paul de Cros Peronard",
+      "Anne Gammelgaard Ballantyne",
+      "Francesco Chinello",
+      "Ulrich Schou Bjerre",
+      "Mirko Presser",
+      "Sven Kunisch"
+     ],
+     "top_cosine": 0.639,
+     "top_bm25": 8.69,
+     "hit@1": 1.0,
+     "good@3": 0.3333333333333333,
+     "recall@10": 1.0
+    },
+    "jbm-marketing": {
+     "query": "marketing and consumer behaviour",
+     "top10": [
+      "Jean-Paul de Cros Peronard",
+      "Lars Bjerregaard Mikkelsen",
+      "Keld Pedersen",
+      "Christian Tang Lystbæk",
+      "Fabien Rezac",
+      "John Vestergaard Olesen",
+      "Madalina Pop",
+      "Henning de Haas",
+      "Amjad Naveed",
+      "Johan Clausen"
+     ],
+     "top_cosine": 0.636,
+     "top_bm25": 9.495,
+     "hit@1": 1.0,
+     "good@3": 1.0,
+     "recall@10": 1.0
+    },
+    "rag-dss": {
+     "query": "retrieval-augmented generation and decision support systems",
+     "top10": [
+      "Robert Alphinas",
+      "Michael Lystbæk",
+      "Mirko Presser",
+      "Eva Sørum Poulsen",
+      "S Jarjees Ul Hassan",
+      "Parwinder Singh",
+      "Michail Beliatis",
+      "Georgios Fotis",
+      "Martin Olsen",
+      "Tharsika Pakeerathan Srirajan"
+     ],
+     "top_cosine": 0.601,
+     "top_bm25": 1.995,
+     "hit@1": 0.0,
+     "good@3": 0.3333333333333333,
+     "recall@10": 1.0
+    },
+    "renewables": {
+     "query": "renewable energy and the energy transition",
+     "top10": [
+      "Peter Enevoldsen",
+      "Benjamin Sovacool",
+      "S Jarjees Ul Hassan",
+      "Georgios Fotis",
+      "Tharsika Pakeerathan Srirajan",
+      "Amjad Naveed",
+      "Henning de Haas",
+      "Christian Tang Lystbæk",
+      "Lucilla Losi",
+      "Torben Tambo"
+     ],
+     "top_cosine": 0.656,
+     "top_bm25": 8.462,
+     "hit@1": 1.0,
+     "good@3": 1.0,
+     "recall@10": 1.0
+    },
+    "smart-grids": {
+     "query": "smart grids and energy management",
+     "top10": [
+      "S Jarjees Ul Hassan",
+      "Peter Enevoldsen",
+      "Georgios Fotis",
+      "Tharsika Pakeerathan Srirajan",
+      "Madalina Pop",
+      "Benjamin Sovacool",
+      "Ulrich Schou Bjerre",
+      "Amjad Naveed",
+      "Henning de Haas",
+      "Justina Karpavice"
+     ],
+     "top_cosine": 0.679,
+     "top_bm25": 8.555,
+     "hit@1": 1.0,
+     "good@3": 1.0,
+     "recall@10": 1.0
+    },
+    "bmi-entrepreneurship": {
+     "query": "business model innovation and sustainable entrepreneurship",
+     "top10": [
+      "Fabien Rezac",
+      "Amjad Naveed",
+      "Lars Bjerregaard Mikkelsen",
+      "Eva Sørum Poulsen",
+      "Hans Henrik Hansen",
+      "Jan Kvist Martinsen",
+      "Emma Lappi",
+      "Madalina Pop",
+      "Jeanette Ejsing Møberg",
+      "Peter Enevoldsen"
+     ],
+     "top_cosine": 0.643,
+     "top_bm25": 10.737,
+     "hit@1": 1.0,
+     "good@3": 0.3333333333333333,
+     "recall@10": 1.0
+    },
+    "supply-chain": {
+     "query": "supply chain management and logistics",
+     "top10": [
+      "Linda Englyst",
+      "Henning de Haas",
+      "John Bang Mathiasen",
+      "Torben Tambo",
+      "Britta Linnea Gammelgaard",
+      "Sanne Wøhlk",
+      "Mikkel Lund Nüssler",
+      "Christian Tang Lystbæk",
+      "Maja Due Kadenic",
+      "Lars Kristian Hansen"
+     ],
+     "top_cosine": 0.644,
+     "top_bm25": 6.327,
+     "hit@1": 1.0,
+     "good@3": 1.0,
+     "recall@10": 1.0
+    },
+    "agile-pm": {
+     "query": "agile project management",
+     "top10": [
+      "Lars Kristian Hansen",
+      "Lise Tordrup",
+      "Konstantinos Koumaditis",
+      "Maja Due Kadenic",
+      "Jeanette Ejsing Møberg",
+      "Michael Nørager",
+      "Torben Tambo",
+      "Jakob Mathias Lund Liboriussen",
+      "John Bang Mathiasen",
+      "Mikkel Lund Nüssler"
+     ],
+     "top_cosine": 0.658,
+     "top_bm25": 5.729,
+     "hit@1": 1.0,
+     "good@3": 1.0,
+     "recall@10": 1.0
+    },
+    "circular": {
+     "query": "circular economy and life-cycle assessment",
+     "top10": [
+      "Mads Kock Skøtt",
+      "Henning de Haas",
+      "Ulrich Schou Bjerre",
+      "Sven Kunisch",
+      "S Jarjees Ul Hassan",
+      "Christian Tang Lystbæk",
+      "Jean-Paul de Cros Peronard",
+      "Fabien Rezac",
+      "Sanne Wøhlk",
+      "Torben Tambo"
+     ],
+     "top_cosine": 0.484,
+     "top_bm25": 3.624,
+     "hit@1": 0.0,
+     "good@3": 1.0,
+     "recall@10": 1.0
+    },
+    "digital-transformation": {
+     "query": "digital transformation and organisational change",
+     "top10": [
+      "Sven Kunisch",
+      "Anne-Christine Rosfeldt Lorentzen",
+      "Lars Kristian Hansen",
+      "Christian Tang Lystbæk",
+      "Keld Pedersen",
+      "Eva Sørum Poulsen",
+      "Pernille Agerskov Clausen",
+      "Michael Nørager",
+      "Maja Due Kadenic",
+      "Anne Gammelgaard Ballantyne"
+     ],
+     "top_cosine": 0.657,
+     "top_bm25": 6.679,
+     "hit@1": 1.0,
+     "good@3": 1.0,
+     "recall@10": 1.0
+    },
+    "responsible-ai": {
+     "query": "natural language processing and responsible AI",
+     "top10": [
+      "Parwinder Singh",
+      "Martin Olsen",
+      "Michail Beliatis",
+      "Michael Lystbæk",
+      "Lasse Lui Frost-Frandsen",
+      "Tharsika Pakeerathan Srirajan",
+      "Nidhi",
+      "Jean-Paul de Cros Peronard",
+      "S Jarjees Ul Hassan",
+      "Mirko Presser"
+     ],
+     "top_cosine": 0.63,
+     "top_bm25": 5.277,
+     "hit@1": 1.0,
+     "good@3": 0.5,
+     "recall@10": 1.0
+    },
+    "xr-training": {
+     "query": "extended reality for industrial training",
+     "top10": [
+      "Unnikrishnan Radhakrishnan",
+      "Konstantinos Koumaditis",
+      "Francesco Chinello",
+      "Lasse Lui Frost-Frandsen",
+      "Syed Ali Hassan",
+      "Ulrich Schou Bjerre",
+      "Hans Henrik Hansen",
+      "Michael Lystbæk",
+      "Michail Beliatis",
+      "S Jarjees Ul Hassan"
+     ],
+     "top_cosine": 0.663,
+     "top_bm25": 4.445,
+     "hit@1": 1.0,
+     "good@3": 0.6666666666666666,
+     "recall@10": 1.0
+    },
+    "carbon-removal": {
+     "query": "carbon removal and climate policy",
+     "top10": [
+      "Chad M. Baum",
+      "Nick Fitzpatrick",
+      "Lucilla Losi",
+      "Benjamin Sovacool",
+      "Anne Gammelgaard Ballantyne",
+      "Peter Enevoldsen",
+      "Henning de Haas",
+      "Sven Kunisch",
+      "Christian Tang Lystbæk",
+      "S Jarjees Ul Hassan"
+     ],
+     "top_cosine": 0.677,
+     "top_bm25": 8.279,
+     "hit@1": 1.0,
+     "good@3": 1.0,
+     "recall@10": 1.0
+    },
+    "routing": {
+     "query": "operations research and vehicle routing",
+     "top10": [
+      "Sanne Wøhlk",
+      "Henning de Haas",
+      "John Bang Mathiasen",
+      "Mikkel Lund Nüssler",
+      "Linda Englyst",
+      "Birgitte Wiwe Lund",
+      "Martin Olsen",
+      "Michail Beliatis",
+      "Mirko Presser",
+      "Parwinder Singh"
+     ],
+     "top_cosine": 0.641,
+     "top_bm25": 12.958,
+     "hit@1": 1.0,
+     "good@3": 0.5,
+     "recall@10": 1.0
+    },
+    "quality-lean": {
+     "query": "quality management and lean production",
+     "top10": [
+      "Mikkel Lund Nüssler",
+      "Birgitte Wiwe Lund",
+      "Henning de Haas",
+      "John Bang Mathiasen",
+      "Linda Englyst",
+      "Lars Kristian Hansen",
+      "Torben Tambo",
+      "Jakob Mathias Lund Liboriussen",
+      "Maja Due Kadenic",
+      "Christian Tang Lystbæk"
+     ],
+     "top_cosine": 0.643,
+     "top_bm25": 7.425,
+     "hit@1": 1.0,
+     "good@3": 1.0,
+     "recall@10": 1.0
+    },
+    "public-sector": {
+     "query": "public sector innovation and e-government",
+     "top10": [
+      "Keld Pedersen",
+      "Madalina Pop",
+      "Michael Nørager",
+      "Fabien Rezac",
+      "Amjad Naveed",
+      "Lucilla Losi",
+      "Chad M. Baum",
+      "Birke Dorothea Otto",
+      "Lars Kristian Hansen",
+      "Sven Kunisch"
+     ],
+     "top_cosine": 0.658,
+     "top_bm25": 11.297,
+     "hit@1": 1.0,
+     "good@3": 1.0,
+     "recall@10": 1.0
+    },
+    "cybersecurity": {
+     "query": "cybersecurity and data privacy",
+     "top10": [
+      "Maria Jensen",
+      "Nidhi",
+      "Tharsika Pakeerathan Srirajan",
+      "Mirko Presser",
+      "Parwinder Singh",
+      "Michail Beliatis",
+      "Fabien Rezac",
+      "Robert Alphinas",
+      "Johan Clausen",
+      "Martin Olsen"
+     ],
+     "top_cosine": 0.588,
+     "top_bm25": 3.943
+    }
+   }
+  }
+ }
+}
