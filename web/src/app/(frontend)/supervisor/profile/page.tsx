@@ -11,7 +11,7 @@ export default async function ProfilePage() {
       <h1>My profile</h1>
       <p className="muted">
         Students find you through these research areas. Changes are used by the search right away.
-        Last updated {new Date(sup.updatedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}.
+        Last updated {new Date(sup.profileUpdatedAt || sup.updatedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}.
       </p>
       <ProfileForm
         id={sup.id}

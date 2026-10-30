@@ -13,5 +13,6 @@ export const QueryLogs: CollectionConfig = {
     { name: 'mode', type: 'text' },
     { name: 'bestScore', type: 'number' },
     { name: 'filters', type: 'json' },
+    { name: 'synthetic', type: 'checkbox', defaultValue: false, admin: { description: 'Made up by npm run seed:demo, not a real search.' } },
   ],
 }

@@ -37,6 +37,7 @@ for (const s of sups) {
     name: s.name, position: s.position, interests: rows(s.interests), requirements: rows(s.requirements),
     capacity: s.capacity ?? null, type: s.type || null, researchGroup: s.research_group || '', room: s.room || '',
     email: s.email || null, profileUrl: s.profile_url || '',
+    profileUpdatedAt: s.updated_at ? new Date(s.updated_at).toISOString() : null,
   })
   supId[s.id] = doc.id
 }

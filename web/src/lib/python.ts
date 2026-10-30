@@ -63,3 +63,11 @@ export const draftEmail = (body: {
 /** The student chat. Public on the Python side, but routed through Next.js from Phase 5. */
 export const chat = (body: unknown) =>
   call<Record<string, unknown>>('/api/chat', { method: 'POST', body: JSON.stringify(body) }, 60000)
+
+/** Admin demand view: groups queries into topics and scores each topic against today's index. */
+export const queryGaps = (queries: string[], similarity?: number) =>
+  call<{ similarity: number; groups: { label: string; members: number[]; best_now: number | null; best_now_name: string | null }[] }>(
+    '/api/query-gaps',
+    { method: 'POST', service: true, body: JSON.stringify({ queries, ...(similarity ? { similarity } : {}) }) },
+    60000,
+  )

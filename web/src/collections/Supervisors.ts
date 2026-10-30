@@ -9,6 +9,13 @@ const TRACKED = ['name', 'position', 'interests', 'requirements', 'capacity', 't
 const list = (rows: unknown) =>
   Array.isArray(rows) ? rows.map((r) => String((r as { value?: string }).value ?? '').trim()).filter(Boolean) : []
 
+/** A field's value without row ids or empty strings, so only real content changes count. */
+export const plain = (field: string, v: unknown): unknown =>
+  field === 'interests' || field === 'requirements' ? list(v) : v === '' || v === undefined ? null : v
+
+const changedFields = (before: Record<string, any> | undefined, after: Record<string, any>) =>
+  TRACKED.filter((f) => JSON.stringify(plain(f, before?.[f])) !== JSON.stringify(plain(f, after[f])))
+
 export const toPythonRecord = (doc: Record<string, any>): PythonSupervisor => ({
   id: doc.recordId,
   name: doc.name,
@@ -71,16 +78,26 @@ export const Supervisors: CollectionConfig = {
     { name: 'room', type: 'text' },
     { name: 'email', type: 'email', access: { update: adminField } },
     { name: 'profileUrl', type: 'text', access: { update: adminField } },
+    // Set by the hook below only; any value sent in by a person is ignored.
+    { name: 'profileUpdatedAt', type: 'date',
+      admin: { readOnly: true, position: 'sidebar', description: 'When the profile content last changed (not when the record was last saved).' } },
   ],
   hooks: {
     beforeChange: [
-      ({ data, originalDoc, operation, req }) => {
+      ({ data, originalDoc, operation, req, context }) => {
         // Supervisors may lower their slots but not raise them.
         if (operation === 'update' && roleOf(req) === 'supervisor' && typeof data.capacity === 'number') {
           const before = typeof originalDoc?.capacity === 'number' ? originalDoc.capacity : null
           if (before === null || data.capacity > before) {
             throw new APIError('You can lower your slots, but only the admin can raise them.', 400, undefined, true)
           }
+        }
+        // The freshness date moves only when the content changes. The seed sets it itself.
+        if (!context.skipSideEffects) {
+          const merged = { ...(originalDoc || {}), ...data }
+          data.profileUpdatedAt = operation === 'create' || changedFields(originalDoc, merged).length
+            ? new Date().toISOString()
+            : originalDoc?.profileUpdatedAt ?? null
         }
         return data
       },
@@ -90,12 +107,13 @@ export const Supervisors: CollectionConfig = {
         if (context.skipSideEffects) return doc
         // 1. Keep the old version (freshness record).
         if (operation === 'update') {
-          const changed = TRACKED.filter((f) => JSON.stringify(previousDoc?.[f] ?? null) !== JSON.stringify(doc?.[f] ?? null))
+          const changed = changedFields(previousDoc, doc)
           if (changed.length) {
-            const snapshot = Object.fromEntries(TRACKED.map((f) => [f, previousDoc?.[f] ?? null]))
+            const snapshot = Object.fromEntries(TRACKED.map((f) => [f, plain(f, previousDoc?.[f])]))
+            const changes = Object.fromEntries(changed.map((f) => [f, { from: plain(f, previousDoc?.[f]), to: plain(f, doc[f]) }]))
             await req.payload.create({
               collection: 'profile-versions',
-              data: { supervisor: doc.id, changedFields: changed.join(', '), previous: snapshot, changedBy: relId(req.user?.id) as number },
+              data: { supervisor: doc.id, changedFields: changed.join(', '), previous: snapshot, changes, changedBy: relId(req.user?.id) as number },
               overrideAccess: true,
               req,
             })

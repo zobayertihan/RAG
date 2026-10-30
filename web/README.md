@@ -12,7 +12,13 @@ stay in the Python service one folder up (`../app.py`); this app calls it.
    (the same SERVICE_KEY as in the Python `.env`).
 4. `npm install`
 5. `npm run seed`   (creates the database and the demo logins)
-6. `npm run dev`, then open http://localhost:3000 (it sends you to the login page)
+6. Optional: `npm run seed:demo` (made-up requests, slots and searches so the admin
+   dashboard has numbers; needs the Python service running). Everything it makes is
+   marked "demo". Run it again to reset the demo data; `npm run seed` resets the slots.
+7. `npm run dev`, then open http://localhost:3000 (it sends you to the login page)
+
+Note: every profile save (and every CSV import) also writes `../data/supervisors.json`
+through the Python service. After demo edits, don't commit that file unless you mean to.
 
 ## Demo logins (local only)
 
@@ -41,6 +47,12 @@ Password: `SEED_PASSWORD` from `.env` (default `demo-password-1`).
 | /student/requests | students | the requests you sent and their status |
 | /supervisor | supervisors | requests with the note summary; accept, decline or ask for details, then an email draft to open in Outlook |
 | /supervisor/profile | supervisors | edit research areas, expectations, room; lower slots |
+| /dashboard | admins | overview: open and stuck requests, slots, what needs attention |
+| /dashboard/supervisors | admins | slots used per supervisor, full, no requests, flagged profiles |
+| /dashboard/requests | admins | assignments (accepted supervision) and all requests |
+| /dashboard/demand | admins | searches with a weak best match, grouped into topics |
+| /dashboard/changes | admins | every profile change, old value next to new |
+| /dashboard/data | admins | supervisor CSV export, and import with a check before saving |
 | /admin | admins only | Payload admin panel |
 
 New requests send the supervisor an email notice. With no email adapter set up, the notice is printed in the web terminal instead (look for "Email attempted").

@@ -16,6 +16,7 @@ SERVICE_KEY is not set:
   DELETE /api/reindex/supervisors/{id}  remove one supervisor from search
   POST /api/summarize-note            two-sentence summary of a student's note
   POST /api/draft-email               accept / agree-to-meet / reject / ask-for-details email draft
+  POST /api/query-gaps                group weak student queries into topics, with today's best match
 """
 
 import hmac
@@ -28,8 +29,8 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
-from rag import (BASE_DIR, COLLECTIONS, FINANCE_DIR, Index, answer, draft_email,
-                 history_text, record_to_chunk, save_supervisor_record, search_query, summarize_note)
+from rag import (BASE_DIR, COLLECTIONS, FINANCE_DIR, GROUP_SIMILARITY, Index, answer, draft_email,
+                 group_queries, history_text, record_to_chunk, save_supervisor_record, search_query, summarize_note)
 
 app = FastAPI(title="Supervisor Finder")
 
@@ -203,6 +204,34 @@ def email(body: EmailRequest):
         return draft_email(body.action, body.student_name, body.supervisor_name, body.note, body.topic)
     except Exception as e:
         raise HTTPException(502, f"LLM call failed: {e}")
+
+
+class GapRequest(BaseModel):
+    queries: list[str] = Field(max_length=2000)
+    similarity: float = Field(default=GROUP_SIMILARITY, ge=0.5, le=0.99)
+
+
+def _name(hit: dict) -> str:
+    return hit["text"].split(";")[0].split("\n")[0].removeprefix("Name: ")[:80]
+
+
+@app.post("/api/query-gaps", dependencies=[Depends(require_service_key)])
+def query_gaps(body: GapRequest):
+    """
+    For the admin's demand view. Groups the queries into topics, and searches each topic's
+    first query against the index as it is now, so a gap that a profile edit has closed
+    shows a higher score than when it was logged. Search only, no LLM.
+    """
+    queries = [q.strip()[:500] for q in body.queries if q.strip()]
+    index = indexes["supervisors"]
+    groups = []
+    for members in group_queries(queries, body.similarity):
+        label = queries[members[0]]
+        hits = index.search(label, k=1)
+        groups.append({"label": label, "members": members,
+                       "best_now": hits[0]["score"] if hits else None,
+                       "best_now_name": _name(hits[0]) if hits else None})
+    return {"similarity": body.similarity, "groups": groups}
 
 
 # ---------------------------------------------------------------- files and page

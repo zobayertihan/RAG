@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react'
 
-const HOME: Record<string, string> = { student: '/student', supervisor: '/supervisor', admin: '/admin' }
+const HOME: Record<string, string> = { student: '/student', supervisor: '/supervisor', admin: '/dashboard' }
 
 export function LoginForm() {
   const [error, setError] = useState('')

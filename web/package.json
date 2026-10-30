@@ -10,7 +10,8 @@
     "seed": "cross-env NODE_OPTIONS=--no-deprecation payload run ./src/seed.ts",
     "generate:types": "cross-env NODE_OPTIONS=--no-deprecation payload generate:types",
     "generate:importmap": "cross-env NODE_OPTIONS=--no-deprecation payload generate:importmap",
-    "payload": "cross-env NODE_OPTIONS=--no-deprecation payload"
+    "payload": "cross-env NODE_OPTIONS=--no-deprecation payload",
+    "seed:demo": "cross-env NODE_OPTIONS=--no-deprecation payload run ./src/seed-demo.ts"
   },
   "dependencies": {
     "@payloadcms/db-sqlite": "3.90.2",

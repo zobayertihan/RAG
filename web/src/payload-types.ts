@@ -207,6 +207,10 @@ export interface Supervisor {
   room?: string | null;
   email?: string | null;
   profileUrl?: string | null;
+  /**
+   * When the profile content last changed (not when the record was last saved).
+   */
+  profileUpdatedAt?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -264,6 +268,10 @@ export interface Request {
    */
   noteSummary?: string | null;
   answeredAt?: string | null;
+  /**
+   * Made up by npm run seed:demo.
+   */
+  synthetic?: boolean | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -279,6 +287,18 @@ export interface ProfileVersion {
    * The tracked fields as they were before the change.
    */
   previous?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  /**
+   * Only the changed fields, old and new: { field: { from, to } }.
+   */
+  changes?:
     | {
         [k: string]: unknown;
       }
@@ -309,6 +329,10 @@ export interface QueryLog {
     | number
     | boolean
     | null;
+  /**
+   * Made up by npm run seed:demo, not a real search.
+   */
+  synthetic?: boolean | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -456,6 +480,7 @@ export interface SupervisorsSelect<T extends boolean = true> {
   room?: T;
   email?: T;
   profileUrl?: T;
+  profileUpdatedAt?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -502,6 +527,7 @@ export interface RequestsSelect<T extends boolean = true> {
   status?: T;
   noteSummary?: T;
   answeredAt?: T;
+  synthetic?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -513,6 +539,7 @@ export interface ProfileVersionsSelect<T extends boolean = true> {
   supervisor?: T;
   changedFields?: T;
   previous?: T;
+  changes?: T;
   changedBy?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -526,6 +553,7 @@ export interface QueryLogsSelect<T extends boolean = true> {
   mode?: T;
   bestScore?: T;
   filters?: T;
+  synthetic?: T;
   updatedAt?: T;
   createdAt?: T;
 }

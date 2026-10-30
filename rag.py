@@ -720,3 +720,30 @@ def draft_email(action: str, student: str, supervisor: str, note: str = "", topi
     if data.get("subject") and data.get("body"):
         draft = {"subject": str(data["subject"]).strip(), "body": str(data["body"]).strip(), "personalized": True}
     return draft
+
+
+# ---------------------------------------------------------------- demand gaps (admin dashboard)
+
+GROUP_SIMILARITY = 0.80  # two queries this similar (cosine) count as one topic
+
+
+def group_queries(queries: list[str], similarity: float = GROUP_SIMILARITY) -> list[list[int]]:
+    """
+    Groups similar queries into topics, greedily: each query joins the first group whose
+    first query is at least `similarity` close, else starts a new group. Returns lists of
+    positions in `queries`, biggest group first. Deterministic for the same input order.
+    """
+    if not queries:
+        return []
+    vecs = np.vstack([embed_query(q) for q in queries])
+    heads: list[int] = []
+    groups: list[list[int]] = []
+    for i, v in enumerate(vecs):
+        sims = [float(vecs[h] @ v) for h in heads]
+        best = int(np.argmax(sims)) if sims else -1
+        if best >= 0 and sims[best] >= similarity:
+            groups[best].append(i)
+        else:
+            heads.append(i)
+            groups.append([i])
+    return sorted(groups, key=len, reverse=True)

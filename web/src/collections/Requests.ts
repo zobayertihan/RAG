@@ -50,6 +50,8 @@ export const Requests: CollectionConfig = {
       ] },
     { name: 'noteSummary', type: 'textarea', admin: { readOnly: true, description: 'Two-sentence LLM summary for the supervisor. It never decides.' } },
     { name: 'answeredAt', type: 'date', admin: { readOnly: true } },
+    { name: 'synthetic', type: 'checkbox', defaultValue: false, access: { update: adminField },
+      admin: { position: 'sidebar', description: 'Made up by npm run seed:demo.' } },
   ],
   hooks: {
     afterChange: [

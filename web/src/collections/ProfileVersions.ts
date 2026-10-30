@@ -12,6 +12,7 @@ export const ProfileVersions: CollectionConfig = {
     { name: 'supervisor', type: 'relationship', relationTo: 'supervisors', required: true },
     { name: 'changedFields', type: 'text' },
     { name: 'previous', type: 'json', admin: { description: 'The tracked fields as they were before the change.' } },
+    { name: 'changes', type: 'json', admin: { description: 'Only the changed fields, old and new: { field: { from, to } }.' } },
     { name: 'changedBy', type: 'relationship', relationTo: 'users' },
   ],
 }

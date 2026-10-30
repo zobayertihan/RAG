@@ -19,7 +19,7 @@ export async function getSession() {
   return { payload, user: user as unknown as SessionUser | null }
 }
 
-export const homeFor = (role?: string) => (role === 'student' ? '/student' : role === 'supervisor' ? '/supervisor' : '/admin')
+export const homeFor = (role?: string) => (role === 'student' ? '/student' : role === 'supervisor' ? '/supervisor' : '/dashboard')
 
 /** Server-side guard for a page: sends people who aren't signed in, or have another role, away. */
 export async function requireRole(...roles: NonNullable<SessionUser['role']>[]) {
