@@ -20,11 +20,26 @@ from dotenv import load_dotenv
 load_dotenv()
 
 BASE_DIR = Path(__file__).parent
-PDF_DIR = BASE_DIR / "data" / "pdfs"
 SUPERVISORS_JSON = BASE_DIR / "data" / "supervisors.json"
+FINANCE_DIR = BASE_DIR / "data" / "finance"  # finance PDFs go here (Phase 8)
 INDEX_DIR = BASE_DIR / "data" / "index"
-CACHE_DIR = INDEX_DIR / "cache"
-MANIFEST = INDEX_DIR / "manifest.json"
+CACHE_DIR = INDEX_DIR / "cache"  # shared by all collections, keyed by file content
+
+
+def collection_sources(name: str) -> list[Path]:
+    """The files each collection is built from. One search index per collection."""
+    if name == "supervisors":
+        return [SUPERVISORS_JSON] if SUPERVISORS_JSON.exists() else []
+    if name == "finance":
+        return sorted(FINANCE_DIR.glob("*.pdf"))
+    raise ValueError(f"Unknown collection {name!r}")
+
+
+COLLECTIONS = ("supervisors", "finance")
+
+
+def manifest_path(name: str) -> Path:
+    return INDEX_DIR / name / "manifest.json"
 
 EMBED_MODEL = os.getenv("EMBED_MODEL", "BAAI/bge-small-en-v1.5")
 CHUNK_CHARS = int(os.getenv("CHUNK_CHARS", "1200"))
@@ -33,7 +48,7 @@ TOP_K = int(os.getenv("TOP_K", "10"))
 # hybrid = both merged. Run eval/run_eval.py before switching the default.
 SEARCH_MODE = os.getenv("SEARCH_MODE", "vector")
 RRF_K = 60  # standard constant for reciprocal rank fusion
-CHUNKER_VERSION = "4"  # bump when pdf_to_chunks or records_to_chunks change, forces re-processing
+CHUNKER_VERSION = "5"  # bump when pdf_to_chunks or records_to_chunks change, forces re-processing
 
 # Positions that can supervise. Everyone else stays in supervisors.json (for the
 # admin later) but is not searchable as a supervisor.
@@ -209,44 +224,72 @@ def pdf_to_chunks(pdf_path: Path) -> list[dict]:
 # ---------------------------------------------------------------- records -> chunks
 
 
+def record_to_chunk(r: dict, file_name: str = SUPERVISORS_JSON.name) -> tuple[dict | None, str]:
+    """
+    One searchable chunk for one supervisor record, or (None, reason) when the person
+    is not searchable: they can't supervise, or they have no research interests.
+    """
+    if r.get("position") not in SUPERVISOR_POSITIONS:
+        return None, "position"
+    interests = [i.strip() for i in r.get("interests") or [] if i.strip()]
+    if not interests:
+        return None, "no_interests"
+    # The text is what gets embedded and what the LLM reads: research content only.
+    # Group, type and room stay as metadata (for display and filters), so they don't
+    # pull search results toward a group name.
+    text = f"Name: {r['name']}; Position: {r['position']}; Area of interest: {', '.join(interests)}"
+    if r.get("requirements"):
+        text += f"; Requirements: {', '.join(r['requirements'])}"
+    return {
+        "file": file_name,
+        "page": None,
+        "record_id": r["id"],
+        "text": text,
+        "urls": [r["profile_url"]] if r.get("profile_url") else [],
+        "emails": [r["email"]] if r.get("email") else [],
+        "position": r["position"],
+        "research_group": r.get("research_group") or "",
+        "type": r.get("type") or "",
+        "room": r.get("room") or "",
+        "capacity": r.get("capacity"),
+        "updated_at": r.get("updated_at"),
+        "version": r.get("version"),
+    }, ""
+
+
 def records_to_chunks(json_path: Path) -> list[dict]:
-    """
-    One chunk per supervisor record. Only people who can supervise AND have at
-    least one research interest are searchable; a record with no interests
-    cannot be matched to anything.
-    """
     records = json.loads(json_path.read_text(encoding="utf-8"))
     chunks, skipped = [], {"position": 0, "no_interests": 0}
     for r in records:
-        if r.get("position") not in SUPERVISOR_POSITIONS:
-            skipped["position"] += 1
-            continue
-        interests = [i.strip() for i in r.get("interests") or [] if i.strip()]
-        if not interests:
-            skipped["no_interests"] += 1
-            continue
-        # The text is what gets embedded and what the LLM reads: research content only.
-        # Group, type and room stay as metadata (for display and filters), so they don't
-        # pull search results toward a group name.
-        text = f"Name: {r['name']}; Position: {r['position']}; Area of interest: {', '.join(interests)}"
-        if r.get("requirements"):
-            text += f"; Requirements: {', '.join(r['requirements'])}"
-        chunks.append({
-            "file": json_path.name,
-            "page": None,
-            "record_id": r["id"],
-            "text": text,
-            "urls": [r["profile_url"]] if r.get("profile_url") else [],
-            "emails": [r["email"]] if r.get("email") else [],
-            "position": r["position"],
-            "research_group": r.get("research_group") or "",
-            "type": r.get("type") or "",
-            "room": r.get("room") or "",
-            "updated_at": r.get("updated_at"),
-        })
+        chunk, reason = record_to_chunk(r, json_path.name)
+        if chunk:
+            chunks.append(chunk)
+        else:
+            skipped[reason] += 1
     print(f"  {json_path.name}: {len(chunks)} searchable, "
           f"{skipped['position']} skipped (position), {skipped['no_interests']} skipped (no interests)")
     return chunks
+
+
+def save_supervisor_record(record: dict) -> dict:
+    """
+    Writes one supervisor record into data/supervisors.json (replacing the record with
+    the same id, or adding it), with a new version number and today's date.
+    Returns the record as saved.
+    """
+    from datetime import date
+
+    records = json.loads(SUPERVISORS_JSON.read_text(encoding="utf-8"))
+    old = next((r for r in records if r["id"] == record["id"]), None)
+    saved = {**(old or {}), **record,
+             "version": ((old or {}).get("version") or 0) + 1,
+             "updated_at": date.today().isoformat()}
+    if old:
+        records[records.index(old)] = saved
+    else:
+        records.append(saved)
+    SUPERVISORS_JSON.write_text(json.dumps(records, ensure_ascii=False, indent=2), encoding="utf-8")
+    return saved
 
 
 # ---------------------------------------------------------------- index
@@ -259,37 +302,47 @@ def _file_key(path: Path) -> str:
     return h.hexdigest()[:20]
 
 
-def build_index() -> dict:
+def build_index(collections: tuple[str, ...] = COLLECTIONS) -> dict:
     """
-    Index data/supervisors.json plus every PDF in data/pdfs. Only new or changed
-    files get embedded; unchanged ones are loaded from cache. Removed files drop out.
+    Builds one index per collection from its source files. Only new or changed files
+    get embedded; unchanged ones come from the shared cache. Removed files drop out.
+    A collection with no source files gets no index.
     """
     CACHE_DIR.mkdir(parents=True, exist_ok=True)
-    sources = ([SUPERVISORS_JSON] if SUPERVISORS_JSON.exists() else []) + sorted(PDF_DIR.glob("*.pdf"))
-    manifest = {"model": EMBED_MODEL, "files": []}
-    stats = {"new": 0, "cached": 0, "chunks": 0}
-
-    for src in sources:
-        key = _file_key(src)
-        meta_path, vec_path = CACHE_DIR / f"{key}.json", CACHE_DIR / f"{key}.npy"
-        if meta_path.exists() and vec_path.exists():
-            stats["cached"] += 1
-            n = len(json.loads(meta_path.read_text(encoding="utf-8")))
-        else:
-            print(f"  processing {src.name}")
-            chunks = records_to_chunks(src) if src.suffix == ".json" else pdf_to_chunks(src)
-            if not chunks:
-                print(f"  WARNING: nothing to index in {src.name}")
-                continue
-            vecs = embed_passages([c["text"] for c in chunks])
-            meta_path.write_text(json.dumps(chunks, ensure_ascii=False, indent=1), encoding="utf-8")
-            np.save(vec_path, vecs)
-            stats["new"] += 1
-            n = len(chunks)
-        manifest["files"].append({"file": src.name, "key": key, "chunks": n})
-        stats["chunks"] += n
-
-    MANIFEST.write_text(json.dumps(manifest, indent=1), encoding="utf-8")
+    stats = {}
+    for name in collections:
+        sources = collection_sources(name)
+        mpath = manifest_path(name)
+        if not sources:
+            if mpath.exists():
+                mpath.unlink()  # its files were removed, so the old index must go too
+            stats[name] = {"new": 0, "cached": 0, "chunks": 0, "files": 0}
+            continue
+        manifest = {"model": EMBED_MODEL, "collection": name, "files": []}
+        st = {"new": 0, "cached": 0, "chunks": 0, "files": 0}
+        for src in sources:
+            key = _file_key(src)
+            meta_path, vec_path = CACHE_DIR / f"{key}.json", CACHE_DIR / f"{key}.npy"
+            if meta_path.exists() and vec_path.exists():
+                st["cached"] += 1
+                n = len(json.loads(meta_path.read_text(encoding="utf-8")))
+            else:
+                print(f"  [{name}] processing {src.name}")
+                chunks = records_to_chunks(src) if src.suffix == ".json" else pdf_to_chunks(src)
+                if not chunks:
+                    print(f"  WARNING: nothing to index in {src.name}")
+                    continue
+                vecs = embed_passages([c["text"] for c in chunks])
+                meta_path.write_text(json.dumps(chunks, ensure_ascii=False, indent=1), encoding="utf-8")
+                np.save(vec_path, vecs)
+                st["new"] += 1
+                n = len(chunks)
+            manifest["files"].append({"file": src.name, "key": key, "chunks": n})
+            st["chunks"] += n
+            st["files"] += 1
+        mpath.parent.mkdir(parents=True, exist_ok=True)
+        mpath.write_text(json.dumps(manifest, indent=1), encoding="utf-8")
+        stats[name] = st
     return stats
 
 
@@ -314,11 +367,16 @@ def _tokens(text: str) -> list[str]:
     return out
 
 
+FILTER_FIELDS = ("position", "research_group", "type")
+
+
 class Index:
-    def __init__(self):
-        if not MANIFEST.exists():
-            raise RuntimeError("No index found. Run: python ingest.py")
-        manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
+    def __init__(self, collection: str = "supervisors"):
+        self.collection = collection
+        mpath = manifest_path(collection)
+        if not mpath.exists():
+            raise RuntimeError(f"No index for '{collection}'. Run: python ingest.py")
+        manifest = json.loads(mpath.read_text(encoding="utf-8"))
         if manifest["model"] != EMBED_MODEL:
             raise RuntimeError("Embedding model changed since last ingest. Run: python ingest.py")
         self.chunks, vecs = [], []
@@ -326,47 +384,93 @@ class Index:
             self.chunks += json.loads((CACHE_DIR / f"{f['key']}.json").read_text(encoding="utf-8"))
             vecs.append(np.load(CACHE_DIR / f"{f['key']}.npy"))
         self.vecs = np.vstack(vecs) if vecs else np.zeros((0, 1), dtype=np.float32)
+        self._build_bm25()
+        print(f"Index '{collection}' loaded: {len(manifest['files'])} files, {len(self.chunks)} chunks, "
+              f"search mode {SEARCH_MODE}")
+
+    @staticmethod
+    def exists(collection: str) -> bool:
+        return manifest_path(collection).exists()
+
+    def _build_bm25(self):
         self.bm25 = None
         if self.chunks:
-            from rank_bm25 import BM25Okapi  # keyword index, built in memory at startup
+            from rank_bm25 import BM25Okapi  # keyword index, built in memory
             self.bm25 = BM25Okapi([_tokens(c["text"]) for c in self.chunks])
-        print(f"Index loaded: {len(manifest['files'])} files, {len(self.chunks)} chunks, search mode {SEARCH_MODE}")
 
-    def _vector_ranking(self, query: str) -> np.ndarray:
-        return self.vecs @ embed_query(query)  # cosine similarity (vectors are normalized)
+    # ---- live updates (used by /reindex; the files on disk are updated separately)
 
-    def _bm25_ranking(self, query: str) -> np.ndarray:
-        return np.asarray(self.bm25.get_scores(_tokens(query)), dtype=np.float32)
+    def upsert(self, chunk: dict) -> str:
+        """Adds or replaces one record's chunk in memory. Returns "updated" or "added"."""
+        vec = embed_passages([chunk["text"]])[0]
+        for i, c in enumerate(self.chunks):
+            if c.get("record_id") == chunk["record_id"]:
+                self.chunks[i] = chunk
+                self.vecs[i] = vec
+                self._build_bm25()
+                return "updated"
+        self.chunks.append(chunk)
+        self.vecs = np.vstack([self.vecs, vec[None, :]]) if len(self.vecs) else vec[None, :]
+        self._build_bm25()
+        return "added"
 
-    def search(self, query: str, k: int = TOP_K, mode: str | None = None) -> list[dict]:
+    def remove(self, record_id: str) -> bool:
+        keep = [i for i, c in enumerate(self.chunks) if c.get("record_id") != record_id]
+        if len(keep) == len(self.chunks):
+            return False
+        self.chunks = [self.chunks[i] for i in keep]
+        self.vecs = self.vecs[keep] if keep else np.zeros((0, self.vecs.shape[1]), dtype=np.float32)
+        self._build_bm25()
+        return True
+
+    # ---- search
+
+    def _allowed(self, filters: dict | None) -> np.ndarray:
+        """Indices of chunks that pass the filters. An empty or missing filter allows everything."""
+        idx = np.arange(len(self.chunks))
+        for field in FILTER_FIELDS:
+            wanted = {v.lower() for v in (filters or {}).get(field) or [] if v}
+            if wanted:
+                idx = np.array([i for i in idx if str(self.chunks[i].get(field, "")).lower() in wanted], dtype=int)
+        return idx
+
+    def search(self, query: str, k: int = TOP_K, mode: str | None = None,
+               filters: dict | None = None) -> list[dict]:
         """
-        Returns the k best chunks. Each hit keeps "score" = cosine similarity (as before,
-        for logs and display) and adds "bm25" and "rank_score" (what the order is based on).
+        Returns the k best chunks among those that pass the filters (position,
+        research_group, type: each a list of allowed values). Each hit keeps
+        "score" = cosine similarity (for logs and display) and adds "bm25" and
+        "rank_score" (what the order is based on).
         """
         if not self.chunks:
             return []
         mode = mode or SEARCH_MODE
-        cos = self._vector_ranking(query) if mode in ("vector", "hybrid") else np.zeros(len(self.chunks))
-        kw = self._bm25_ranking(query) if mode in ("bm25", "hybrid") else np.zeros(len(self.chunks))
+        if mode not in ("vector", "bm25", "hybrid"):
+            raise ValueError(f"Unknown search mode {mode!r}; use vector, bm25 or hybrid")
+        allowed = self._allowed(filters)
+        if not len(allowed):
+            return []
+        cos = self.vecs @ embed_query(query) if mode in ("vector", "hybrid") else np.zeros(len(self.chunks))
+        kw = (np.asarray(self.bm25.get_scores(_tokens(query)), dtype=np.float32)
+              if mode in ("bm25", "hybrid") else np.zeros(len(self.chunks)))
 
+        rank_score = np.full(len(self.chunks), -np.inf)
         if mode == "vector":
-            rank_score = cos
+            rank_score[allowed] = cos[allowed]
         elif mode == "bm25":
-            rank_score = kw
-        elif mode == "hybrid":
-            # Reciprocal rank fusion: each list votes by position, not by raw score,
-            # so cosine (0 to 1) and BM25 (unbounded) don't need to be on the same scale.
-            # Records with no keyword overlap get no keyword vote.
-            rank_score = np.zeros(len(self.chunks))
+            rank_score[allowed] = kw[allowed]
+        else:
+            # Reciprocal rank fusion over the allowed chunks: each list votes by position,
+            # not by raw score, so cosine (0 to 1) and BM25 (unbounded) need no common scale.
+            # Chunks with no keyword overlap get no keyword vote.
+            rank_score[allowed] = 0.0
             for scores, use_all in ((cos, True), (kw, False)):
-                order = np.argsort(-scores, kind="stable")
+                order = allowed[np.argsort(-scores[allowed], kind="stable")]
                 for pos, i in enumerate(order):
                     if use_all or scores[i] > 0:
                         rank_score[i] += 1.0 / (RRF_K + pos + 1)
-        else:
-            raise ValueError(f"Unknown search mode {mode!r}; use vector, bm25 or hybrid")
 
-        top = np.argsort(-rank_score, kind="stable")[:k]
+        top = allowed[np.argsort(-rank_score[allowed], kind="stable")][:k]
         return [{**self.chunks[i], "score": round(float(cos[i]), 3), "bm25": round(float(kw[i]), 3),
                  "rank_score": round(float(rank_score[i]), 5)} for i in top]
 
@@ -521,6 +625,10 @@ def answer(messages: list[dict], hits: list[dict]) -> dict | None:
     # drop cards that point at a source that doesn't exist (the link would be wrong)
     data["supervisors"] = [s for s in data.get("supervisors") or []
                            if isinstance(s, dict) and s.get("source") in valid]
+    for card in data["supervisors"]:
+        # Room for the typed cards from Phase 2 (best, business, engineering, generalist).
+        # Until the types are labeled, the LLM is not asked for it and it stays null.
+        card.setdefault("slot", None)
     mentions = data.get("mentions") if isinstance(data.get("mentions"), list) else []
     data["mentions"] = list(dict.fromkeys(m for m in mentions if m in valid))  # dedupe, keep order
     return data
@@ -535,3 +643,76 @@ def history_text(data: dict | None) -> str:
     for i, s in enumerate(data["supervisors"], 1):
         lines.append(f"{i}. {s.get('name')} ({s.get('title')}): {s.get('focus')}")
     return "\n".join(lines)
+
+
+# ---------------------------------------------------------------- LLM helpers for the web app
+
+NOTE_PROMPT = """A student sent a supervision request with a note. Write a summary for the supervisor.
+Rules:
+- Exactly two short sentences, plain text.
+- Sentence 1: what the student wants to do, in their own terms.
+- Sentence 2: how it relates to the supervisor's listed research areas. Say plainly if it doesn't.
+- Use only what the note and the supervisor's areas say. Don't judge the student or recommend a decision."""
+
+
+def summarize_note(note: str, supervisor_areas: str, request_type: str = "") -> str | None:
+    """Two-sentence summary of a student's note for the supervisor. None without an API key."""
+    if not os.getenv("LLM_API_KEY"):
+        return None
+    resp = _client().chat.completions.create(
+        model=_model(), temperature=0,
+        messages=[{"role": "system", "content": NOTE_PROMPT},
+                  {"role": "user", "content": f"REQUEST TYPE: {request_type or 'not given'}\n"
+                                              f"SUPERVISOR'S AREAS: {supervisor_areas or 'not listed'}\n"
+                                              f"STUDENT'S NOTE:\n{note}"}],
+    )
+    return (resp.choices[0].message.content or "").strip() or None
+
+
+EMAIL_ACTIONS = ("accept", "reject", "ask_details")
+
+EMAIL_TEMPLATES = {
+    "accept": ("Supervision request: accepted",
+               "Dear {student},\n\nThank you for your request. I am happy to supervise your project{topic_part}. "
+               "Please send me a few dates for a first meeting.\n\nBest regards,\n{supervisor}"),
+    "reject": ("Supervision request",
+               "Dear {student},\n\nThank you for your request{topic_part}. Unfortunately I cannot take it on. "
+               "I recommend contacting other supervisors whose areas are closer to your idea.\n\nBest regards,\n{supervisor}"),
+    "ask_details": ("Supervision request: a few questions",
+                    "Dear {student},\n\nThank you for your request{topic_part}. Before I decide, could you send me "
+                    "a short description of your preliminary idea: the problem, how you plan to approach it, "
+                    "and what data or partners you have in mind?\n\nBest regards,\n{supervisor}"),
+}
+
+EMAIL_PROMPT = """Write a short, polite email from a university supervisor to a student about a supervision request.
+Decision: {action_text}. Base it on the template below, and mention one concrete point from the
+student's note if it helps. Don't add promises, dates or facts that aren't given. Plain text, under 120 words.
+Reply with JSON: {{"subject": "...", "body": "..."}}"""
+
+_ACTION_TEXT = {"accept": "accept the request", "reject": "decline the request",
+                "ask_details": "ask for more details before deciding"}
+
+
+def draft_email(action: str, student: str, supervisor: str, note: str = "", topic: str = "") -> dict:
+    """
+    Email draft for the supervisor to edit before sending. Uses the fixed template, and
+    lets the LLM personalize it when an API key is set. Returns {"subject", "body", "personalized"}.
+    """
+    if action not in EMAIL_ACTIONS:
+        raise ValueError(f"action must be one of {EMAIL_ACTIONS}")
+    subject, body = EMAIL_TEMPLATES[action]
+    body = body.format(student=student, supervisor=supervisor,
+                       topic_part=f" on {topic}" if topic else "")
+    draft = {"subject": subject, "body": body, "personalized": False}
+    if not os.getenv("LLM_API_KEY") or not note.strip():
+        return draft
+    resp = _client().chat.completions.create(
+        model=_model(), temperature=0.2, response_format={"type": "json_object"},
+        messages=[{"role": "system", "content": EMAIL_PROMPT.format(action_text=_ACTION_TEXT[action])},
+                  {"role": "user", "content": f"TEMPLATE SUBJECT: {subject}\nTEMPLATE BODY:\n{body}\n\n"
+                                              f"STUDENT'S NOTE:\n{note}"}],
+    )
+    data = _parse_json(resp.choices[0].message.content or "")
+    if data.get("subject") and data.get("body"):
+        draft = {"subject": str(data["subject"]).strip(), "body": str(data["body"]).strip(), "personalized": True}
+    return draft
