@@ -6,7 +6,8 @@
 const BASE = (process.env.PYTHON_API_URL || 'http://127.0.0.1:8000').replace(/\/$/, '')
 const KEY = process.env.SERVICE_KEY || ''
 
-async function call<T>(path: string, init: RequestInit & { service?: boolean }, timeoutMs = 30000): Promise<T> {
+// Long timeouts: a free Render service takes up to about a minute to wake up.
+async function call<T>(path: string, init: RequestInit & { service?: boolean }, timeoutMs = 90000): Promise<T> {
   const headers: Record<string, string> = { 'Content-Type': 'application/json' }
   if (init.service) headers['X-Service-Key'] = KEY
   const res = await fetch(`${BASE}${path}`, { ...init, headers, signal: AbortSignal.timeout(timeoutMs) })
@@ -62,7 +63,7 @@ export const draftEmail = (body: {
 
 /** The student chat. Public on the Python side, but routed through Next.js from Phase 5. */
 export const chat = (body: unknown) =>
-  call<Record<string, unknown>>('/api/chat', { method: 'POST', body: JSON.stringify(body) }, 60000)
+  call<Record<string, unknown>>('/api/chat', { method: 'POST', body: JSON.stringify(body) }, 120000)
 
 /** Admin demand view: groups queries into topics and scores each topic against today's index. */
 export const queryGaps = (queries: string[], similarity?: number) =>
@@ -71,3 +72,7 @@ export const queryGaps = (queries: string[], similarity?: number) =>
     { method: 'POST', service: true, body: JSON.stringify({ queries, ...(similarity ? { similarity } : {}) }) },
     60000,
   )
+
+/** Wakes the Python service early (free hosts sleep), so the first real call is fast. Never throws. */
+export const wakePython = () =>
+  fetch(`${BASE}/api/health`, { signal: AbortSignal.timeout(90000) }).then(() => undefined, () => undefined)

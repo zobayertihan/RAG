@@ -1,12 +1,12 @@
-import { APIError, type CollectionConfig, type Where } from 'payload'
+import type { CollectionConfig, Where } from 'payload'
 
-import { adminField, isAdmin, relId, roleOf, studentIdOf, supervisorIdOf } from '../access'
+import { adminField, isAdmin, relId, roleOf, ruleError, studentIdOf, supervisorIdOf } from '../access'
 import { summarizeNote } from '../lib/python'
 
 export const MAX_OPEN_REQUESTS = 3 // per student, to confirm at the 4 Nov meeting
 const OPEN = ['pending', 'info_requested']
 
-const fail = (msg: string) => new APIError(msg, 400, undefined, true)
+const fail = ruleError
 
 export const Requests: CollectionConfig = {
   slug: 'requests',

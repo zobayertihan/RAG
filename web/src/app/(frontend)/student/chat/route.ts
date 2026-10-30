@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server'
+import { NextResponse, after } from 'next/server'
 
 import { chat } from '@/lib/python'
 import { getSession } from '@/lib/session'
@@ -26,13 +26,13 @@ export async function POST(req: Request) {
   }
 
   // Query log for the admin dashboard (Phase 7). A failure here never breaks the chat.
-  payload
-    .create({
-      collection: 'query-logs',
-      data: { query: String(data.query || '').slice(0, 500), mode: data.mode, bestScore: data.best_score ?? null, filters: body.filters || null },
-      overrideAccess: true,
-    })
-    .catch((e) => payload.logger.warn(`Query not logged: ${(e as Error).message}`))
+  // after(): on Vercel, work left running after the response is cut off unless registered here.
+  const log = { query: String(data.query || '').slice(0, 500), mode: data.mode, bestScore: data.best_score ?? null, filters: body.filters || null }
+  after(() =>
+    payload
+      .create({ collection: 'query-logs', data: log, overrideAccess: true })
+      .then(() => undefined, (e) => payload.logger.warn(`Query not logged: ${(e as Error).message}`)),
+  )
 
   // Live slots and the database id for the Contact button, matched by recordId.
   const cards: Card[] = [...(data.supervisors || []), ...(data.mentions || []), ...(data.matches || [])]

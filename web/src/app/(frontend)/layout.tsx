@@ -1,4 +1,7 @@
+import { after } from 'next/server'
 import React from 'react'
+
+import { wakePython } from '@/lib/python'
 import './styles.css'
 
 export const metadata = {
@@ -7,6 +10,9 @@ export const metadata = {
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  // Free hosts put the Python service to sleep. Opening any page (the login page first)
+  // starts waking it, so it is usually up by the time someone searches.
+  after(wakePython)
   return (
     <html lang="en">
       <head>

@@ -1,3 +1,4 @@
+import { postgresAdapter } from '@payloadcms/db-postgres'
 import { sqliteAdapter } from '@payloadcms/db-sqlite'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import path from 'path'
@@ -13,6 +14,7 @@ import { Users } from './collections/Users'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
+const DB_URL = process.env.DATABASE_URL || 'file:./payload.db'
 
 export default buildConfig({
   admin: {
@@ -24,6 +26,8 @@ export default buildConfig({
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: { outputFile: path.resolve(dirname, 'payload-types.ts') },
-  // A local SQLite file for the prototype: nothing to host or sign up for.
-  db: sqliteAdapter({ client: { url: process.env.DATABASE_URL || 'file:./payload.db' } }),
+  // Local: a SQLite file, nothing to host. Deployed: Postgres (Neon), chosen by the URL.
+  db: DB_URL.startsWith('postgres')
+    ? postgresAdapter({ pool: { connectionString: DB_URL, max: 5 } })
+    : sqliteAdapter({ client: { url: DB_URL } }),
 })

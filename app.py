@@ -20,7 +20,11 @@ SERVICE_KEY is not set:
 """
 
 import hmac
+import json
 import os
+import threading
+import urllib.request
+from datetime import datetime, timezone
 from typing import Literal
 
 from fastapi import Depends, FastAPI, Header, HTTPException
@@ -46,6 +50,44 @@ if "supervisors" not in indexes:
     raise RuntimeError("No supervisor index. Run: python ingest.py")
 
 SEARCH_ONLY_SHOWN = 3  # sources shown when there's no LLM to pick them
+
+# ---------------------------------------------------------------- startup sync (deployed setup)
+# On a free host the disk is wiped on every restart, so profile edits saved here would be lost.
+# When WEB_URL is set, the search index is brought up to date from the web app's database at
+# startup instead: the database is the one source of truth, supervisors.json only the seed.
+sync_status = {"state": "off", "at": None, "changed": 0, "detail": None}
+
+
+def sync_from_web():
+    web, key = os.getenv("WEB_URL", "").rstrip("/"), os.getenv("SERVICE_KEY", "")
+    if not web or not key:
+        return
+    sync_status["state"] = "running"
+    try:
+        req = urllib.request.Request(f"{web}/service/supervisors", headers={"X-Service-Key": key})
+        with urllib.request.urlopen(req, timeout=120) as res:
+            records = json.loads(res.read())["records"]
+        index, changed, seen = indexes["supervisors"], 0, set()
+        current = {c.get("record_id"): c["text"] for c in index.chunks}
+        for r in records:
+            chunk, _ = record_to_chunk(r)
+            if chunk:
+                seen.add(r["id"])
+                if current.get(r["id"]) != chunk["text"]:
+                    index.upsert(chunk)
+                    changed += 1
+            elif index.remove(r["id"]):
+                changed += 1
+        sync_status.update(state="done", changed=changed, detail=f"{len(records)} records, {len(index.chunks)} searchable")
+    except Exception as e:  # the web app may be asleep or down: search keeps the built-in data
+        sync_status.update(state="failed", detail=str(e)[:200])
+    sync_status["at"] = datetime.now(timezone.utc).isoformat(timespec="seconds")
+    print(f"Startup sync: {sync_status}")
+
+
+@app.on_event("startup")
+def start_sync():
+    threading.Thread(target=sync_from_web, daemon=True).start()
 
 
 # ---------------------------------------------------------------- chat
@@ -120,7 +162,7 @@ def chat(body: Chat):
 
 @app.get("/api/health")
 def health():
-    return {"collections": {name: len(ix.chunks) for name, ix in indexes.items()}}
+    return {"collections": {name: len(ix.chunks) for name, ix in indexes.items()}, "sync": sync_status}
 
 
 # ---------------------------------------------------------------- service endpoints

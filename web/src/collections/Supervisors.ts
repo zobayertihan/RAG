@@ -1,6 +1,6 @@
-import { APIError, type CollectionConfig, type PayloadRequest } from 'payload'
+import type { CollectionConfig, PayloadRequest } from 'payload'
 
-import { adminField, isAdmin, isLoggedIn, relId, roleOf, supervisorIdOf } from '../access'
+import { adminField, isAdmin, isLoggedIn, relId, roleOf, ruleError, supervisorIdOf } from '../access'
 import { reindexSupervisor, type PythonSupervisor } from '../lib/python'
 
 // Fields whose changes are kept in ProfileVersions (the thesis' freshness record).
@@ -89,7 +89,7 @@ export const Supervisors: CollectionConfig = {
         if (operation === 'update' && roleOf(req) === 'supervisor' && typeof data.capacity === 'number') {
           const before = typeof originalDoc?.capacity === 'number' ? originalDoc.capacity : null
           if (before === null || data.capacity > before) {
-            throw new APIError('You can lower your slots, but only the admin can raise them.', 400, undefined, true)
+            throw ruleError('You can lower your slots, but only the admin can raise them.')
           }
         }
         // The freshness date moves only when the content changes. The seed sets it itself.
