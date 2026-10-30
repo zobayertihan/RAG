@@ -21,6 +21,13 @@ export default buildConfig({
     user: Users.slug,
     importMap: { baseDir: path.resolve(dirname) },
     meta: { titleSuffix: ' | Supervisor Finder' },
+    avatar: 'default', // the built-in avatar, not Gravatar (no outside request, nothing broken offline)
+    components: {
+      graphics: { Logo: '/components/admin/Logo#Logo', Icon: '/components/admin/Icon#Icon' },
+      beforeNavLinks: ['/components/admin/BackToDashboard#BackToDashboard'],
+      beforeDashboard: ['/components/admin/AdminNote#AdminNote'],
+      providers: ['/components/admin/FontLink#FontLink'],
+    },
   },
   collections: [Users, Supervisors, Students, Requests, ProfileVersions, QueryLogs],
   editor: lexicalEditor(),
