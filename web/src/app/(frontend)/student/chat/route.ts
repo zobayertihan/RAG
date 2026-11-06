@@ -3,6 +3,9 @@ import { NextResponse, after } from 'next/server'
 import { chat } from '@/lib/python'
 import { getSession } from '@/lib/session'
 
+// Room for a sleeping search service to wake up (Vercel Hobby allows up to 300 s).
+export const maxDuration = 300
+
 type Card = { record_id?: string; [k: string]: unknown }
 
 /**
@@ -35,7 +38,8 @@ export async function POST(req: Request) {
   )
 
   // Live slots and the database id for the Contact button, matched by recordId.
-  const cards: Card[] = [...(data.supervisors || []), ...(data.mentions || []), ...(data.matches || [])]
+  // "others" = the remaining search matches, offered as alternatives when a supervisor is full
+  const cards: Card[] = [...(data.supervisors || []), ...(data.mentions || []), ...(data.matches || []), ...(data.others || [])]
   const ids = [...new Set(cards.map((c) => c.record_id).filter(Boolean))] as string[]
   if (ids.length) {
     const found = await payload.find({

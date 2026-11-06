@@ -12,6 +12,7 @@ export default async function Overview() {
 
   const open = requests.filter((r) => r.status === 'pending' || r.status === 'info_requested')
   const stuck = requests.filter((r) => r.stuck)
+  const waitingCoordinator = requests.filter((r) => r.type === 'coordinator' && r.supervisor.id === null && (r.status === 'pending' || r.status === 'info_requested'))
   const withSlots = eligible.filter((s) => s.capacity !== null)
   const slotsTotal = withSlots.reduce((n, s) => n + (s.capacity ?? 0), 0)
   const slotsUsed = withSlots.reduce((n, s) => n + s.used, 0)
@@ -39,6 +40,7 @@ export default async function Overview() {
 
       <h2>Needs attention</h2>
       <ul className="attention">
+        <li><a href="/dashboard/coordinator"><strong>{waitingCoordinator.length}</strong> students are waiting for the coordinator to suggest a supervisor</a></li>
         <li><a href="/dashboard/requests?show=stuck"><strong>{stuck.length}</strong> requests have waited more than {STUCK_DAYS} days for an answer</a></li>
         <li><a href="/dashboard/supervisors?show=full"><strong>{full.length}</strong> supervisors are full</a></li>
         <li><a href="/dashboard/supervisors?show=none"><strong>{noReq.length}</strong> searchable supervisors have had no requests</a></li>

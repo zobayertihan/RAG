@@ -1,0 +1,62 @@
+{
+ "label": "SYNTHETIC RESEARCH DOCUMENT. NOT AN OFFICIAL AARHUS UNIVERSITY POLICY. All rules, amounts and dates are fictional.",
+ "source": "Fictional meeting decisions of the Demonstration Finance Office.",
+ "entries": [
+  {
+   "id": "FAQ-001",
+   "decided_at": "2025-04-15",
+   "rule_id": "TR-201",
+   "based_on": "v1.0",
+   "question": "Can I take a taxi on an official trip when a bus or train would also work?",
+   "answer": "Yes. A work-related taxi is reimbursed when you attach the receipt."
+  },
+  {
+   "id": "FAQ-002",
+   "decided_at": "2025-05-20",
+   "rule_id": "AC-301",
+   "based_on": "v1.0",
+   "question": "What is the most I can spend on a hotel night in Denmark?",
+   "answer": "DKK 1,200 per night, including breakfast."
+  },
+  {
+   "id": "FAQ-003",
+   "decided_at": "2025-06-10",
+   "rule_id": "CC-601",
+   "based_on": "v1.0",
+   "question": "I paid with my own card. Can I still get the money back?",
+   "answer": "Yes. Include the expense in your settlement; the university card is preferred, but a personal card is reimbursed."
+  },
+  {
+   "id": "FAQ-004",
+   "decided_at": "2025-10-02",
+   "rule_id": "TR-201",
+   "based_on": "v2.0",
+   "question": "My train arrives at 00:30 and buses still run. Can I take a taxi home without approval?",
+   "answer": "No. Buses are running, so the taxi needs prior approval from the budget holder."
+  },
+  {
+   "id": "FAQ-005",
+   "decided_at": "2025-11-12",
+   "rule_id": "EX-401",
+   "based_on": "v2.0",
+   "question": "I lost a receipt. Can the expense still be reimbursed?",
+   "answer": "No. Every expense needs a receipt."
+  },
+  {
+   "id": "FAQ-006",
+   "decided_at": "2026-03-20",
+   "rule_id": "ST-701",
+   "based_on": "v3.0",
+   "question": "How long do I have to submit my travel settlement?",
+   "answer": "30 days after the trip ends. After that, the budget holder must approve it."
+  },
+  {
+   "id": "FAQ-007",
+   "decided_at": "2025-09-05",
+   "rule_id": "AC-301",
+   "based_on": "v2.0",
+   "question": "Has the hotel limit in Denmark gone up?",
+   "answer": "Yes. From 1 September 2025 the limit is DKK 1,350 per night, including breakfast."
+  }
+ ]
+}

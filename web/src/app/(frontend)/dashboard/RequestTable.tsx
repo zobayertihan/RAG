@@ -22,8 +22,8 @@ export function RequestTable({ rows }: { rows: ReqRow[] }) {
               <tr key={r.id} className={r.stuck ? 'stuck' : undefined}>
                 <td><a href={`/admin/collections/requests/${r.id}`}>{r.student.name}</a>{r.synthetic && <span className="demo" title="Made up by the demo seed">demo</span>}
                   {r.student.programme && <div className="sub">{r.student.programme}</div>}</td>
-                <td>{r.supervisor.name}</td>
-                <td>{r.type === 'supervision' ? 'Supervision' : 'Discuss'}</td>
+                <td>{r.supervisor.name}{r.viaCoordinator && <div className="sub">via coordinator</div>}</td>
+                <td>{r.type === 'supervision' ? 'Supervision' : r.type === 'coordinator' ? 'Coordinator' : 'Discuss'}</td>
                 <td><span className={st.cls}>{st.label}</span>{r.answeredAt && <div className="sub">answered {day(r.answeredAt)}</div>}</td>
                 <td>{day(r.createdAt)}</td>
                 <td className="num">{open ? `${r.waitingDays} d` : ''}</td>

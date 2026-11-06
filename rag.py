@@ -26,13 +26,28 @@ INDEX_DIR = BASE_DIR / "data" / "index"
 CACHE_DIR = INDEX_DIR / "cache"  # shared by all collections, keyed by file content
 
 
+FINANCE_SOURCES = FINANCE_DIR / "sources.json"  # the finance documents and their dates (Phase 8)
+
+
 def collection_sources(name: str) -> list[Path]:
     """The files each collection is built from. One search index per collection."""
     if name == "supervisors":
         return [SUPERVISORS_JSON] if SUPERVISORS_JSON.exists() else []
     if name == "finance":
-        return sorted(FINANCE_DIR.glob("*.pdf"))
+        # Only documents listed in sources.json, because search needs their dates and versions.
+        # A listed file that isn't in the folder yet is skipped (ingest.py says which).
+        if not FINANCE_SOURCES.exists():
+            return []
+        docs = json.loads(FINANCE_SOURCES.read_text(encoding="utf-8"))["documents"]
+        return [FINANCE_DIR / d["file"] for d in docs if (FINANCE_DIR / d["file"]).exists()]
     raise ValueError(f"Unknown collection {name!r}")
+
+
+def missing_finance_files() -> list[str]:
+    if not FINANCE_SOURCES.exists():
+        return []
+    docs = json.loads(FINANCE_SOURCES.read_text(encoding="utf-8"))["documents"]
+    return [d["file"] for d in docs if not (FINANCE_DIR / d["file"]).exists()]
 
 
 COLLECTIONS = ("supervisors", "finance")
@@ -42,13 +57,21 @@ def manifest_path(name: str) -> Path:
     return INDEX_DIR / name / "manifest.json"
 
 EMBED_MODEL = os.getenv("EMBED_MODEL", "BAAI/bge-small-en-v1.5")
+# Finance includes Danish government circulars, so it gets a multilingual model: an English
+# question then also finds the Danish passage. Supervisors keep EMBED_MODEL, so the Phase 2
+# evaluation numbers stay valid.
+EMBED_MODEL_FINANCE = os.getenv("EMBED_MODEL_FINANCE", "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2")
+
+
+def model_for(collection: str) -> str:
+    return EMBED_MODEL_FINANCE if collection == "finance" else EMBED_MODEL
 CHUNK_CHARS = int(os.getenv("CHUNK_CHARS", "1200"))
 TOP_K = int(os.getenv("TOP_K", "10"))
 # vector = embeddings only (the original behavior), bm25 = keywords only,
 # hybrid = both merged. Run eval/run_eval.py before switching the default.
 SEARCH_MODE = os.getenv("SEARCH_MODE", "vector")
 RRF_K = 60  # standard constant for reciprocal rank fusion
-CHUNKER_VERSION = "5"  # bump when pdf_to_chunks or records_to_chunks change, forces re-processing
+CHUNKER_VERSION = "6"  # bump when pdf_to_chunks or records_to_chunks change, forces re-processing
 
 # Positions that can supervise. Everyone else stays in supervisors.json (for the
 # admin later) but is not searchable as a supervisor.
@@ -63,30 +86,29 @@ URL_RE = re.compile(r"https?://[^\s<>\"')\]]+")
 
 # ---------------------------------------------------------------- embeddings
 
-_embedder = None
+_embedders: dict = {}
 
 
-def _get_embedder():
-    global _embedder
-    if _embedder is None:
+def _get_embedder(model: str = EMBED_MODEL):
+    if model not in _embedders:
         from fastembed import TextEmbedding  # imported lazily: slow to load
 
-        print(f"Loading embedding model {EMBED_MODEL} (first run downloads it)...")
-        _embedder = TextEmbedding(EMBED_MODEL)
-    return _embedder
+        print(f"Loading embedding model {model} (first run downloads it)...")
+        _embedders[model] = TextEmbedding(model)
+    return _embedders[model]
 
 
 def _normalize(m: np.ndarray) -> np.ndarray:
     return m / np.clip(np.linalg.norm(m, axis=1, keepdims=True), 1e-12, None)
 
 
-def embed_passages(texts: list[str]) -> np.ndarray:
-    vecs = list(_get_embedder().passage_embed(texts))
+def embed_passages(texts: list[str], model: str = EMBED_MODEL) -> np.ndarray:
+    vecs = list(_get_embedder(model).passage_embed(texts))
     return _normalize(np.array(vecs, dtype=np.float32))
 
 
-def embed_query(text: str) -> np.ndarray:
-    vec = list(_get_embedder().query_embed(text))[0]
+def embed_query(text: str, model: str = EMBED_MODEL) -> np.ndarray:
+    vec = list(_get_embedder(model).query_embed(text))[0]
     return _normalize(np.array([vec], dtype=np.float32))[0]
 
 
@@ -295,9 +317,128 @@ def save_supervisor_record(record: dict) -> dict:
 # ---------------------------------------------------------------- index
 
 
-def _file_key(path: Path) -> str:
+RULE_ID_RE = re.compile(r"^([A-Z]{2,4}-\d{3})\b")
+
+
+def md_to_chunks(path: Path) -> list[dict]:
+    """
+    A markdown document (the synthetic policies): one chunk per "## " section. A section
+    whose heading starts with a rule ID (e.g. "## TR-201 Taxis") keeps that ID, so the same
+    rule can be followed across versions.
+    """
+    title, sections, current = path.stem, [], None
+    for line in path.read_text(encoding="utf-8").splitlines():
+        if line.startswith("# ") and current is None:
+            title = line[2:].strip()
+        elif line.startswith("## "):
+            current = {"heading": line[3:].strip(), "lines": []}
+            sections.append(current)
+        elif current is not None:
+            current["lines"].append(line)
+    chunks = []
+    for sec in sections:
+        body = "\n".join(sec["lines"]).strip()
+        if not body:
+            continue
+        m = RULE_ID_RE.match(sec["heading"])
+        chunks.append({"file": path.name, "page": None, "section": sec["heading"],
+                       "rule_id": m.group(1) if m else None, "rule_text": body,
+                       "text": f"{title}\n{sec['heading']}\n{body}", "emails": [], "urls": []})
+    return chunks
+
+
+def faq_to_chunks(path: Path) -> list[dict]:
+    """A JSON file of FAQ decisions: one chunk per question, keeping which rule and version it was based on."""
+    data = json.loads(path.read_text(encoding="utf-8"))
+    return [{"file": path.name, "page": None, "section": e["id"], "faq_id": e["id"], "rule_id": e.get("rule_id"),
+             "based_on": e.get("based_on"), "decided_at": e.get("decided_at"),
+             "text": f"FAQ {e['id']} (decided {e.get('decided_at')}): Q: {e['question']} A: {e['answer']}",
+             "emails": [], "urls": []}
+            for e in data["entries"]]
+
+
+# The Danish rate circulars are kept word for word as evidence. Each passage only gets a short,
+# fixed English label for its annex, so English questions can find it. These labels are written
+# by hand from the circulars' own list of annexes, not machine-translated: check them here.
+DANISH_ANNEX_LABELS = {
+    "transportgodtgørelse": "transport allowance, mileage rates per km (kilometergodtgørelse)",
+    "time- og dagpenge": "hourly and daily allowance (per diem) in Denmark and the Faroe Islands",
+    "dagpenge og procentgodtgørelse i udlandet": "daily allowance (per diem) abroad and in Greenland, by country",
+    "måltidsfradrag": "meal deductions when meals are provided free",
+    "hoteldispositionsbeløb": "hotel allowance (maximum hotel amount per night) in Denmark, the Faroe Islands and abroad, by country",
+    "udokumenteret nattillæg": "undocumented night allowance",
+}
+ANNEX_RE = re.compile(r"^\s*Bilag (\d+)\s+(.+)", re.M)  # "Bilag 5 Hoteldispositionsbeløb i Danmark ..."
+
+
+def label_danish_annexes(chunks: list[dict]) -> None:
+    """
+    Prefixes each chunk of a Danish circular with its annex ("Bilag 5 ...") and the English label.
+    The annex heading is carried over to the following pages, so a page that only holds the rest
+    of a country table still says what the table is.
+    """
+    current = None
+    for c in chunks:
+        m = ANNEX_RE.search(c["text"])
+        if m:
+            heading = re.sub(r"\s+pr\.\s*1\..*$", "", " ".join(m.group(2).split()))  # drop "pr. 1. januar 2026"
+            english = next((v for k, v in DANISH_ANNEX_LABELS.items() if heading.lower().startswith(k)), None)
+            current = (m.group(1), heading, english)
+        if current:
+            n, heading, english = current
+            c["annex"] = f"Bilag {n}"
+            label = f"[Bilag {n}: {heading}" + (f" | English: Annex {n}, {english}]" if english else "]")
+            if not c["text"].startswith(label):
+                c["text"] = f"{label}\n{c['text']}"
+
+
+def txt_to_chunks(path: Path) -> list[dict]:
+    """
+    A web page saved as plain text (copied from the browser). Split at FAQ questions (lines
+    ending in "?") and keep chunks under CHUNK_CHARS, so each question stays with its answer.
+    """
+    lines = [ln.rstrip() for ln in path.read_text(encoding="utf-8").splitlines()]
+    chunks, buf, heading = [], [], None
+
+    def flush():
+        body = "\n".join(x for x in buf if x.strip()).strip()
+        if body:
+            chunks.append({"file": path.name, "page": None, "section": heading, "text": body, "emails": [], "urls": []})
+
+    for ln in lines:
+        starts_question = ln.strip().endswith("?") and len(ln.strip()) < 200
+        if (starts_question and buf) or sum(len(x) for x in buf) > CHUNK_CHARS:
+            flush()
+            buf = []
+        if starts_question:
+            heading = ln.strip()
+        buf.append(ln)
+    flush()
+    return chunks
+
+
+def file_to_chunks(src: Path, collection: str) -> list[dict]:
+    if collection == "supervisors":
+        return records_to_chunks(src)
+    if src.suffix == ".md":
+        chunks = md_to_chunks(src)
+    elif src.suffix == ".json":
+        chunks = faq_to_chunks(src)
+    elif src.suffix == ".txt":
+        chunks = txt_to_chunks(src)
+    else:
+        chunks = pdf_to_chunks(src)
+        if collection == "finance":
+            label_danish_annexes(chunks)
+    rel = src.relative_to(FINANCE_DIR).as_posix() if collection == "finance" else src.name
+    for c in chunks:
+        c["file"] = rel  # finance metadata (sources.json) is matched by this path
+    return chunks
+
+
+def _file_key(path: Path, model: str = EMBED_MODEL) -> str:
     h = hashlib.sha256(path.read_bytes())
-    h.update(EMBED_MODEL.encode())  # changing the model invalidates the cache
+    h.update(model.encode())  # changing the model invalidates the cache
     h.update(CHUNKER_VERSION.encode())  # so does changing how files are split
     return h.hexdigest()[:20]
 
@@ -318,21 +459,22 @@ def build_index(collections: tuple[str, ...] = COLLECTIONS) -> dict:
                 mpath.unlink()  # its files were removed, so the old index must go too
             stats[name] = {"new": 0, "cached": 0, "chunks": 0, "files": 0}
             continue
-        manifest = {"model": EMBED_MODEL, "collection": name, "files": []}
+        model = model_for(name)
+        manifest = {"model": model, "collection": name, "files": []}
         st = {"new": 0, "cached": 0, "chunks": 0, "files": 0}
         for src in sources:
-            key = _file_key(src)
+            key = _file_key(src, model)
             meta_path, vec_path = CACHE_DIR / f"{key}.json", CACHE_DIR / f"{key}.npy"
             if meta_path.exists() and vec_path.exists():
                 st["cached"] += 1
                 n = len(json.loads(meta_path.read_text(encoding="utf-8")))
             else:
                 print(f"  [{name}] processing {src.name}")
-                chunks = records_to_chunks(src) if src.suffix == ".json" else pdf_to_chunks(src)
+                chunks = file_to_chunks(src, name)
                 if not chunks:
                     print(f"  WARNING: nothing to index in {src.name}")
                     continue
-                vecs = embed_passages([c["text"] for c in chunks])
+                vecs = embed_passages([c["text"] for c in chunks], model)
                 meta_path.write_text(json.dumps(chunks, ensure_ascii=False, indent=1), encoding="utf-8")
                 np.save(vec_path, vecs)
                 st["new"] += 1
@@ -377,7 +519,8 @@ class Index:
         if not mpath.exists():
             raise RuntimeError(f"No index for '{collection}'. Run: python ingest.py")
         manifest = json.loads(mpath.read_text(encoding="utf-8"))
-        if manifest["model"] != EMBED_MODEL:
+        self.model = model_for(collection)
+        if manifest["model"] != self.model:
             raise RuntimeError("Embedding model changed since last ingest. Run: python ingest.py")
         self.chunks, vecs = [], []
         for f in manifest["files"]:
@@ -402,7 +545,7 @@ class Index:
 
     def upsert(self, chunk: dict) -> str:
         """Adds or replaces one record's chunk in memory. Returns "updated" or "added"."""
-        vec = embed_passages([chunk["text"]])[0]
+        vec = embed_passages([chunk["text"]], self.model)[0]
         for i, c in enumerate(self.chunks):
             if c.get("record_id") == chunk["record_id"]:
                 self.chunks[i] = chunk
@@ -435,7 +578,7 @@ class Index:
         return idx
 
     def search(self, query: str, k: int = TOP_K, mode: str | None = None,
-               filters: dict | None = None) -> list[dict]:
+               filters: dict | None = None, only=None) -> list[dict]:
         """
         Returns the k best chunks among those that pass the filters (position,
         research_group, type: each a list of allowed values). Each hit keeps
@@ -448,9 +591,12 @@ class Index:
         if mode not in ("vector", "bm25", "hybrid"):
             raise ValueError(f"Unknown search mode {mode!r}; use vector, bm25 or hybrid")
         allowed = self._allowed(filters)
+        if only is not None:  # e.g. finance: only chunks of the document versions that apply
+            keep = set(int(i) for i in only)
+            allowed = np.array([i for i in allowed if int(i) in keep], dtype=int)
         if not len(allowed):
             return []
-        cos = self.vecs @ embed_query(query) if mode in ("vector", "hybrid") else np.zeros(len(self.chunks))
+        cos = self.vecs @ embed_query(query, self.model) if mode in ("vector", "hybrid") else np.zeros(len(self.chunks))
         kw = (np.asarray(self.bm25.get_scores(_tokens(query)), dtype=np.float32)
               if mode in ("bm25", "hybrid") else np.zeros(len(self.chunks)))
 
@@ -472,7 +618,7 @@ class Index:
 
         top = allowed[np.argsort(-rank_score[allowed], kind="stable")][:k]
         return [{**self.chunks[i], "score": round(float(cos[i]), 3), "bm25": round(float(kw[i]), 3),
-                 "rank_score": round(float(rank_score[i]), 5)} for i in top]
+                 "rank_score": round(float(rank_score[i]), 5), "pos": int(i)} for i in top]
 
 
 # ---------------------------------------------------------------- LLM (chat)

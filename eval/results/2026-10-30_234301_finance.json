@@ -1,0 +1,3077 @@
+{
+ "time": "2026-10-30T23:40:57",
+ "embed_model": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+ "test_set_version": 3,
+ "understand": false,
+ "answers": false,
+ "systems": {
+  "plain": {
+   "summary": {
+    "all": {
+     "cases": 37,
+     "right_version_top": 0.543,
+     "wrong_version_in": 0.943,
+     "stale_faq_in": 0.351
+    },
+    "real": {
+     "cases": 16,
+     "right_version_top": 0.667,
+     "wrong_version_in": 1.0,
+     "stale_faq_in": 0.0
+    },
+    "synthetic": {
+     "cases": 21,
+     "right_version_top": 0.45,
+     "wrong_version_in": 0.9,
+     "stale_faq_in": 0.619
+    }
+   },
+   "cases": {
+    "hotel-v1": {
+     "evidence": [
+      "demo-faq#FAQ-007",
+      "demo-faq#FAQ-002",
+      "demo-policy-v2.0#AC-301",
+      "demo-policy-v1.0#AC-301",
+      "demo-policy-v3.0#AC-301",
+      "demo-policy-v2.1#AC-301",
+      "demo-policy-v1.0#GEN-101",
+      "demo-policy-v2.1#GEN-101"
+     ],
+     "flagged": [],
+     "kept_faqs": [
+      "FAQ-007",
+      "FAQ-002"
+     ],
+     "right_version_top": false,
+     "wrong_version_in": true,
+     "rule_found": true,
+     "stale_faq_in": true
+    },
+    "hotel-correction": {
+     "evidence": [
+      "demo-faq#FAQ-007",
+      "demo-policy-v3.0#AC-301",
+      "demo-policy-v1.0#AC-301",
+      "demo-policy-v2.1#AC-301",
+      "demo-policy-v2.0#AC-301",
+      "demo-faq#FAQ-002",
+      "demo-policy-v3.0#pNone",
+      "demo-policy-v2.1#pNone"
+     ],
+     "flagged": [],
+     "kept_faqs": [
+      "FAQ-007",
+      "FAQ-002"
+     ],
+     "right_version_top": false,
+     "wrong_version_in": true,
+     "rule_found": true,
+     "stale_faq_in": true
+    },
+    "hotel-as-published": {
+     "evidence": [
+      "demo-policy-v2.1#pNone",
+      "demo-faq#FAQ-007",
+      "demo-policy-v3.0#pNone",
+      "demo-policy-v3.0#AC-301",
+      "demo-policy-v2.0#pNone",
+      "demo-policy-v1.0#AC-301",
+      "demo-policy-v2.0#AC-301",
+      "demo-policy-v2.1#AC-301"
+     ],
+     "flagged": [],
+     "kept_faqs": [
+      "FAQ-007"
+     ],
+     "right_version_top": false,
+     "wrong_version_in": true,
+     "rule_found": true,
+     "stale_faq_in": false
+    },
+    "hotel-named-version": {
+     "evidence": [
+      "demo-policy-v2.1#pNone",
+      "demo-policy-v3.0#pNone",
+      "demo-policy-v2.0#pNone",
+      "demo-policy-v2.0#AC-301",
+      "demo-faq#FAQ-007",
+      "demo-policy-v3.0#AC-301",
+      "demo-policy-v1.0#AC-301",
+      "demo-policy-v1.0#pNone"
+     ],
+     "flagged": [],
+     "kept_faqs": [
+      "FAQ-007"
+     ],
+     "right_version_top": true,
+     "wrong_version_in": true,
+     "rule_found": true,
+     "stale_faq_in": false
+    },
+    "hotel-v3": {
+     "evidence": [
+      "demo-faq#FAQ-007",
+      "demo-policy-v3.0#AC-301",
+      "demo-policy-v1.0#AC-301",
+      "demo-policy-v2.0#AC-301",
+      "demo-policy-v2.1#AC-301",
+      "demo-faq#FAQ-002",
+      "demo-policy-v2.1#pNone",
+      "demo-policy-v3.0#pNone"
+     ],
+     "flagged": [],
+     "kept_faqs": [
+      "FAQ-007",
+      "FAQ-002"
+     ],
+     "right_version_top": true,
+     "wrong_version_in": true,
+     "rule_found": true,
+     "stale_faq_in": true
+    },
+    "taxi-v1": {
+     "evidence": [
+      "demo-policy-v2.0#TR-201",
+      "demo-policy-v1.0#TR-201",
+      "demo-faq#FAQ-001",
+      "demo-policy-v2.1#TR-201",
+      "demo-policy-v3.0#TR-201",
+      "demo-faq#FAQ-004",
+      "demo-policy-v2.0#pNone",
+      "demo-policy-v2.1#pNone"
+     ],
+     "flagged": [],
+     "kept_faqs": [
+      "FAQ-001",
+      "FAQ-004"
+     ],
+     "right_version_top": false,
+     "wrong_version_in": true,
+     "rule_found": true,
+     "stale_faq_in": true
+    },
+    "taxi-v2": {
+     "evidence": [
+      "demo-policy-v2.0#TR-201",
+      "demo-policy-v2.1#TR-201",
+      "demo-policy-v3.0#TR-201",
+      "demo-faq#FAQ-001",
+      "demo-faq#FAQ-004",
+      "demo-policy-v1.0#TR-201",
+      "demo-policy-v2.0#pNone",
+      "demo-policy-v2.1#pNone"
+     ],
+     "flagged": [],
+     "kept_faqs": [
+      "FAQ-001",
+      "FAQ-004"
+     ],
+     "right_version_top": false,
+     "wrong_version_in": true,
+     "rule_found": true,
+     "stale_faq_in": true
+    },
+    "taxi-night-v3": {
+     "evidence": [
+      "demo-faq#FAQ-004",
+      "demo-faq#FAQ-001",
+      "demo-policy-v3.0#TR-201",
+      "demo-policy-v2.0#TR-201",
+      "demo-policy-v2.1#TR-201",
+      "demo-policy-v1.0#TR-201",
+      "demo-policy-v2.0#pNone",
+      "demo-policy-v3.0#pNone"
+     ],
+     "flagged": [],
+     "kept_faqs": [
+      "FAQ-004",
+      "FAQ-001"
+     ],
+     "right_version_top": true,
+     "wrong_version_in": true,
+     "rule_found": true,
+     "stale_faq_in": true
+    },
+    "taxi-safety-v3": {
+     "evidence": [
+      "demo-policy-v3.0#TR-201",
+      "demo-policy-v2.0#TR-201",
+      "demo-policy-v2.1#TR-201",
+      "demo-faq#FAQ-004",
+      "demo-policy-v2.0#pNone",
+      "demo-policy-v2.1#pNone",
+      "demo-policy-v3.0#pNone",
+      "demo-faq#FAQ-001"
+     ],
+     "flagged": [],
+     "kept_faqs": [
+      "FAQ-004",
+      "FAQ-001"
+     ],
+     "right_version_top": true,
+     "wrong_version_in": true,
+     "rule_found": true,
+     "stale_faq_in": true
+    },
+    "receipt-lost-v2": {
+     "evidence": [
+      "demo-policy-v3.0#EX-401",
+      "demo-faq#FAQ-005",
+      "demo-policy-v1.0#EX-401",
+      "demo-policy-v1.0#TR-201",
+      "demo-policy-v2.0#EX-401",
+      "demo-policy-v2.1#EX-401",
+      "demo-policy-v2.0#pNone",
+      "demo-policy-v2.0#CC-601"
+     ],
+     "flagged": [],
+     "kept_faqs": [
+      "FAQ-005"
+     ],
+     "right_version_top": false,
+     "wrong_version_in": true,
+     "rule_found": true,
+     "stale_faq_in": false
+    },
+    "receipt-lost-v3": {
+     "evidence": [
+      "demo-faq#FAQ-005",
+      "demo-policy-v3.0#EX-401",
+      "demo-policy-v1.0#EX-401",
+      "demo-policy-v1.0#TR-201",
+      "demo-policy-v2.0#EX-401",
+      "demo-policy-v2.1#EX-401",
+      "demo-policy-v2.0#pNone",
+      "demo-policy-v2.0#TR-201"
+     ],
+     "flagged": [],
+     "kept_faqs": [
+      "FAQ-005"
+     ],
+     "right_version_top": true,
+     "wrong_version_in": true,
+     "rule_found": true,
+     "stale_faq_in": true
+    },
+    "receipt-small-v1": {
+     "evidence": [
+      "demo-policy-v3.0#EX-401",
+      "demo-policy-v1.0#EX-401",
+      "demo-policy-v2.0#TR-201",
+      "demo-policy-v1.0#TR-201",
+      "demo-policy-v2.1#TR-201",
+      "demo-faq#FAQ-005",
+      "demo-policy-v2.0#EX-401",
+      "demo-policy-v3.0#TR-201"
+     ],
+     "flagged": [],
+     "kept_faqs": [
+      "FAQ-005"
+     ],
+     "right_version_top": false,
+     "wrong_version_in": true,
+     "rule_found": true,
+     "stale_faq_in": true
+    },
+    "receipt-small-v2": {
+     "evidence": [
+      "demo-policy-v3.0#EX-401",
+      "demo-policy-v1.0#EX-401",
+      "demo-policy-v1.0#TR-201",
+      "demo-faq#FAQ-005",
+      "demo-policy-v2.0#EX-401",
+      "demo-policy-v2.0#TR-201",
+      "demo-policy-v2.1#EX-401",
+      "demo-policy-v2.1#TR-201"
+     ],
+     "flagged": [],
+     "kept_faqs": [
+      "FAQ-005"
+     ],
+     "right_version_top": false,
+     "wrong_version_in": true,
+     "rule_found": true,
+     "stale_faq_in": false
+    },
+    "meals-v1": {
+     "evidence": [
+      "demo-policy-v3.0#ME-501",
+      "demo-policy-v1.0#ME-501",
+      "demo-policy-v2.0#ME-501",
+      "demo-policy-v2.1#ME-501",
+      "demo-policy-v3.0#pNone",
+      "demo-policy-v2.1#pNone",
+      "demo-policy-v2.0#pNone",
+      "demo-faq#FAQ-007"
+     ],
+     "flagged": [],
+     "kept_faqs": [
+      "FAQ-007"
+     ],
+     "right_version_top": false,
+     "wrong_version_in": true,
+     "rule_found": true,
+     "stale_faq_in": true
+    },
+    "meals-v3": {
+     "evidence": [
+      "demo-policy-v3.0#ME-501",
+      "demo-policy-v3.0#pNone",
+      "demo-policy-v1.0#ME-501",
+      "demo-policy-v2.1#pNone",
+      "demo-policy-v2.0#pNone",
+      "demo-policy-v2.0#ME-501",
+      "demo-policy-v2.1#ME-501",
+      "demo-faq#FAQ-007"
+     ],
+     "flagged": [],
+     "kept_faqs": [
+      "FAQ-007"
+     ],
+     "right_version_top": true,
+     "wrong_version_in": true,
+     "rule_found": true,
+     "stale_faq_in": true
+    },
+    "deadline-v1": {
+     "evidence": [
+      "demo-policy-v1.0#ST-701",
+      "demo-policy-v3.0#ST-701",
+      "demo-policy-v2.1#ST-701",
+      "demo-policy-v2.0#ST-701",
+      "demo-faq#FAQ-006",
+      "demo-policy-v3.0#pNone",
+      "demo-policy-v1.0#TR-201",
+      "demo-policy-v3.0#TR-201"
+     ],
+     "flagged": [],
+     "kept_faqs": [
+      "FAQ-006"
+     ],
+     "right_version_top": true,
+     "wrong_version_in": true,
+     "rule_found": true,
+     "stale_faq_in": true
+    },
+    "deadline-v3": {
+     "evidence": [
+      "demo-policy-v1.0#ST-701",
+      "demo-policy-v3.0#ST-701",
+      "demo-policy-v2.0#ST-701",
+      "demo-policy-v2.1#ST-701",
+      "demo-faq#FAQ-006",
+      "demo-policy-v1.0#TR-201",
+      "demo-policy-v3.0#pNone",
+      "demo-policy-v1.0#CC-601"
+     ],
+     "flagged": [],
+     "kept_faqs": [
+      "FAQ-006"
+     ],
+     "right_version_top": false,
+     "wrong_version_in": true,
+     "rule_found": true,
+     "stale_faq_in": false
+    },
+    "card-unchanged": {
+     "evidence": [
+      "demo-policy-v2.0#CC-601",
+      "demo-policy-v1.0#CC-601",
+      "demo-policy-v3.0#CC-601",
+      "demo-policy-v2.1#CC-601",
+      "demo-faq#FAQ-003",
+      "demo-faq#FAQ-004",
+      "demo-faq#FAQ-001",
+      "demo-policy-v1.0#TR-201"
+     ],
+     "flagged": [],
+     "kept_faqs": [
+      "FAQ-003",
+      "FAQ-004",
+      "FAQ-001"
+     ],
+     "right_version_top": true,
+     "wrong_version_in": false,
+     "rule_found": true,
+     "stale_faq_in": true
+    },
+    "scope-student": {
+     "evidence": [
+      "demo-policy-v1.0#GEN-101",
+      "demo-policy-v3.0#GEN-101",
+      "demo-policy-v2.1#GEN-101",
+      "demo-policy-v2.0#GEN-101",
+      "demo-policy-v1.0#CC-601",
+      "demo-policy-v2.0#CC-601",
+      "demo-policy-v2.1#CC-601",
+      "demo-policy-v1.0#pNone"
+     ],
+     "flagged": [],
+     "kept_faqs": [],
+     "right_version_top": true,
+     "wrong_version_in": false,
+     "rule_found": true,
+     "stale_faq_in": false
+    },
+    "before-policy": {
+     "evidence": [
+      "demo-policy-v2.0#AC-301",
+      "demo-policy-v1.0#AC-301",
+      "demo-policy-v2.1#AC-301",
+      "demo-faq#FAQ-002",
+      "demo-policy-v3.0#AC-301",
+      "demo-faq#FAQ-007",
+      "demo-policy-v2.1#pNone",
+      "demo-policy-v3.0#pNone"
+     ],
+     "flagged": [],
+     "kept_faqs": [
+      "FAQ-002",
+      "FAQ-007"
+     ],
+     "right_version_top": false,
+     "wrong_version_in": true,
+     "rule_found": false,
+     "stale_faq_in": false
+    },
+    "unsupported": {
+     "evidence": [
+      "demo-policy-v3.0#EX-401",
+      "demo-policy-v1.0#CC-601",
+      "demo-policy-v2.0#EX-401",
+      "demo-policy-v2.1#EX-401",
+      "demo-policy-v2.1#CC-601",
+      "demo-policy-v2.0#CC-601",
+      "demo-policy-v2.0#AC-301",
+      "demo-policy-v1.0#AC-301"
+     ],
+     "flagged": [],
+     "kept_faqs": [],
+     "stale_faq_in": false
+    },
+    "r-mileage-2025": {
+     "evidence": [
+      "056-25#Bilag 1",
+      "au-travel-policy-2022#p3",
+      "119-25#Bilag 1",
+      "119-25#Bilag 1",
+      "002-26#Bilag 1",
+      "002-26#Bilag 1",
+      "056-25#Bilag 1",
+      "006-26#Bilag 1"
+     ],
+     "flagged": [],
+     "kept_faqs": [],
+     "right_version_top": true,
+     "wrong_version_in": true,
+     "rule_found": true,
+     "stale_faq_in": false
+    },
+    "r-mileage-2026": {
+     "evidence": [
+      "119-25#Bilag 1",
+      "002-26#Bilag 1",
+      "006-26#Bilag 1",
+      "007-26#Bilag 1",
+      "au-travel-policy-2022#p3",
+      "056-25#Bilag 1",
+      "119-25#Bilag 1",
+      "au-travel-policy-2022#p3"
+     ],
+     "flagged": [],
+     "kept_faqs": [],
+     "right_version_top": true,
+     "wrong_version_in": true,
+     "rule_found": true,
+     "stale_faq_in": false
+    },
+    "r-bicycle-2025": {
+     "evidence": [
+      "056-25#Bilag 1",
+      "119-25#Bilag 1",
+      "119-25#Bilag 1",
+      "002-26#Bilag 1",
+      "002-26#Bilag 1",
+      "056-25#Bilag 1",
+      "006-26#Bilag 1",
+      "006-26#Bilag 1"
+     ],
+     "flagged": [],
+     "kept_faqs": [],
+     "right_version_top": true,
+     "wrong_version_in": true,
+     "rule_found": true,
+     "stale_faq_in": false
+    },
+    "r-bicycle-2026": {
+     "evidence": [
+      "119-25#Bilag 1",
+      "002-26#Bilag 1",
+      "006-26#Bilag 1",
+      "007-26#Bilag 1",
+      "119-25#Bilag 1",
+      "002-26#Bilag 1",
+      "056-25#Bilag 1",
+      "056-25#Bilag 1"
+     ],
+     "flagged": [],
+     "kept_faqs": [],
+     "right_version_top": true,
+     "wrong_version_in": true,
+     "rule_found": true,
+     "stale_faq_in": false
+    },
+    "r-daily-dk-2025": {
+     "evidence": [
+      "056-25#Bilag 2",
+      "002-26#Bilag 2",
+      "006-26#Bilag 2",
+      "119-25#Bilag 2",
+      "007-26#Bilag 2",
+      "056-25#Bilag 3",
+      "056-25#p3",
+      "119-25#Bilag 3"
+     ],
+     "flagged": [],
+     "kept_faqs": [],
+     "right_version_top": true,
+     "wrong_version_in": true,
+     "rule_found": true,
+     "stale_faq_in": false
+    },
+    "r-daily-dk-2026": {
+     "evidence": [
+      "119-25#Bilag 2",
+      "002-26#Bilag 2",
+      "006-26#Bilag 2",
+      "007-26#Bilag 2",
+      "056-25#Bilag 2",
+      "119-25#Bilag 3",
+      "002-26#Bilag 3",
+      "006-26#Bilag 3"
+     ],
+     "flagged": [],
+     "kept_faqs": [],
+     "right_version_top": true,
+     "wrong_version_in": true,
+     "rule_found": true,
+     "stale_faq_in": false
+    },
+    "r-abroad-default-2026": {
+     "evidence": [
+      "119-25#Bilag 3",
+      "002-26#Bilag 3",
+      "006-26#Bilag 3",
+      "007-26#Bilag 3",
+      "056-25#Bilag 3",
+      "119-25#Bilag 3",
+      "002-26#Bilag 3",
+      "002-26#Bilag 2"
+     ],
+     "flagged": [],
+     "kept_faqs": [],
+     "right_version_top": true,
+     "wrong_version_in": true,
+     "rule_found": true,
+     "stale_faq_in": false
+    },
+    "r-hotel-germany-2025": {
+     "evidence": [
+      "119-25#Bilag 5",
+      "002-26#Bilag 5",
+      "056-25#Bilag 5",
+      "006-26#Bilag 5",
+      "007-26#Bilag 5",
+      "056-25#Bilag 5",
+      "006-26#Bilag 5",
+      "002-26#Bilag 5"
+     ],
+     "flagged": [],
+     "kept_faqs": [],
+     "right_version_top": false,
+     "wrong_version_in": true,
+     "rule_found": true,
+     "stale_faq_in": false
+    },
+    "r-hotel-germany-2026": {
+     "evidence": [
+      "119-25#Bilag 5",
+      "002-26#Bilag 5",
+      "056-25#Bilag 5",
+      "006-26#Bilag 5",
+      "007-26#Bilag 5",
+      "006-26#Bilag 5",
+      "002-26#Bilag 5",
+      "007-26#Bilag 5"
+     ],
+     "flagged": [],
+     "kept_faqs": [],
+     "right_version_top": true,
+     "wrong_version_in": true,
+     "rule_found": true,
+     "stale_faq_in": false
+    },
+    "r-hotel-italy-unchanged": {
+     "evidence": [
+      "056-25#Bilag 5",
+      "119-25#Bilag 5",
+      "007-26#Bilag 5",
+      "006-26#Bilag 5",
+      "002-26#Bilag 5",
+      "119-25#p1",
+      "119-25#Bilag 5",
+      "au-travel-policy-2022#p5"
+     ],
+     "flagged": [],
+     "kept_faqs": [],
+     "right_version_top": false,
+     "wrong_version_in": true,
+     "rule_found": true,
+     "stale_faq_in": false
+    },
+    "r-hotel-uk-2026": {
+     "evidence": [
+      "119-25#Bilag 5",
+      "119-25#Bilag 5",
+      "au-travel-policy-2022#p5",
+      "002-26#Bilag 5",
+      "002-26#Bilag 5",
+      "006-26#Bilag 5",
+      "007-26#Bilag 5",
+      "056-25#Bilag 5"
+     ],
+     "flagged": [],
+     "kept_faqs": [],
+     "right_version_top": true,
+     "wrong_version_in": true,
+     "rule_found": true,
+     "stale_faq_in": false
+    },
+    "r-hotel-dk-named-006": {
+     "evidence": [
+      "au-travel-policy-2022#p5",
+      "119-25#Bilag 5",
+      "006-26#Bilag 5",
+      "002-26#Bilag 5",
+      "002-26#Bilag 5",
+      "056-25#Bilag 5",
+      "119-25#Bilag 5",
+      "056-25#Bilag 5"
+     ],
+     "flagged": [],
+     "kept_faqs": [],
+     "right_version_top": false,
+     "wrong_version_in": true,
+     "rule_found": true,
+     "stale_faq_in": false
+    },
+    "r-hotel-dk-named-007": {
+     "evidence": [
+      "au-travel-policy-2022#p5",
+      "119-25#Bilag 5",
+      "006-26#Bilag 5",
+      "002-26#Bilag 5",
+      "002-26#Bilag 5",
+      "119-25#Bilag 5",
+      "056-25#Bilag 5",
+      "056-25#Bilag 5"
+     ],
+     "flagged": [],
+     "kept_faqs": [],
+     "right_version_top": false,
+     "wrong_version_in": true,
+     "rule_found": false,
+     "stale_faq_in": false
+    },
+    "r-hotel-dk-as-published": {
+     "evidence": [
+      "006-26#Bilag 5",
+      "119-25#Bilag 5",
+      "007-26#Bilag 5",
+      "002-26#Bilag 5",
+      "au-travel-policy-2022#p5",
+      "056-25#Bilag 5",
+      "119-25#Bilag 3",
+      "002-26#Bilag 3"
+     ],
+     "flagged": [],
+     "kept_faqs": [],
+     "right_version_top": true,
+     "wrong_version_in": true,
+     "rule_found": true,
+     "stale_faq_in": false
+    },
+    "r-hotel-dk-may-2026": {
+     "evidence": [
+      "119-25#Bilag 5",
+      "006-26#Bilag 5",
+      "056-25#Bilag 5",
+      "002-26#Bilag 5",
+      "007-26#Bilag 5",
+      "au-travel-policy-2022#p5",
+      "119-25#Bilag 5",
+      "002-26#Bilag 5"
+     ],
+     "flagged": [],
+     "kept_faqs": [],
+     "right_version_top": false,
+     "wrong_version_in": true,
+     "rule_found": true,
+     "stale_faq_in": false
+    },
+    "r-au-train": {
+     "evidence": [
+      "au-travel-policy-2022#p1",
+      "au-travel-policy-2022#p2",
+      "au-travel-policy-2022#p2",
+      "au-travel-policy-2022#p4",
+      "au-travel-policy-2022#p4",
+      "au-travel-policy-2022#p2",
+      "au-travel-policy-2022#p1",
+      "au-travel-policy-2022#p5"
+     ],
+     "flagged": [],
+     "kept_faqs": [],
+     "stale_faq_in": false
+    }
+   }
+  },
+  "newest": {
+   "summary": {
+    "all": {
+     "cases": 37,
+     "right_version_top": 0.486,
+     "wrong_version_in": 0.514,
+     "stale_faq_in": 0.432
+    },
+    "real": {
+     "cases": 16,
+     "right_version_top": 0.6,
+     "wrong_version_in": 0.4,
+     "stale_faq_in": 0.0
+    },
+    "synthetic": {
+     "cases": 21,
+     "right_version_top": 0.4,
+     "wrong_version_in": 0.6,
+     "stale_faq_in": 0.762
+    }
+   },
+   "cases": {
+    "hotel-v1": {
+     "evidence": [
+      "demo-faq#FAQ-007",
+      "demo-faq#FAQ-002",
+      "demo-policy-v3.0#AC-301",
+      "demo-policy-v3.0#GEN-101",
+      "demo-policy-v3.0#pNone",
+      "demo-policy-v3.0#ME-501",
+      "demo-policy-v3.0#EX-401",
+      "demo-policy-v3.0#TR-201"
+     ],
+     "flagged": [],
+     "kept_faqs": [
+      "FAQ-007",
+      "FAQ-002"
+     ],
+     "right_version_top": false,
+     "wrong_version_in": true,
+     "rule_found": false,
+     "stale_faq_in": true
+    },
+    "hotel-correction": {
+     "evidence": [
+      "demo-faq#FAQ-007",
+      "demo-policy-v3.0#AC-301",
+      "demo-policy-v3.0#pNone",
+      "demo-faq#FAQ-002",
+      "demo-policy-v3.0#GEN-101",
+      "demo-policy-v3.0#ME-501",
+      "demo-policy-v3.0#EX-401",
+      "demo-policy-v3.0#TR-201"
+     ],
+     "flagged": [],
+     "kept_faqs": [
+      "FAQ-007",
+      "FAQ-002"
+     ],
+     "right_version_top": false,
+     "wrong_version_in": true,
+     "rule_found": false,
+     "stale_faq_in": true
+    },
+    "hotel-as-published": {
+     "evidence": [
+      "demo-faq#FAQ-007",
+      "demo-policy-v3.0#pNone",
+      "demo-policy-v3.0#AC-301",
+      "demo-policy-v3.0#ST-701",
+      "demo-faq#FAQ-002",
+      "demo-policy-v3.0#GEN-101",
+      "demo-policy-v3.0#CC-601",
+      "demo-policy-v3.0#TR-201"
+     ],
+     "flagged": [],
+     "kept_faqs": [
+      "FAQ-007",
+      "FAQ-002"
+     ],
+     "right_version_top": false,
+     "wrong_version_in": true,
+     "rule_found": false,
+     "stale_faq_in": true
+    },
+    "hotel-named-version": {
+     "evidence": [
+      "demo-policy-v3.0#pNone",
+      "demo-faq#FAQ-007",
+      "demo-policy-v3.0#AC-301",
+      "demo-policy-v3.0#GEN-101",
+      "demo-policy-v3.0#CC-601",
+      "demo-faq#FAQ-002",
+      "demo-policy-v3.0#TR-201",
+      "demo-policy-v3.0#ME-501"
+     ],
+     "flagged": [],
+     "kept_faqs": [
+      "FAQ-007",
+      "FAQ-002"
+     ],
+     "right_version_top": false,
+     "wrong_version_in": true,
+     "rule_found": false,
+     "stale_faq_in": true
+    },
+    "hotel-v3": {
+     "evidence": [
+      "demo-faq#FAQ-007",
+      "demo-policy-v3.0#AC-301",
+      "demo-faq#FAQ-002",
+      "demo-policy-v3.0#pNone",
+      "demo-policy-v3.0#GEN-101",
+      "demo-policy-v3.0#ME-501",
+      "demo-policy-v3.0#TR-201",
+      "demo-faq#FAQ-006"
+     ],
+     "flagged": [],
+     "kept_faqs": [
+      "FAQ-007",
+      "FAQ-002",
+      "FAQ-006"
+     ],
+     "right_version_top": true,
+     "wrong_version_in": false,
+     "rule_found": true,
+     "stale_faq_in": true
+    },
+    "taxi-v1": {
+     "evidence": [
+      "demo-faq#FAQ-001",
+      "demo-policy-v3.0#TR-201",
+      "demo-faq#FAQ-004",
+      "demo-policy-v3.0#pNone",
+      "demo-policy-v3.0#EX-401",
+      "demo-policy-v3.0#ME-501",
+      "demo-faq#FAQ-005",
+      "demo-policy-v3.0#AC-301"
+     ],
+     "flagged": [],
+     "kept_faqs": [
+      "FAQ-001",
+      "FAQ-004",
+      "FAQ-005"
+     ],
+     "right_version_top": false,
+     "wrong_version_in": true,
+     "rule_found": false,
+     "stale_faq_in": true
+    },
+    "taxi-v2": {
+     "evidence": [
+      "demo-policy-v3.0#TR-201",
+      "demo-faq#FAQ-001",
+      "demo-faq#FAQ-004",
+      "demo-policy-v3.0#pNone",
+      "demo-policy-v3.0#GEN-101",
+      "demo-policy-v3.0#CC-601",
+      "demo-policy-v3.0#ME-501",
+      "demo-policy-v3.0#EX-401"
+     ],
+     "flagged": [],
+     "kept_faqs": [
+      "FAQ-001",
+      "FAQ-004"
+     ],
+     "right_version_top": false,
+     "wrong_version_in": true,
+     "rule_found": false,
+     "stale_faq_in": true
+    },
+    "taxi-night-v3": {
+     "evidence": [
+      "demo-faq#FAQ-004",
+      "demo-policy-v3.0#TR-201",
+      "demo-faq#FAQ-001",
+      "demo-policy-v3.0#pNone",
+      "demo-policy-v3.0#ST-701",
+      "demo-policy-v3.0#ME-501",
+      "demo-faq#FAQ-006",
+      "demo-policy-v3.0#GEN-101"
+     ],
+     "flagged": [],
+     "kept_faqs": [
+      "FAQ-004",
+      "FAQ-001",
+      "FAQ-006"
+     ],
+     "right_version_top": true,
+     "wrong_version_in": false,
+     "rule_found": true,
+     "stale_faq_in": true
+    },
+    "taxi-safety-v3": {
+     "evidence": [
+      "demo-policy-v3.0#TR-201",
+      "demo-faq#FAQ-004",
+      "demo-policy-v3.0#pNone",
+      "demo-faq#FAQ-001",
+      "demo-policy-v3.0#ST-701",
+      "demo-policy-v3.0#EX-401",
+      "demo-policy-v3.0#AC-301",
+      "demo-policy-v3.0#GEN-101"
+     ],
+     "flagged": [],
+     "kept_faqs": [
+      "FAQ-004",
+      "FAQ-001"
+     ],
+     "right_version_top": true,
+     "wrong_version_in": false,
+     "rule_found": true,
+     "stale_faq_in": true
+    },
+    "receipt-lost-v2": {
+     "evidence": [
+      "demo-policy-v3.0#EX-401",
+      "demo-faq#FAQ-005",
+      "demo-policy-v3.0#CC-601",
+      "demo-policy-v3.0#pNone",
+      "demo-policy-v3.0#TR-201",
+      "demo-faq#FAQ-003",
+      "demo-policy-v3.0#ME-501",
+      "demo-policy-v3.0#GEN-101"
+     ],
+     "flagged": [],
+     "kept_faqs": [
+      "FAQ-005",
+      "FAQ-003"
+     ],
+     "right_version_top": false,
+     "wrong_version_in": true,
+     "rule_found": false,
+     "stale_faq_in": false
+    },
+    "receipt-lost-v3": {
+     "evidence": [
+      "demo-faq#FAQ-005",
+      "demo-policy-v3.0#EX-401",
+      "demo-policy-v3.0#TR-201",
+      "demo-policy-v3.0#pNone",
+      "demo-faq#FAQ-001",
+      "demo-faq#FAQ-003",
+      "demo-policy-v3.0#ST-701",
+      "demo-faq#FAQ-006"
+     ],
+     "flagged": [],
+     "kept_faqs": [
+      "FAQ-005",
+      "FAQ-001",
+      "FAQ-003",
+      "FAQ-006"
+     ],
+     "right_version_top": true,
+     "wrong_version_in": false,
+     "rule_found": true,
+     "stale_faq_in": true
+    },
+    "receipt-small-v1": {
+     "evidence": [
+      "demo-policy-v3.0#EX-401",
+      "demo-faq#FAQ-005",
+      "demo-policy-v3.0#TR-201",
+      "demo-policy-v3.0#pNone",
+      "demo-faq#FAQ-001",
+      "demo-faq#FAQ-003",
+      "demo-policy-v3.0#CC-601",
+      "demo-faq#FAQ-004"
+     ],
+     "flagged": [],
+     "kept_faqs": [
+      "FAQ-005",
+      "FAQ-001",
+      "FAQ-003",
+      "FAQ-004"
+     ],
+     "right_version_top": false,
+     "wrong_version_in": true,
+     "rule_found": false,
+     "stale_faq_in": true
+    },
+    "receipt-small-v2": {
+     "evidence": [
+      "demo-policy-v3.0#EX-401",
+      "demo-faq#FAQ-005",
+      "demo-policy-v3.0#TR-201",
+      "demo-faq#FAQ-001",
+      "demo-policy-v3.0#pNone",
+      "demo-faq#FAQ-003",
+      "demo-policy-v3.0#CC-601",
+      "demo-faq#FAQ-004"
+     ],
+     "flagged": [],
+     "kept_faqs": [
+      "FAQ-005",
+      "FAQ-001",
+      "FAQ-003",
+      "FAQ-004"
+     ],
+     "right_version_top": false,
+     "wrong_version_in": true,
+     "rule_found": false,
+     "stale_faq_in": true
+    },
+    "meals-v1": {
+     "evidence": [
+      "demo-policy-v3.0#ME-501",
+      "demo-policy-v3.0#pNone",
+      "demo-faq#FAQ-007",
+      "demo-faq#FAQ-004",
+      "demo-policy-v3.0#EX-401",
+      "demo-faq#FAQ-002",
+      "demo-faq#FAQ-005",
+      "demo-policy-v3.0#ST-701"
+     ],
+     "flagged": [],
+     "kept_faqs": [
+      "FAQ-007",
+      "FAQ-004",
+      "FAQ-002",
+      "FAQ-005"
+     ],
+     "right_version_top": false,
+     "wrong_version_in": true,
+     "rule_found": false,
+     "stale_faq_in": true
+    },
+    "meals-v3": {
+     "evidence": [
+      "demo-policy-v3.0#ME-501",
+      "demo-policy-v3.0#pNone",
+      "demo-faq#FAQ-007",
+      "demo-faq#FAQ-002",
+      "demo-policy-v3.0#ST-701",
+      "demo-faq#FAQ-006",
+      "demo-faq#FAQ-005",
+      "demo-faq#FAQ-004"
+     ],
+     "flagged": [],
+     "kept_faqs": [
+      "FAQ-007",
+      "FAQ-002",
+      "FAQ-006",
+      "FAQ-005",
+      "FAQ-004"
+     ],
+     "right_version_top": true,
+     "wrong_version_in": false,
+     "rule_found": true,
+     "stale_faq_in": true
+    },
+    "deadline-v1": {
+     "evidence": [
+      "demo-policy-v3.0#ST-701",
+      "demo-policy-v3.0#pNone",
+      "demo-faq#FAQ-006",
+      "demo-policy-v3.0#TR-201",
+      "demo-policy-v3.0#CC-601",
+      "demo-policy-v3.0#EX-401",
+      "demo-policy-v3.0#GEN-101",
+      "demo-faq#FAQ-003"
+     ],
+     "flagged": [],
+     "kept_faqs": [
+      "FAQ-006",
+      "FAQ-003"
+     ],
+     "right_version_top": false,
+     "wrong_version_in": true,
+     "rule_found": false,
+     "stale_faq_in": true
+    },
+    "deadline-v3": {
+     "evidence": [
+      "demo-policy-v3.0#ST-701",
+      "demo-faq#FAQ-006",
+      "demo-policy-v3.0#pNone",
+      "demo-policy-v3.0#TR-201",
+      "demo-policy-v3.0#CC-601",
+      "demo-policy-v3.0#GEN-101",
+      "demo-policy-v3.0#EX-401",
+      "demo-faq#FAQ-003"
+     ],
+     "flagged": [],
+     "kept_faqs": [
+      "FAQ-006",
+      "FAQ-003"
+     ],
+     "right_version_top": true,
+     "wrong_version_in": false,
+     "rule_found": true,
+     "stale_faq_in": false
+    },
+    "card-unchanged": {
+     "evidence": [
+      "demo-policy-v3.0#CC-601",
+      "demo-faq#FAQ-003",
+      "demo-faq#FAQ-004",
+      "demo-faq#FAQ-001",
+      "demo-policy-v3.0#TR-201",
+      "demo-policy-v3.0#EX-401",
+      "demo-policy-v3.0#GEN-101",
+      "demo-policy-v3.0#pNone"
+     ],
+     "flagged": [],
+     "kept_faqs": [
+      "FAQ-003",
+      "FAQ-004",
+      "FAQ-001"
+     ],
+     "right_version_top": true,
+     "wrong_version_in": false,
+     "rule_found": true,
+     "stale_faq_in": true
+    },
+    "scope-student": {
+     "evidence": [
+      "demo-policy-v3.0#GEN-101",
+      "demo-policy-v3.0#CC-601",
+      "demo-policy-v3.0#AC-301",
+      "demo-policy-v3.0#EX-401",
+      "demo-policy-v3.0#ST-701",
+      "demo-policy-v3.0#pNone",
+      "demo-faq#FAQ-003",
+      "demo-faq#FAQ-006"
+     ],
+     "flagged": [],
+     "kept_faqs": [
+      "FAQ-003",
+      "FAQ-006"
+     ],
+     "right_version_top": true,
+     "wrong_version_in": false,
+     "rule_found": true,
+     "stale_faq_in": false
+    },
+    "before-policy": {
+     "evidence": [
+      "demo-policy-v3.0#AC-301",
+      "demo-faq#FAQ-002",
+      "demo-faq#FAQ-007",
+      "demo-policy-v3.0#pNone",
+      "demo-policy-v3.0#ME-501",
+      "demo-policy-v3.0#EX-401",
+      "demo-policy-v3.0#TR-201",
+      "demo-policy-v3.0#CC-601"
+     ],
+     "flagged": [],
+     "kept_faqs": [
+      "FAQ-002",
+      "FAQ-007"
+     ],
+     "right_version_top": false,
+     "wrong_version_in": true,
+     "rule_found": false,
+     "stale_faq_in": false
+    },
+    "unsupported": {
+     "evidence": [
+      "demo-policy-v3.0#EX-401",
+      "demo-policy-v3.0#AC-301",
+      "demo-policy-v3.0#CC-601",
+      "demo-policy-v3.0#ME-501",
+      "demo-policy-v3.0#GEN-101",
+      "demo-policy-v3.0#pNone",
+      "demo-policy-v3.0#TR-201",
+      "demo-policy-v3.0#ST-701"
+     ],
+     "flagged": [],
+     "kept_faqs": [],
+     "stale_faq_in": false
+    },
+    "r-mileage-2025": {
+     "evidence": [
+      "au-travel-policy-2022#p3",
+      "007-26#Bilag 1",
+      "au-travel-policy-2022#p3",
+      "007-26#Bilag 1",
+      "au-travel-policy-2022#p4",
+      "au-travel-policy-2022#p5",
+      "au-travel-policy-2022#p3",
+      "au-travel-policy-2022#p1"
+     ],
+     "flagged": [],
+     "kept_faqs": [],
+     "right_version_top": false,
+     "wrong_version_in": true,
+     "rule_found": false,
+     "stale_faq_in": false
+    },
+    "r-mileage-2026": {
+     "evidence": [
+      "007-26#Bilag 1",
+      "au-travel-policy-2022#p3",
+      "au-travel-policy-2022#p3",
+      "007-26#Bilag 1",
+      "au-travel-policy-2022#p4",
+      "au-travel-policy-2022#p2",
+      "au-travel-policy-2022#p3",
+      "au-travel-policy-2022#p5"
+     ],
+     "flagged": [],
+     "kept_faqs": [],
+     "right_version_top": true,
+     "wrong_version_in": false,
+     "rule_found": true,
+     "stale_faq_in": false
+    },
+    "r-bicycle-2025": {
+     "evidence": [
+      "007-26#Bilag 1",
+      "007-26#Bilag 1",
+      "au-travel-policy-2022#p5",
+      "au-travel-policy-2022#p6",
+      "au-travel-policy-2022#p5",
+      "007-26#Bilag 3",
+      "007-26#Bilag 5",
+      "007-26#Bilag 2"
+     ],
+     "flagged": [],
+     "kept_faqs": [],
+     "right_version_top": false,
+     "wrong_version_in": true,
+     "rule_found": false,
+     "stale_faq_in": false
+    },
+    "r-bicycle-2026": {
+     "evidence": [
+      "007-26#Bilag 1",
+      "007-26#Bilag 1",
+      "007-26#Bilag 2",
+      "007-26#Bilag 5",
+      "007-26#p5",
+      "007-26#p1",
+      "007-26#Bilag 3",
+      "au-travel-policy-2022#p5"
+     ],
+     "flagged": [],
+     "kept_faqs": [],
+     "right_version_top": true,
+     "wrong_version_in": false,
+     "rule_found": true,
+     "stale_faq_in": false
+    },
+    "r-daily-dk-2025": {
+     "evidence": [
+      "007-26#Bilag 2",
+      "007-26#Bilag 3",
+      "007-26#Bilag 3",
+      "007-26#p3",
+      "007-26#Bilag 5",
+      "au-travel-policy-2022#p6",
+      "007-26#Bilag 6",
+      "007-26#Bilag 4"
+     ],
+     "flagged": [],
+     "kept_faqs": [],
+     "right_version_top": false,
+     "wrong_version_in": true,
+     "rule_found": false,
+     "stale_faq_in": false
+    },
+    "r-daily-dk-2026": {
+     "evidence": [
+      "007-26#Bilag 2",
+      "007-26#Bilag 3",
+      "007-26#Bilag 6",
+      "007-26#p3",
+      "007-26#Bilag 3",
+      "007-26#Bilag 5",
+      "au-travel-policy-2022#p6",
+      "007-26#Bilag 4"
+     ],
+     "flagged": [],
+     "kept_faqs": [],
+     "right_version_top": true,
+     "wrong_version_in": false,
+     "rule_found": true,
+     "stale_faq_in": false
+    },
+    "r-abroad-default-2026": {
+     "evidence": [
+      "007-26#Bilag 3",
+      "007-26#Bilag 3",
+      "007-26#Bilag 2",
+      "au-travel-policy-2022#p5",
+      "007-26#Bilag 1",
+      "au-travel-policy-2022#p6",
+      "007-26#p5",
+      "au-travel-policy-2022#p3"
+     ],
+     "flagged": [],
+     "kept_faqs": [],
+     "right_version_top": true,
+     "wrong_version_in": false,
+     "rule_found": true,
+     "stale_faq_in": false
+    },
+    "r-hotel-germany-2025": {
+     "evidence": [
+      "007-26#Bilag 5",
+      "007-26#Bilag 5",
+      "au-travel-policy-2022#p5",
+      "007-26#Bilag 6",
+      "au-travel-policy-2022#p2",
+      "au-travel-policy-2022#p6",
+      "au-travel-policy-2022#p6",
+      "au-travel-policy-2022#p5"
+     ],
+     "flagged": [],
+     "kept_faqs": [],
+     "right_version_top": false,
+     "wrong_version_in": true,
+     "rule_found": false,
+     "stale_faq_in": false
+    },
+    "r-hotel-germany-2026": {
+     "evidence": [
+      "007-26#Bilag 5",
+      "007-26#Bilag 5",
+      "au-travel-policy-2022#p5",
+      "007-26#p5",
+      "007-26#Bilag 6",
+      "007-26#p1",
+      "au-travel-policy-2022#p4",
+      "007-26#Bilag 2"
+     ],
+     "flagged": [],
+     "kept_faqs": [],
+     "right_version_top": true,
+     "wrong_version_in": false,
+     "rule_found": true,
+     "stale_faq_in": false
+    },
+    "r-hotel-italy-unchanged": {
+     "evidence": [
+      "007-26#Bilag 5",
+      "au-travel-policy-2022#p5",
+      "007-26#Bilag 5",
+      "au-travel-policy-2022#p4",
+      "007-26#Bilag 6",
+      "007-26#p5",
+      "007-26#p1",
+      "007-26#Bilag 3"
+     ],
+     "flagged": [],
+     "kept_faqs": [],
+     "right_version_top": true,
+     "wrong_version_in": false,
+     "rule_found": true,
+     "stale_faq_in": false
+    },
+    "r-hotel-uk-2026": {
+     "evidence": [
+      "au-travel-policy-2022#p5",
+      "007-26#Bilag 5",
+      "007-26#Bilag 5",
+      "007-26#Bilag 6",
+      "007-26#p5",
+      "007-26#Bilag 2",
+      "007-26#p1",
+      "au-travel-policy-2022#p6"
+     ],
+     "flagged": [],
+     "kept_faqs": [],
+     "right_version_top": true,
+     "wrong_version_in": false,
+     "rule_found": true,
+     "stale_faq_in": false
+    },
+    "r-hotel-dk-named-006": {
+     "evidence": [
+      "au-travel-policy-2022#p5",
+      "007-26#Bilag 5",
+      "007-26#Bilag 5",
+      "au-travel-policy-2022#p4",
+      "au-travel-policy-2022#p6",
+      "au-travel-policy-2022#p2",
+      "au-travel-policy-2022#p5",
+      "au-travel-policy-2022#p1"
+     ],
+     "flagged": [],
+     "kept_faqs": [],
+     "right_version_top": false,
+     "wrong_version_in": true,
+     "rule_found": false,
+     "stale_faq_in": false
+    },
+    "r-hotel-dk-named-007": {
+     "evidence": [
+      "au-travel-policy-2022#p5",
+      "007-26#Bilag 5",
+      "007-26#Bilag 5",
+      "au-travel-policy-2022#p6",
+      "au-travel-policy-2022#p4",
+      "au-travel-policy-2022#p2",
+      "au-travel-policy-2022#p5",
+      "007-26#p1"
+     ],
+     "flagged": [],
+     "kept_faqs": [],
+     "right_version_top": true,
+     "wrong_version_in": false,
+     "rule_found": true,
+     "stale_faq_in": false
+    },
+    "r-hotel-dk-as-published": {
+     "evidence": [
+      "au-travel-policy-2022#p5",
+      "007-26#Bilag 5",
+      "007-26#Bilag 3",
+      "007-26#Bilag 5",
+      "007-26#Bilag 2",
+      "au-travel-policy-2022#p4",
+      "007-26#p1",
+      "007-26#Bilag 6"
+     ],
+     "flagged": [],
+     "kept_faqs": [],
+     "right_version_top": false,
+     "wrong_version_in": true,
+     "rule_found": false,
+     "stale_faq_in": false
+    },
+    "r-hotel-dk-may-2026": {
+     "evidence": [
+      "007-26#Bilag 5",
+      "au-travel-policy-2022#p5",
+      "007-26#Bilag 5",
+      "au-travel-policy-2022#p4",
+      "007-26#Bilag 2",
+      "au-travel-policy-2022#p6",
+      "007-26#Bilag 6",
+      "au-travel-policy-2022#p2"
+     ],
+     "flagged": [],
+     "kept_faqs": [],
+     "right_version_top": true,
+     "wrong_version_in": false,
+     "rule_found": true,
+     "stale_faq_in": false
+    },
+    "r-au-train": {
+     "evidence": [
+      "au-travel-policy-2022#p1",
+      "au-travel-policy-2022#p2",
+      "au-travel-policy-2022#p2",
+      "au-travel-policy-2022#p4",
+      "au-travel-policy-2022#p4",
+      "au-travel-policy-2022#p2",
+      "au-travel-policy-2022#p1",
+      "au-travel-policy-2022#p5"
+     ],
+     "flagged": [],
+     "kept_faqs": [],
+     "stale_faq_in": false
+    }
+   }
+  },
+  "versioned": {
+   "summary": {
+    "all": {
+     "cases": 37,
+     "right_version_top": 1.0,
+     "wrong_version_in": 0.0,
+     "stale_faq_in": 0.459
+    },
+    "real": {
+     "cases": 16,
+     "right_version_top": 1.0,
+     "wrong_version_in": 0.0,
+     "stale_faq_in": 0.0
+    },
+    "synthetic": {
+     "cases": 21,
+     "right_version_top": 1.0,
+     "wrong_version_in": 0.0,
+     "stale_faq_in": 0.81
+    }
+   },
+   "cases": {
+    "hotel-v1": {
+     "evidence": [
+      "demo-faq#FAQ-007",
+      "demo-faq#FAQ-002",
+      "demo-policy-v1.0#AC-301",
+      "demo-policy-v1.0#GEN-101",
+      "demo-policy-v1.0#ME-501",
+      "demo-faq#FAQ-006",
+      "demo-policy-v1.0#EX-401",
+      "demo-policy-v1.0#ST-701"
+     ],
+     "flagged": [],
+     "kept_faqs": [
+      "FAQ-007",
+      "FAQ-002",
+      "FAQ-006"
+     ],
+     "right_version_top": true,
+     "wrong_version_in": false,
+     "rule_found": true,
+     "stale_faq_in": true
+    },
+    "hotel-correction": {
+     "evidence": [
+      "demo-faq#FAQ-007",
+      "demo-faq#FAQ-002",
+      "demo-policy-v2.1#AC-301",
+      "demo-policy-v2.1#pNone",
+      "demo-policy-v2.1#GEN-101",
+      "demo-policy-v2.1#ME-501",
+      "demo-faq#FAQ-006",
+      "demo-policy-v2.1#CC-601"
+     ],
+     "flagged": [],
+     "kept_faqs": [
+      "FAQ-007",
+      "FAQ-002",
+      "FAQ-006"
+     ],
+     "right_version_top": true,
+     "wrong_version_in": false,
+     "rule_found": true,
+     "stale_faq_in": true
+    },
+    "hotel-as-published": {
+     "evidence": [
+      "demo-faq#FAQ-007",
+      "demo-policy-v2.0#pNone",
+      "demo-policy-v2.0#AC-301",
+      "demo-faq#FAQ-002",
+      "demo-policy-v2.0#GEN-101",
+      "demo-policy-v2.0#ST-701",
+      "demo-policy-v2.0#CC-601",
+      "demo-policy-v2.0#TR-201"
+     ],
+     "flagged": [],
+     "kept_faqs": [
+      "FAQ-007",
+      "FAQ-002"
+     ],
+     "right_version_top": true,
+     "wrong_version_in": false,
+     "rule_found": true,
+     "stale_faq_in": true
+    },
+    "hotel-named-version": {
+     "evidence": [
+      "demo-policy-v2.0#AC-301",
+      "demo-policy-v2.0#pNone",
+      "demo-faq#FAQ-007",
+      "demo-policy-v2.0#CC-601",
+      "demo-policy-v2.0#EX-401",
+      "demo-policy-v2.0#ST-701",
+      "demo-faq#FAQ-002",
+      "demo-policy-v2.0#TR-201"
+     ],
+     "flagged": [],
+     "kept_faqs": [
+      "FAQ-007",
+      "FAQ-002"
+     ],
+     "right_version_top": true,
+     "wrong_version_in": false,
+     "rule_found": true,
+     "stale_faq_in": true
+    },
+    "hotel-v3": {
+     "evidence": [
+      "demo-faq#FAQ-007",
+      "demo-policy-v3.0#AC-301",
+      "demo-faq#FAQ-002",
+      "demo-policy-v3.0#pNone",
+      "demo-policy-v3.0#GEN-101",
+      "demo-policy-v3.0#ME-501",
+      "demo-policy-v3.0#TR-201",
+      "demo-faq#FAQ-006"
+     ],
+     "flagged": [],
+     "kept_faqs": [
+      "FAQ-007",
+      "FAQ-002",
+      "FAQ-006"
+     ],
+     "right_version_top": true,
+     "wrong_version_in": false,
+     "rule_found": true,
+     "stale_faq_in": true
+    },
+    "taxi-v1": {
+     "evidence": [
+      "demo-policy-v1.0#TR-201",
+      "demo-faq#FAQ-001",
+      "demo-faq#FAQ-004",
+      "demo-policy-v1.0#EX-401",
+      "demo-policy-v1.0#ME-501",
+      "demo-policy-v1.0#AC-301",
+      "demo-faq#FAQ-005",
+      "demo-policy-v1.0#GEN-101"
+     ],
+     "flagged": [],
+     "kept_faqs": [
+      "FAQ-001",
+      "FAQ-004",
+      "FAQ-005"
+     ],
+     "right_version_top": true,
+     "wrong_version_in": false,
+     "rule_found": true,
+     "stale_faq_in": true
+    },
+    "taxi-v2": {
+     "evidence": [
+      "demo-policy-v2.1#TR-201",
+      "demo-faq#FAQ-001",
+      "demo-faq#FAQ-004",
+      "demo-policy-v2.1#pNone",
+      "demo-policy-v2.1#CC-601",
+      "demo-policy-v2.1#GEN-101",
+      "demo-policy-v2.1#EX-401",
+      "demo-policy-v2.1#ME-501"
+     ],
+     "flagged": [],
+     "kept_faqs": [
+      "FAQ-001",
+      "FAQ-004"
+     ],
+     "right_version_top": true,
+     "wrong_version_in": false,
+     "rule_found": true,
+     "stale_faq_in": true
+    },
+    "taxi-night-v3": {
+     "evidence": [
+      "demo-faq#FAQ-004",
+      "demo-policy-v3.0#TR-201",
+      "demo-faq#FAQ-001",
+      "demo-policy-v3.0#pNone",
+      "demo-policy-v3.0#ST-701",
+      "demo-policy-v3.0#ME-501",
+      "demo-faq#FAQ-006",
+      "demo-policy-v3.0#GEN-101"
+     ],
+     "flagged": [],
+     "kept_faqs": [
+      "FAQ-004",
+      "FAQ-001",
+      "FAQ-006"
+     ],
+     "right_version_top": true,
+     "wrong_version_in": false,
+     "rule_found": true,
+     "stale_faq_in": true
+    },
+    "taxi-safety-v3": {
+     "evidence": [
+      "demo-policy-v3.0#TR-201",
+      "demo-faq#FAQ-004",
+      "demo-policy-v3.0#pNone",
+      "demo-faq#FAQ-001",
+      "demo-policy-v3.0#ST-701",
+      "demo-policy-v3.0#EX-401",
+      "demo-policy-v3.0#AC-301",
+      "demo-policy-v3.0#GEN-101"
+     ],
+     "flagged": [],
+     "kept_faqs": [
+      "FAQ-004",
+      "FAQ-001"
+     ],
+     "right_version_top": true,
+     "wrong_version_in": false,
+     "rule_found": true,
+     "stale_faq_in": true
+    },
+    "receipt-lost-v2": {
+     "evidence": [
+      "demo-faq#FAQ-005",
+      "demo-policy-v2.1#EX-401",
+      "demo-policy-v2.1#CC-601",
+      "demo-policy-v2.1#pNone",
+      "demo-policy-v2.1#TR-201",
+      "demo-faq#FAQ-003",
+      "demo-policy-v2.1#ME-501",
+      "demo-faq#FAQ-001"
+     ],
+     "flagged": [],
+     "kept_faqs": [
+      "FAQ-005",
+      "FAQ-003",
+      "FAQ-001"
+     ],
+     "right_version_top": true,
+     "wrong_version_in": false,
+     "rule_found": true,
+     "stale_faq_in": true
+    },
+    "receipt-lost-v3": {
+     "evidence": [
+      "demo-faq#FAQ-005",
+      "demo-policy-v3.0#EX-401",
+      "demo-policy-v3.0#TR-201",
+      "demo-policy-v3.0#pNone",
+      "demo-faq#FAQ-001",
+      "demo-faq#FAQ-003",
+      "demo-policy-v3.0#ST-701",
+      "demo-faq#FAQ-006"
+     ],
+     "flagged": [],
+     "kept_faqs": [
+      "FAQ-005",
+      "FAQ-001",
+      "FAQ-003",
+      "FAQ-006"
+     ],
+     "right_version_top": true,
+     "wrong_version_in": false,
+     "rule_found": true,
+     "stale_faq_in": true
+    },
+    "receipt-small-v1": {
+     "evidence": [
+      "demo-policy-v1.0#EX-401",
+      "demo-policy-v1.0#TR-201",
+      "demo-faq#FAQ-005",
+      "demo-faq#FAQ-001",
+      "demo-faq#FAQ-003",
+      "demo-policy-v1.0#CC-601",
+      "demo-faq#FAQ-004",
+      "demo-policy-v1.0#ME-501"
+     ],
+     "flagged": [],
+     "kept_faqs": [
+      "FAQ-005",
+      "FAQ-001",
+      "FAQ-003",
+      "FAQ-004"
+     ],
+     "right_version_top": true,
+     "wrong_version_in": false,
+     "rule_found": true,
+     "stale_faq_in": true
+    },
+    "receipt-small-v2": {
+     "evidence": [
+      "demo-faq#FAQ-005",
+      "demo-policy-v2.1#EX-401",
+      "demo-policy-v2.1#TR-201",
+      "demo-faq#FAQ-001",
+      "demo-policy-v2.1#pNone",
+      "demo-faq#FAQ-003",
+      "demo-policy-v2.1#CC-601",
+      "demo-faq#FAQ-004"
+     ],
+     "flagged": [],
+     "kept_faqs": [
+      "FAQ-005",
+      "FAQ-001",
+      "FAQ-003",
+      "FAQ-004"
+     ],
+     "right_version_top": true,
+     "wrong_version_in": false,
+     "rule_found": true,
+     "stale_faq_in": true
+    },
+    "meals-v1": {
+     "evidence": [
+      "demo-policy-v1.0#ME-501",
+      "demo-faq#FAQ-007",
+      "demo-faq#FAQ-004",
+      "demo-policy-v1.0#EX-401",
+      "demo-faq#FAQ-002",
+      "demo-faq#FAQ-005",
+      "demo-policy-v1.0#pNone",
+      "demo-policy-v1.0#AC-301"
+     ],
+     "flagged": [],
+     "kept_faqs": [
+      "FAQ-007",
+      "FAQ-004",
+      "FAQ-002",
+      "FAQ-005"
+     ],
+     "right_version_top": true,
+     "wrong_version_in": false,
+     "rule_found": true,
+     "stale_faq_in": true
+    },
+    "meals-v3": {
+     "evidence": [
+      "demo-policy-v3.0#ME-501",
+      "demo-policy-v3.0#pNone",
+      "demo-faq#FAQ-007",
+      "demo-faq#FAQ-002",
+      "demo-policy-v3.0#ST-701",
+      "demo-faq#FAQ-006",
+      "demo-faq#FAQ-005",
+      "demo-faq#FAQ-004"
+     ],
+     "flagged": [],
+     "kept_faqs": [
+      "FAQ-007",
+      "FAQ-002",
+      "FAQ-006",
+      "FAQ-005",
+      "FAQ-004"
+     ],
+     "right_version_top": true,
+     "wrong_version_in": false,
+     "rule_found": true,
+     "stale_faq_in": true
+    },
+    "deadline-v1": {
+     "evidence": [
+      "demo-policy-v2.1#ST-701",
+      "demo-faq#FAQ-006",
+      "demo-policy-v2.1#CC-601",
+      "demo-policy-v2.1#TR-201",
+      "demo-policy-v2.1#pNone",
+      "demo-policy-v2.1#GEN-101",
+      "demo-policy-v2.1#EX-401",
+      "demo-faq#FAQ-003"
+     ],
+     "flagged": [],
+     "kept_faqs": [
+      "FAQ-006",
+      "FAQ-003"
+     ],
+     "right_version_top": true,
+     "wrong_version_in": false,
+     "rule_found": true,
+     "stale_faq_in": true
+    },
+    "deadline-v3": {
+     "evidence": [
+      "demo-policy-v3.0#ST-701",
+      "demo-faq#FAQ-006",
+      "demo-policy-v3.0#pNone",
+      "demo-policy-v3.0#TR-201",
+      "demo-policy-v3.0#CC-601",
+      "demo-policy-v3.0#GEN-101",
+      "demo-policy-v3.0#EX-401",
+      "demo-faq#FAQ-003"
+     ],
+     "flagged": [],
+     "kept_faqs": [
+      "FAQ-006",
+      "FAQ-003"
+     ],
+     "right_version_top": true,
+     "wrong_version_in": false,
+     "rule_found": true,
+     "stale_faq_in": false
+    },
+    "card-unchanged": {
+     "evidence": [
+      "demo-policy-v3.0#CC-601",
+      "demo-faq#FAQ-003",
+      "demo-faq#FAQ-004",
+      "demo-faq#FAQ-001",
+      "demo-policy-v3.0#TR-201",
+      "demo-policy-v3.0#EX-401",
+      "demo-policy-v3.0#GEN-101",
+      "demo-policy-v3.0#pNone"
+     ],
+     "flagged": [],
+     "kept_faqs": [
+      "FAQ-003",
+      "FAQ-004",
+      "FAQ-001"
+     ],
+     "right_version_top": true,
+     "wrong_version_in": false,
+     "rule_found": true,
+     "stale_faq_in": true
+    },
+    "scope-student": {
+     "evidence": [
+      "demo-policy-v3.0#GEN-101",
+      "demo-policy-v3.0#CC-601",
+      "demo-policy-v3.0#AC-301",
+      "demo-policy-v3.0#EX-401",
+      "demo-policy-v3.0#ST-701",
+      "demo-policy-v3.0#pNone",
+      "demo-faq#FAQ-003",
+      "demo-faq#FAQ-006"
+     ],
+     "flagged": [],
+     "kept_faqs": [
+      "FAQ-003",
+      "FAQ-006"
+     ],
+     "right_version_top": true,
+     "wrong_version_in": false,
+     "rule_found": true,
+     "stale_faq_in": false
+    },
+    "before-policy": {
+     "evidence": [
+      "demo-faq#FAQ-002",
+      "demo-faq#FAQ-007",
+      "demo-faq#FAQ-006",
+      "demo-faq#FAQ-004",
+      "demo-faq#FAQ-001",
+      "demo-faq#FAQ-003",
+      "demo-faq#FAQ-005"
+     ],
+     "flagged": [],
+     "kept_faqs": [
+      "FAQ-002",
+      "FAQ-007",
+      "FAQ-006",
+      "FAQ-004",
+      "FAQ-001",
+      "FAQ-003",
+      "FAQ-005"
+     ],
+     "right_version_top": true,
+     "wrong_version_in": false,
+     "rule_found": false,
+     "stale_faq_in": false
+    },
+    "unsupported": {
+     "evidence": [
+      "demo-policy-v3.0#EX-401",
+      "demo-policy-v3.0#AC-301",
+      "demo-policy-v3.0#CC-601",
+      "demo-policy-v3.0#ME-501",
+      "demo-policy-v3.0#GEN-101",
+      "demo-policy-v3.0#pNone",
+      "demo-policy-v3.0#TR-201",
+      "demo-policy-v3.0#ST-701"
+     ],
+     "flagged": [],
+     "kept_faqs": [],
+     "stale_faq_in": false
+    },
+    "r-mileage-2025": {
+     "evidence": [
+      "056-25#Bilag 1",
+      "au-travel-policy-2022#p3",
+      "au-travel-policy-2022#p4",
+      "056-25#Bilag 1",
+      "au-travel-policy-2022#p3",
+      "056-25#p1",
+      "056-25#p5",
+      "056-25#Bilag 3"
+     ],
+     "flagged": [],
+     "kept_faqs": [],
+     "right_version_top": true,
+     "wrong_version_in": false,
+     "rule_found": true,
+     "stale_faq_in": false
+    },
+    "r-mileage-2026": {
+     "evidence": [
+      "007-26#Bilag 1",
+      "au-travel-policy-2022#p3",
+      "au-travel-policy-2022#p3",
+      "007-26#Bilag 1",
+      "au-travel-policy-2022#p4",
+      "au-travel-policy-2022#p2",
+      "au-travel-policy-2022#p3",
+      "au-travel-policy-2022#p5"
+     ],
+     "flagged": [],
+     "kept_faqs": [],
+     "right_version_top": true,
+     "wrong_version_in": false,
+     "rule_found": true,
+     "stale_faq_in": false
+    },
+    "r-bicycle-2025": {
+     "evidence": [
+      "056-25#Bilag 1",
+      "056-25#Bilag 1",
+      "056-25#p1",
+      "056-25#p5",
+      "056-25#Bilag 2",
+      "056-25#Bilag 3",
+      "056-25#Bilag 5",
+      "056-25#p3"
+     ],
+     "flagged": [],
+     "kept_faqs": [],
+     "right_version_top": true,
+     "wrong_version_in": false,
+     "rule_found": true,
+     "stale_faq_in": false
+    },
+    "r-bicycle-2026": {
+     "evidence": [
+      "007-26#Bilag 1",
+      "007-26#Bilag 1",
+      "007-26#Bilag 2",
+      "007-26#Bilag 5",
+      "007-26#p5",
+      "007-26#p1",
+      "007-26#Bilag 3",
+      "au-travel-policy-2022#p5"
+     ],
+     "flagged": [],
+     "kept_faqs": [],
+     "right_version_top": true,
+     "wrong_version_in": false,
+     "rule_found": true,
+     "stale_faq_in": false
+    },
+    "r-daily-dk-2025": {
+     "evidence": [
+      "056-25#Bilag 2",
+      "056-25#p3",
+      "056-25#Bilag 3",
+      "056-25#Bilag 6",
+      "056-25#Bilag 4",
+      "056-25#p5",
+      "056-25#Bilag 5",
+      "056-25#p1"
+     ],
+     "flagged": [],
+     "kept_faqs": [],
+     "right_version_top": true,
+     "wrong_version_in": false,
+     "rule_found": true,
+     "stale_faq_in": false
+    },
+    "r-daily-dk-2026": {
+     "evidence": [
+      "007-26#Bilag 2",
+      "007-26#Bilag 3",
+      "007-26#Bilag 6",
+      "007-26#p3",
+      "007-26#Bilag 3",
+      "007-26#Bilag 5",
+      "au-travel-policy-2022#p6",
+      "007-26#Bilag 4"
+     ],
+     "flagged": [],
+     "kept_faqs": [],
+     "right_version_top": true,
+     "wrong_version_in": false,
+     "rule_found": true,
+     "stale_faq_in": false
+    },
+    "r-abroad-default-2026": {
+     "evidence": [
+      "007-26#Bilag 3",
+      "007-26#Bilag 3",
+      "007-26#Bilag 2",
+      "au-travel-policy-2022#p5",
+      "007-26#Bilag 1",
+      "au-travel-policy-2022#p6",
+      "007-26#p5",
+      "au-travel-policy-2022#p3"
+     ],
+     "flagged": [],
+     "kept_faqs": [],
+     "right_version_top": true,
+     "wrong_version_in": false,
+     "rule_found": true,
+     "stale_faq_in": false
+    },
+    "r-hotel-germany-2025": {
+     "evidence": [
+      "056-25#Bilag 5",
+      "056-25#Bilag 5",
+      "au-travel-policy-2022#p5",
+      "056-25#Bilag 6",
+      "056-25#p1",
+      "056-25#Bilag 2",
+      "056-25#p5",
+      "056-25#Bilag 1"
+     ],
+     "flagged": [],
+     "kept_faqs": [],
+     "right_version_top": true,
+     "wrong_version_in": false,
+     "rule_found": true,
+     "stale_faq_in": false
+    },
+    "r-hotel-germany-2026": {
+     "evidence": [
+      "007-26#Bilag 5",
+      "007-26#Bilag 5",
+      "au-travel-policy-2022#p5",
+      "007-26#p5",
+      "007-26#Bilag 6",
+      "007-26#p1",
+      "au-travel-policy-2022#p4",
+      "007-26#Bilag 2"
+     ],
+     "flagged": [],
+     "kept_faqs": [],
+     "right_version_top": true,
+     "wrong_version_in": false,
+     "rule_found": true,
+     "stale_faq_in": false
+    },
+    "r-hotel-italy-unchanged": {
+     "evidence": [
+      "007-26#Bilag 5",
+      "au-travel-policy-2022#p5",
+      "007-26#Bilag 5",
+      "au-travel-policy-2022#p4",
+      "007-26#Bilag 6",
+      "007-26#p5",
+      "007-26#p1",
+      "007-26#Bilag 3"
+     ],
+     "flagged": [],
+     "kept_faqs": [],
+     "right_version_top": true,
+     "wrong_version_in": false,
+     "rule_found": true,
+     "stale_faq_in": false
+    },
+    "r-hotel-uk-2026": {
+     "evidence": [
+      "au-travel-policy-2022#p5",
+      "007-26#Bilag 5",
+      "007-26#Bilag 5",
+      "007-26#Bilag 6",
+      "007-26#p5",
+      "007-26#Bilag 2",
+      "007-26#p1",
+      "au-travel-policy-2022#p6"
+     ],
+     "flagged": [],
+     "kept_faqs": [],
+     "right_version_top": true,
+     "wrong_version_in": false,
+     "rule_found": true,
+     "stale_faq_in": false
+    },
+    "r-hotel-dk-named-006": {
+     "evidence": [
+      "au-travel-policy-2022#p5",
+      "006-26#Bilag 5",
+      "006-26#Bilag 5",
+      "au-travel-policy-2022#p4",
+      "au-travel-policy-2022#p6",
+      "006-26#p1",
+      "au-travel-policy-2022#p2",
+      "au-travel-policy-2022#p5"
+     ],
+     "flagged": [],
+     "kept_faqs": [],
+     "right_version_top": true,
+     "wrong_version_in": false,
+     "rule_found": true,
+     "stale_faq_in": false
+    },
+    "r-hotel-dk-named-007": {
+     "evidence": [
+      "au-travel-policy-2022#p5",
+      "007-26#Bilag 5",
+      "007-26#Bilag 5",
+      "au-travel-policy-2022#p6",
+      "au-travel-policy-2022#p4",
+      "au-travel-policy-2022#p2",
+      "au-travel-policy-2022#p5",
+      "007-26#p1"
+     ],
+     "flagged": [],
+     "kept_faqs": [],
+     "right_version_top": true,
+     "wrong_version_in": false,
+     "rule_found": true,
+     "stale_faq_in": false
+    },
+    "r-hotel-dk-as-published": {
+     "evidence": [
+      "au-travel-policy-2022#p5",
+      "006-26#Bilag 5",
+      "006-26#Bilag 3",
+      "au-travel-policy-2022#p4",
+      "006-26#Bilag 5",
+      "006-26#Bilag 2",
+      "006-26#p1",
+      "006-26#Bilag 6"
+     ],
+     "flagged": [],
+     "kept_faqs": [],
+     "right_version_top": true,
+     "wrong_version_in": false,
+     "rule_found": true,
+     "stale_faq_in": false
+    },
+    "r-hotel-dk-may-2026": {
+     "evidence": [
+      "007-26#Bilag 5",
+      "au-travel-policy-2022#p5",
+      "007-26#Bilag 5",
+      "au-travel-policy-2022#p4",
+      "007-26#Bilag 2",
+      "au-travel-policy-2022#p6",
+      "007-26#Bilag 6",
+      "au-travel-policy-2022#p2"
+     ],
+     "flagged": [],
+     "kept_faqs": [],
+     "right_version_top": true,
+     "wrong_version_in": false,
+     "rule_found": true,
+     "stale_faq_in": false
+    },
+    "r-au-train": {
+     "evidence": [
+      "au-travel-policy-2022#p1",
+      "au-travel-policy-2022#p2",
+      "au-travel-policy-2022#p2",
+      "au-travel-policy-2022#p4",
+      "au-travel-policy-2022#p4",
+      "au-travel-policy-2022#p2",
+      "au-travel-policy-2022#p1",
+      "au-travel-policy-2022#p5"
+     ],
+     "flagged": [],
+     "kept_faqs": [],
+     "stale_faq_in": false
+    }
+   }
+  },
+  "versioned_faq": {
+   "summary": {
+    "all": {
+     "cases": 37,
+     "right_version_top": 1.0,
+     "wrong_version_in": 0.0,
+     "stale_faq_in": 0.0
+    },
+    "real": {
+     "cases": 16,
+     "right_version_top": 1.0,
+     "wrong_version_in": 0.0,
+     "stale_faq_in": 0.0
+    },
+    "synthetic": {
+     "cases": 21,
+     "right_version_top": 1.0,
+     "wrong_version_in": 0.0,
+     "stale_faq_in": 0.0
+    },
+    "faq_check_precision": 1.0,
+    "faq_check_recall": 1.0
+   },
+   "cases": {
+    "hotel-v1": {
+     "evidence": [
+      "demo-faq#FAQ-002",
+      "demo-policy-v1.0#AC-301",
+      "demo-policy-v1.0#GEN-101",
+      "demo-policy-v1.0#ME-501",
+      "demo-policy-v1.0#EX-401",
+      "demo-policy-v1.0#ST-701",
+      "demo-policy-v1.0#TR-201",
+      "demo-policy-v1.0#CC-601"
+     ],
+     "flagged": [
+      "FAQ-007",
+      "FAQ-006",
+      "FAQ-004"
+     ],
+     "kept_faqs": [
+      "FAQ-002"
+     ],
+     "right_version_top": true,
+     "wrong_version_in": false,
+     "rule_found": true,
+     "stale_faq_in": false
+    },
+    "hotel-correction": {
+     "evidence": [
+      "demo-policy-v2.1#AC-301",
+      "demo-policy-v2.1#pNone",
+      "demo-policy-v2.1#GEN-101",
+      "demo-policy-v2.1#ME-501",
+      "demo-policy-v2.1#CC-601",
+      "demo-policy-v2.1#TR-201",
+      "demo-policy-v2.1#ST-701",
+      "demo-policy-v2.1#EX-401"
+     ],
+     "flagged": [
+      "FAQ-007",
+      "FAQ-002",
+      "FAQ-006"
+     ],
+     "kept_faqs": [],
+     "right_version_top": true,
+     "wrong_version_in": false,
+     "rule_found": true,
+     "stale_faq_in": false
+    },
+    "hotel-as-published": {
+     "evidence": [
+      "demo-faq#FAQ-007",
+      "demo-policy-v2.0#pNone",
+      "demo-policy-v2.0#AC-301",
+      "demo-policy-v2.0#GEN-101",
+      "demo-policy-v2.0#ST-701",
+      "demo-policy-v2.0#CC-601",
+      "demo-policy-v2.0#TR-201",
+      "demo-policy-v2.0#EX-401"
+     ],
+     "flagged": [
+      "FAQ-002",
+      "FAQ-006"
+     ],
+     "kept_faqs": [
+      "FAQ-007"
+     ],
+     "right_version_top": true,
+     "wrong_version_in": false,
+     "rule_found": true,
+     "stale_faq_in": false
+    },
+    "hotel-named-version": {
+     "evidence": [
+      "demo-policy-v2.0#AC-301",
+      "demo-policy-v2.0#pNone",
+      "demo-faq#FAQ-007",
+      "demo-policy-v2.0#CC-601",
+      "demo-policy-v2.0#EX-401",
+      "demo-policy-v2.0#ST-701",
+      "demo-policy-v2.0#TR-201",
+      "demo-policy-v2.0#ME-501"
+     ],
+     "flagged": [
+      "FAQ-002",
+      "FAQ-006"
+     ],
+     "kept_faqs": [
+      "FAQ-007"
+     ],
+     "right_version_top": true,
+     "wrong_version_in": false,
+     "rule_found": true,
+     "stale_faq_in": false
+    },
+    "hotel-v3": {
+     "evidence": [
+      "demo-policy-v3.0#AC-301",
+      "demo-policy-v3.0#pNone",
+      "demo-policy-v3.0#GEN-101",
+      "demo-policy-v3.0#ME-501",
+      "demo-policy-v3.0#TR-201",
+      "demo-faq#FAQ-006",
+      "demo-policy-v3.0#ST-701",
+      "demo-policy-v3.0#CC-601"
+     ],
+     "flagged": [
+      "FAQ-007",
+      "FAQ-002",
+      "FAQ-004"
+     ],
+     "kept_faqs": [
+      "FAQ-006"
+     ],
+     "right_version_top": true,
+     "wrong_version_in": false,
+     "rule_found": true,
+     "stale_faq_in": false
+    },
+    "taxi-v1": {
+     "evidence": [
+      "demo-policy-v1.0#TR-201",
+      "demo-faq#FAQ-001",
+      "demo-policy-v1.0#EX-401",
+      "demo-policy-v1.0#ME-501",
+      "demo-policy-v1.0#AC-301",
+      "demo-policy-v1.0#GEN-101",
+      "demo-policy-v1.0#CC-601",
+      "demo-policy-v1.0#pNone"
+     ],
+     "flagged": [
+      "FAQ-004",
+      "FAQ-005"
+     ],
+     "kept_faqs": [
+      "FAQ-001"
+     ],
+     "right_version_top": true,
+     "wrong_version_in": false,
+     "rule_found": true,
+     "stale_faq_in": false
+    },
+    "taxi-v2": {
+     "evidence": [
+      "demo-policy-v2.1#TR-201",
+      "demo-faq#FAQ-004",
+      "demo-policy-v2.1#pNone",
+      "demo-policy-v2.1#CC-601",
+      "demo-policy-v2.1#GEN-101",
+      "demo-policy-v2.1#EX-401",
+      "demo-policy-v2.1#ME-501",
+      "demo-faq#FAQ-003"
+     ],
+     "flagged": [
+      "FAQ-001",
+      "FAQ-006"
+     ],
+     "kept_faqs": [
+      "FAQ-004",
+      "FAQ-003"
+     ],
+     "right_version_top": true,
+     "wrong_version_in": false,
+     "rule_found": true,
+     "stale_faq_in": false
+    },
+    "taxi-night-v3": {
+     "evidence": [
+      "demo-policy-v3.0#TR-201",
+      "demo-policy-v3.0#pNone",
+      "demo-policy-v3.0#ST-701",
+      "demo-policy-v3.0#ME-501",
+      "demo-faq#FAQ-006",
+      "demo-policy-v3.0#GEN-101",
+      "demo-policy-v3.0#AC-301",
+      "demo-policy-v3.0#EX-401"
+     ],
+     "flagged": [
+      "FAQ-004",
+      "FAQ-001",
+      "FAQ-005"
+     ],
+     "kept_faqs": [
+      "FAQ-006"
+     ],
+     "right_version_top": true,
+     "wrong_version_in": false,
+     "rule_found": true,
+     "stale_faq_in": false
+    },
+    "taxi-safety-v3": {
+     "evidence": [
+      "demo-policy-v3.0#TR-201",
+      "demo-policy-v3.0#pNone",
+      "demo-policy-v3.0#ST-701",
+      "demo-policy-v3.0#EX-401",
+      "demo-policy-v3.0#AC-301",
+      "demo-policy-v3.0#GEN-101",
+      "demo-faq#FAQ-006",
+      "demo-policy-v3.0#ME-501"
+     ],
+     "flagged": [
+      "FAQ-004",
+      "FAQ-001",
+      "FAQ-005",
+      "FAQ-007"
+     ],
+     "kept_faqs": [
+      "FAQ-006"
+     ],
+     "right_version_top": true,
+     "wrong_version_in": false,
+     "rule_found": true,
+     "stale_faq_in": false
+    },
+    "receipt-lost-v2": {
+     "evidence": [
+      "demo-faq#FAQ-005",
+      "demo-policy-v2.1#EX-401",
+      "demo-policy-v2.1#CC-601",
+      "demo-policy-v2.1#pNone",
+      "demo-policy-v2.1#TR-201",
+      "demo-faq#FAQ-003",
+      "demo-policy-v2.1#ME-501",
+      "demo-policy-v2.1#GEN-101"
+     ],
+     "flagged": [
+      "FAQ-001",
+      "FAQ-006"
+     ],
+     "kept_faqs": [
+      "FAQ-005",
+      "FAQ-003"
+     ],
+     "right_version_top": true,
+     "wrong_version_in": false,
+     "rule_found": true,
+     "stale_faq_in": false
+    },
+    "receipt-lost-v3": {
+     "evidence": [
+      "demo-policy-v3.0#EX-401",
+      "demo-policy-v3.0#TR-201",
+      "demo-policy-v3.0#pNone",
+      "demo-faq#FAQ-003",
+      "demo-policy-v3.0#ST-701",
+      "demo-faq#FAQ-006",
+      "demo-policy-v3.0#CC-601",
+      "demo-policy-v3.0#ME-501"
+     ],
+     "flagged": [
+      "FAQ-005",
+      "FAQ-001",
+      "FAQ-004"
+     ],
+     "kept_faqs": [
+      "FAQ-003",
+      "FAQ-006"
+     ],
+     "right_version_top": true,
+     "wrong_version_in": false,
+     "rule_found": true,
+     "stale_faq_in": false
+    },
+    "receipt-small-v1": {
+     "evidence": [
+      "demo-policy-v1.0#EX-401",
+      "demo-policy-v1.0#TR-201",
+      "demo-faq#FAQ-001",
+      "demo-faq#FAQ-003",
+      "demo-policy-v1.0#CC-601",
+      "demo-policy-v1.0#ME-501",
+      "demo-policy-v1.0#GEN-101",
+      "demo-policy-v1.0#ST-701"
+     ],
+     "flagged": [
+      "FAQ-005",
+      "FAQ-004",
+      "FAQ-006"
+     ],
+     "kept_faqs": [
+      "FAQ-001",
+      "FAQ-003"
+     ],
+     "right_version_top": true,
+     "wrong_version_in": false,
+     "rule_found": true,
+     "stale_faq_in": false
+    },
+    "receipt-small-v2": {
+     "evidence": [
+      "demo-faq#FAQ-005",
+      "demo-policy-v2.1#EX-401",
+      "demo-policy-v2.1#TR-201",
+      "demo-policy-v2.1#pNone",
+      "demo-faq#FAQ-003",
+      "demo-policy-v2.1#CC-601",
+      "demo-faq#FAQ-004",
+      "demo-policy-v2.1#ME-501"
+     ],
+     "flagged": [
+      "FAQ-001",
+      "FAQ-006"
+     ],
+     "kept_faqs": [
+      "FAQ-005",
+      "FAQ-003",
+      "FAQ-004"
+     ],
+     "right_version_top": true,
+     "wrong_version_in": false,
+     "rule_found": true,
+     "stale_faq_in": false
+    },
+    "meals-v1": {
+     "evidence": [
+      "demo-policy-v1.0#ME-501",
+      "demo-policy-v1.0#EX-401",
+      "demo-faq#FAQ-002",
+      "demo-policy-v1.0#pNone",
+      "demo-policy-v1.0#AC-301",
+      "demo-policy-v1.0#ST-701",
+      "demo-faq#FAQ-001",
+      "demo-policy-v1.0#GEN-101"
+     ],
+     "flagged": [
+      "FAQ-007",
+      "FAQ-004",
+      "FAQ-005",
+      "FAQ-006"
+     ],
+     "kept_faqs": [
+      "FAQ-002",
+      "FAQ-001"
+     ],
+     "right_version_top": true,
+     "wrong_version_in": false,
+     "rule_found": true,
+     "stale_faq_in": false
+    },
+    "meals-v3": {
+     "evidence": [
+      "demo-policy-v3.0#ME-501",
+      "demo-policy-v3.0#pNone",
+      "demo-policy-v3.0#ST-701",
+      "demo-faq#FAQ-006",
+      "demo-policy-v3.0#AC-301",
+      "demo-policy-v3.0#TR-201",
+      "demo-policy-v3.0#EX-401"
+     ],
+     "flagged": [
+      "FAQ-007",
+      "FAQ-002",
+      "FAQ-005",
+      "FAQ-004",
+      "FAQ-001"
+     ],
+     "kept_faqs": [
+      "FAQ-006"
+     ],
+     "right_version_top": true,
+     "wrong_version_in": false,
+     "rule_found": true,
+     "stale_faq_in": false
+    },
+    "deadline-v1": {
+     "evidence": [
+      "demo-policy-v2.1#ST-701",
+      "demo-policy-v2.1#CC-601",
+      "demo-policy-v2.1#TR-201",
+      "demo-policy-v2.1#pNone",
+      "demo-policy-v2.1#GEN-101",
+      "demo-policy-v2.1#EX-401",
+      "demo-faq#FAQ-003",
+      "demo-policy-v2.1#ME-501"
+     ],
+     "flagged": [
+      "FAQ-006",
+      "FAQ-001"
+     ],
+     "kept_faqs": [
+      "FAQ-003"
+     ],
+     "right_version_top": true,
+     "wrong_version_in": false,
+     "rule_found": true,
+     "stale_faq_in": false
+    },
+    "deadline-v3": {
+     "evidence": [
+      "demo-policy-v3.0#ST-701",
+      "demo-faq#FAQ-006",
+      "demo-policy-v3.0#pNone",
+      "demo-policy-v3.0#TR-201",
+      "demo-policy-v3.0#CC-601",
+      "demo-policy-v3.0#GEN-101",
+      "demo-policy-v3.0#EX-401",
+      "demo-faq#FAQ-003"
+     ],
+     "flagged": [
+      "FAQ-001",
+      "FAQ-004"
+     ],
+     "kept_faqs": [
+      "FAQ-006",
+      "FAQ-003"
+     ],
+     "right_version_top": true,
+     "wrong_version_in": false,
+     "rule_found": true,
+     "stale_faq_in": false
+    },
+    "card-unchanged": {
+     "evidence": [
+      "demo-policy-v3.0#CC-601",
+      "demo-faq#FAQ-003",
+      "demo-policy-v3.0#TR-201",
+      "demo-policy-v3.0#EX-401",
+      "demo-policy-v3.0#GEN-101",
+      "demo-policy-v3.0#pNone",
+      "demo-policy-v3.0#AC-301",
+      "demo-policy-v3.0#ST-701"
+     ],
+     "flagged": [
+      "FAQ-004",
+      "FAQ-001",
+      "FAQ-005"
+     ],
+     "kept_faqs": [
+      "FAQ-003"
+     ],
+     "right_version_top": true,
+     "wrong_version_in": false,
+     "rule_found": true,
+     "stale_faq_in": false
+    },
+    "scope-student": {
+     "evidence": [
+      "demo-policy-v3.0#GEN-101",
+      "demo-policy-v3.0#CC-601",
+      "demo-policy-v3.0#AC-301",
+      "demo-policy-v3.0#EX-401",
+      "demo-policy-v3.0#ST-701",
+      "demo-policy-v3.0#pNone",
+      "demo-faq#FAQ-003",
+      "demo-faq#FAQ-006"
+     ],
+     "flagged": [
+      "FAQ-007",
+      "FAQ-001"
+     ],
+     "kept_faqs": [
+      "FAQ-003",
+      "FAQ-006"
+     ],
+     "right_version_top": true,
+     "wrong_version_in": false,
+     "rule_found": true,
+     "stale_faq_in": false
+    },
+    "before-policy": {
+     "evidence": [
+      "demo-faq#FAQ-002",
+      "demo-faq#FAQ-007",
+      "demo-faq#FAQ-006",
+      "demo-faq#FAQ-004",
+      "demo-faq#FAQ-001",
+      "demo-faq#FAQ-003",
+      "demo-faq#FAQ-005"
+     ],
+     "flagged": [],
+     "kept_faqs": [
+      "FAQ-002",
+      "FAQ-007",
+      "FAQ-006",
+      "FAQ-004",
+      "FAQ-001",
+      "FAQ-003",
+      "FAQ-005"
+     ],
+     "right_version_top": true,
+     "wrong_version_in": false,
+     "rule_found": false,
+     "stale_faq_in": false
+    },
+    "unsupported": {
+     "evidence": [
+      "demo-policy-v3.0#EX-401",
+      "demo-policy-v3.0#AC-301",
+      "demo-policy-v3.0#CC-601",
+      "demo-policy-v3.0#ME-501",
+      "demo-policy-v3.0#GEN-101",
+      "demo-policy-v3.0#pNone",
+      "demo-policy-v3.0#TR-201",
+      "demo-policy-v3.0#ST-701"
+     ],
+     "flagged": [
+      "FAQ-005",
+      "FAQ-002"
+     ],
+     "kept_faqs": [],
+     "stale_faq_in": false
+    },
+    "r-mileage-2025": {
+     "evidence": [
+      "056-25#Bilag 1",
+      "au-travel-policy-2022#p3",
+      "au-travel-policy-2022#p4",
+      "056-25#Bilag 1",
+      "au-travel-policy-2022#p3",
+      "056-25#p1",
+      "056-25#p5",
+      "056-25#Bilag 3"
+     ],
+     "flagged": [],
+     "kept_faqs": [],
+     "right_version_top": true,
+     "wrong_version_in": false,
+     "rule_found": true,
+     "stale_faq_in": false
+    },
+    "r-mileage-2026": {
+     "evidence": [
+      "007-26#Bilag 1",
+      "au-travel-policy-2022#p3",
+      "au-travel-policy-2022#p3",
+      "007-26#Bilag 1",
+      "au-travel-policy-2022#p4",
+      "au-travel-policy-2022#p2",
+      "au-travel-policy-2022#p3",
+      "au-travel-policy-2022#p5"
+     ],
+     "flagged": [],
+     "kept_faqs": [],
+     "right_version_top": true,
+     "wrong_version_in": false,
+     "rule_found": true,
+     "stale_faq_in": false
+    },
+    "r-bicycle-2025": {
+     "evidence": [
+      "056-25#Bilag 1",
+      "056-25#Bilag 1",
+      "056-25#p1",
+      "056-25#p5",
+      "056-25#Bilag 2",
+      "056-25#Bilag 3",
+      "056-25#Bilag 5",
+      "056-25#p3"
+     ],
+     "flagged": [],
+     "kept_faqs": [],
+     "right_version_top": true,
+     "wrong_version_in": false,
+     "rule_found": true,
+     "stale_faq_in": false
+    },
+    "r-bicycle-2026": {
+     "evidence": [
+      "007-26#Bilag 1",
+      "007-26#Bilag 1",
+      "007-26#Bilag 2",
+      "007-26#Bilag 5",
+      "007-26#p5",
+      "007-26#p1",
+      "007-26#Bilag 3",
+      "au-travel-policy-2022#p5"
+     ],
+     "flagged": [],
+     "kept_faqs": [],
+     "right_version_top": true,
+     "wrong_version_in": false,
+     "rule_found": true,
+     "stale_faq_in": false
+    },
+    "r-daily-dk-2025": {
+     "evidence": [
+      "056-25#Bilag 2",
+      "056-25#p3",
+      "056-25#Bilag 3",
+      "056-25#Bilag 6",
+      "056-25#Bilag 4",
+      "056-25#p5",
+      "056-25#Bilag 5",
+      "056-25#p1"
+     ],
+     "flagged": [],
+     "kept_faqs": [],
+     "right_version_top": true,
+     "wrong_version_in": false,
+     "rule_found": true,
+     "stale_faq_in": false
+    },
+    "r-daily-dk-2026": {
+     "evidence": [
+      "007-26#Bilag 2",
+      "007-26#Bilag 3",
+      "007-26#Bilag 6",
+      "007-26#p3",
+      "007-26#Bilag 3",
+      "007-26#Bilag 5",
+      "au-travel-policy-2022#p6",
+      "007-26#Bilag 4"
+     ],
+     "flagged": [],
+     "kept_faqs": [],
+     "right_version_top": true,
+     "wrong_version_in": false,
+     "rule_found": true,
+     "stale_faq_in": false
+    },
+    "r-abroad-default-2026": {
+     "evidence": [
+      "007-26#Bilag 3",
+      "007-26#Bilag 3",
+      "007-26#Bilag 2",
+      "au-travel-policy-2022#p5",
+      "007-26#Bilag 1",
+      "au-travel-policy-2022#p6",
+      "007-26#p5",
+      "au-travel-policy-2022#p3"
+     ],
+     "flagged": [],
+     "kept_faqs": [],
+     "right_version_top": true,
+     "wrong_version_in": false,
+     "rule_found": true,
+     "stale_faq_in": false
+    },
+    "r-hotel-germany-2025": {
+     "evidence": [
+      "056-25#Bilag 5",
+      "056-25#Bilag 5",
+      "au-travel-policy-2022#p5",
+      "056-25#Bilag 6",
+      "056-25#p1",
+      "056-25#Bilag 2",
+      "056-25#p5",
+      "056-25#Bilag 1"
+     ],
+     "flagged": [],
+     "kept_faqs": [],
+     "right_version_top": true,
+     "wrong_version_in": false,
+     "rule_found": true,
+     "stale_faq_in": false
+    },
+    "r-hotel-germany-2026": {
+     "evidence": [
+      "007-26#Bilag 5",
+      "007-26#Bilag 5",
+      "au-travel-policy-2022#p5",
+      "007-26#p5",
+      "007-26#Bilag 6",
+      "007-26#p1",
+      "au-travel-policy-2022#p4",
+      "007-26#Bilag 2"
+     ],
+     "flagged": [],
+     "kept_faqs": [],
+     "right_version_top": true,
+     "wrong_version_in": false,
+     "rule_found": true,
+     "stale_faq_in": false
+    },
+    "r-hotel-italy-unchanged": {
+     "evidence": [
+      "007-26#Bilag 5",
+      "au-travel-policy-2022#p5",
+      "007-26#Bilag 5",
+      "au-travel-policy-2022#p4",
+      "007-26#Bilag 6",
+      "007-26#p5",
+      "007-26#p1",
+      "007-26#Bilag 3"
+     ],
+     "flagged": [],
+     "kept_faqs": [],
+     "right_version_top": true,
+     "wrong_version_in": false,
+     "rule_found": true,
+     "stale_faq_in": false
+    },
+    "r-hotel-uk-2026": {
+     "evidence": [
+      "au-travel-policy-2022#p5",
+      "007-26#Bilag 5",
+      "007-26#Bilag 5",
+      "007-26#Bilag 6",
+      "007-26#p5",
+      "007-26#Bilag 2",
+      "007-26#p1",
+      "au-travel-policy-2022#p6"
+     ],
+     "flagged": [],
+     "kept_faqs": [],
+     "right_version_top": true,
+     "wrong_version_in": false,
+     "rule_found": true,
+     "stale_faq_in": false
+    },
+    "r-hotel-dk-named-006": {
+     "evidence": [
+      "au-travel-policy-2022#p5",
+      "006-26#Bilag 5",
+      "006-26#Bilag 5",
+      "au-travel-policy-2022#p4",
+      "au-travel-policy-2022#p6",
+      "006-26#p1",
+      "au-travel-policy-2022#p2",
+      "au-travel-policy-2022#p5"
+     ],
+     "flagged": [],
+     "kept_faqs": [],
+     "right_version_top": true,
+     "wrong_version_in": false,
+     "rule_found": true,
+     "stale_faq_in": false
+    },
+    "r-hotel-dk-named-007": {
+     "evidence": [
+      "au-travel-policy-2022#p5",
+      "007-26#Bilag 5",
+      "007-26#Bilag 5",
+      "au-travel-policy-2022#p6",
+      "au-travel-policy-2022#p4",
+      "au-travel-policy-2022#p2",
+      "au-travel-policy-2022#p5",
+      "007-26#p1"
+     ],
+     "flagged": [],
+     "kept_faqs": [],
+     "right_version_top": true,
+     "wrong_version_in": false,
+     "rule_found": true,
+     "stale_faq_in": false
+    },
+    "r-hotel-dk-as-published": {
+     "evidence": [
+      "au-travel-policy-2022#p5",
+      "006-26#Bilag 5",
+      "006-26#Bilag 3",
+      "au-travel-policy-2022#p4",
+      "006-26#Bilag 5",
+      "006-26#Bilag 2",
+      "006-26#p1",
+      "006-26#Bilag 6"
+     ],
+     "flagged": [],
+     "kept_faqs": [],
+     "right_version_top": true,
+     "wrong_version_in": false,
+     "rule_found": true,
+     "stale_faq_in": false
+    },
+    "r-hotel-dk-may-2026": {
+     "evidence": [
+      "007-26#Bilag 5",
+      "au-travel-policy-2022#p5",
+      "007-26#Bilag 5",
+      "au-travel-policy-2022#p4",
+      "007-26#Bilag 2",
+      "au-travel-policy-2022#p6",
+      "007-26#Bilag 6",
+      "au-travel-policy-2022#p2"
+     ],
+     "flagged": [],
+     "kept_faqs": [],
+     "right_version_top": true,
+     "wrong_version_in": false,
+     "rule_found": true,
+     "stale_faq_in": false
+    },
+    "r-au-train": {
+     "evidence": [
+      "au-travel-policy-2022#p1",
+      "au-travel-policy-2022#p2",
+      "au-travel-policy-2022#p2",
+      "au-travel-policy-2022#p4",
+      "au-travel-policy-2022#p4",
+      "au-travel-policy-2022#p2",
+      "au-travel-policy-2022#p1",
+      "au-travel-policy-2022#p5"
+     ],
+     "flagged": [],
+     "kept_faqs": [],
+     "stale_faq_in": false
+    }
+   }
+  }
+ }
+}

@@ -3,6 +3,8 @@ import { NextResponse } from 'next/server'
 import { draftEmail } from '@/lib/python'
 import { getSession, idOf } from '@/lib/session'
 
+export const maxDuration = 300
+
 const STATUS = { accept: 'accepted', reject: 'rejected', ask_details: 'info_requested' } as const
 
 /**

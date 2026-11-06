@@ -12,6 +12,7 @@ export default async function SupervisorLayout({ children }: { children: React.R
         links={[
           { href: '/supervisor', label: 'Requests' },
           { href: '/supervisor/profile', label: 'My profile' },
+          { href: '/supervisor/finance', label: 'Travel & expenses' },
         ]}
       />
       {children}

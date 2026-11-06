@@ -13,8 +13,10 @@ export default async function DashboardLayout({ children }: { children: React.Re
           { href: '/dashboard', label: 'Overview' },
           { href: '/dashboard/supervisors', label: 'Supervisors' },
           { href: '/dashboard/requests', label: 'Requests' },
+          { href: '/dashboard/coordinator', label: 'Coordinator' },
           { href: '/dashboard/demand', label: 'Demand' },
           { href: '/dashboard/changes', label: 'Changes' },
+          { href: '/dashboard/finance', label: 'Finance' },
           { href: '/dashboard/data', label: 'Import/export' },
           { href: '/admin', label: 'Admin panel' },
         ]}

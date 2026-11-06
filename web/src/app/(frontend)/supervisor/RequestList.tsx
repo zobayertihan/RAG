@@ -11,6 +11,8 @@ export type RequestItem = {
   summary: string
   createdAt: string
   answeredAt: string | null
+  viaCoordinator: boolean
+  coordinatorNote: string
   student: { name: string; email: string; programme: string; skills: string[] }
 }
 type Action = 'accept' | 'reject' | 'ask_details'
@@ -110,6 +112,9 @@ function RequestRow({ r, onStatus }: { r: RequestItem; onStatus: (s: RequestItem
         </div>
         <span className={st.cls}>{st.label}</span>
       </div>
+      {r.viaCoordinator && (
+        <p className="summary coord"><span>Suggested by the thesis coordinator</span>{r.coordinatorNote || 'The student asked the coordinator to find a supervisor, and the coordinator chose you.'}</p>
+      )}
       {r.summary && <p className="summary"><span>Summary</span>{r.summary}</p>}
       <p className="req-note">{r.note}</p>
       {!!r.student.skills.length && <ul className="chips">{r.student.skills.map((s) => <li key={s}>{s}</li>)}</ul>}

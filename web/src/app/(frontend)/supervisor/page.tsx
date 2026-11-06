@@ -14,7 +14,8 @@ export default async function SupervisorPage() {
   const items: RequestItem[] = docs.map((r) => {
     const st = typeof r.student === 'object' ? r.student : null
     return {
-      id: r.id, type: r.type, status: r.status, note: r.note, summary: r.noteSummary || '',
+      id: r.id, type: r.type === 'discuss' ? 'discuss' : 'supervision', status: r.status, note: r.note, summary: r.noteSummary || '',
+      viaCoordinator: !!r.viaCoordinator, coordinatorNote: r.coordinatorNote || '',
       createdAt: r.createdAt, answeredAt: r.answeredAt || null,
       student: { name: st?.name ?? 'Student', email: st?.email ?? '', programme: st?.programme ?? '',
         skills: (st?.skills || []).map((s: { value: string }) => s.value) },

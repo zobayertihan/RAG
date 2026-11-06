@@ -17,6 +17,11 @@ SERVICE_KEY is not set:
   POST /api/summarize-note            two-sentence summary of a student's note
   POST /api/draft-email               accept / agree-to-meet / reject / ask-for-details email draft
   POST /api/query-gaps                group weak student queries into topics, with today's best match
+  GET  /api/finance/overview          finance documents and FAQ review status (admin page)
+  POST /api/search-supervisors        supervisors matching a text, search only (coordinator suggestions)
+
+/api/chat with mode "finance" answers travel and expense questions with version-aware search
+(Phase 8, see finance.py). It accepts "system" (plain, newest, versioned, versioned_faq) and "role".
 """
 
 import hmac
@@ -33,8 +38,9 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
+import finance
 from rag import (BASE_DIR, COLLECTIONS, FINANCE_DIR, GROUP_SIMILARITY, Index, answer, draft_email,
-                 group_queries, history_text, record_to_chunk, save_supervisor_record, search_query, summarize_note)
+                 group_queries, history_text, missing_finance_files, record_to_chunk, save_supervisor_record, search_query, summarize_note)
 
 app = FastAPI(title="Supervisor Finder")
 
@@ -48,6 +54,8 @@ if origins:
 indexes = {name: Index(name) for name in COLLECTIONS if Index.exists(name)}
 if "supervisors" not in indexes:
     raise RuntimeError("No supervisor index. Run: python ingest.py")
+# Finance (Phase 8): version-aware search over the documents listed in data/finance/sources.json
+fin = finance.FinanceIndex(indexes["finance"]) if "finance" in indexes else None
 
 SEARCH_ONLY_SHOWN = 3  # sources shown when there's no LLM to pick them
 
@@ -108,6 +116,10 @@ class Chat(BaseModel):
     messages: list[Message] = Field(min_length=1, max_length=40)
     mode: Literal["supervisors", "finance"] = "supervisors"  # old clients send no mode: supervisors
     filters: Filters | None = None
+    # finance only: which of the four systems to use (the thesis compares them), and who asks
+    system: Literal["plain", "newest", "versioned", "versioned_faq"] = finance.DEFAULT_SYSTEM
+    role: Literal["student", "staff"] = "staff"
+    corpus: Literal["real", "synthetic"] = "real"  # real documents, or the synthetic demonstration policy
 
 
 @app.post("/api/chat")
@@ -116,9 +128,7 @@ def chat(body: Chat):
     if messages[-1]["role"] != "user":
         raise HTTPException(400, "Last message must be from the user")
     if body.mode == "finance":
-        # Phase 8 adds the finance prompt and answer format. Until then this mode is closed,
-        # even if finance PDFs are indexed, so it can't answer with the supervisor prompt.
-        raise HTTPException(400, "The finance helper is not available yet.")
+        return finance_chat(messages, body)
     index = indexes[body.mode]
     filters = body.filters.model_dump() if body.filters else None
     try:
@@ -157,12 +167,50 @@ def chat(body: Chat):
     mentions = [{"name": hits[int(m[1:]) - 1]["text"].split(";")[0].split("\n")[0].removeprefix("Name: ")[:60], **sources[m]}
                 for m in data["mentions"] if m not in carded]
     return {"mode": body.mode, "message": data["message"], "supervisors": cards, "mentions": mentions,
+            "others": others(hits, sources, carded | set(data["mentions"])),
             "query": query, "best_score": best_score, "history": history_text(data), "matches": []}
+
+
+def others(hits: list[dict], sources: dict, used: set[str]) -> list[dict]:
+    """The other search matches, in order, so the web app can offer alternatives when a supervisor is full."""
+    return [{"source": f"S{i}", "name": _name(h), **sources[f"S{i}"]}
+            for i, h in enumerate(hits, 1) if f"S{i}" not in used]
+
+
+def finance_chat(messages: list[dict], body: Chat) -> dict:
+    if fin is None:
+        raise HTTPException(503, "The finance documents are not indexed yet. Run: python ingest.py")
+    try:
+        ctx = finance.understand(messages)
+        found = fin.search(finance.search_text(ctx), ctx, system=body.system, corpus=body.corpus)
+        print(f"\nFINANCE [{body.system}, {body.corpus}] {finance.search_text(ctx)}  context: "
+              f"{ {k: v for k, v in ctx.items() if k not in ('query', 'query_da') and v} }")
+        for i, h in enumerate(found["hits"], 1):
+            print(f"  S{i} {h['score']:.3f}  {(h.get('doc') or {}).get('id')}  {h['text'][:70]!r}")
+        for s in found["stale"]:
+            print(f"  OUTDATED {s['stale']['faq_id']}: {s['stale']['reason']}")
+        data = finance.answer(messages, found, ctx, "student" if body.role == "student" else "staff member", body.corpus)
+    except Exception as e:
+        raise HTTPException(502, f"LLM call failed: {e}")
+    hits = found["hits"]
+    citations = [finance.citation(i, h) for i, h in enumerate(hits, 1)]
+    best = hits[0]["score"] if hits else None
+    if data is None:  # no LLM key: show what search found
+        return {"mode": "finance", "system": body.system, "corpus": body.corpus, "message": None, "status": "search_only",
+                "citations": citations[:3], "stale_faqs": [finance.stale_entry(s) for s in found["stale"]],
+                "context": ctx, "query": finance.search_text(ctx), "best_score": best, "next_step": None,
+                "history": "(showed search results)"}
+    used = [c for c in citations if c["id"] in data["citations"]]
+    return {"mode": "finance", "system": body.system, "corpus": body.corpus, "message": data["answer"], "status": data["status"],
+            "citations": used, "stale_faqs": [finance.stale_entry(s) for s in found["stale"]],
+            "context": ctx, "query": finance.search_text(ctx), "best_score": best,
+            "next_step": data.get("next_step"), "history": data["answer"]}
 
 
 @app.get("/api/health")
 def health():
-    return {"collections": {name: len(ix.chunks) for name, ix in indexes.items()}, "sync": sync_status}
+    return {"collections": {name: len(ix.chunks) for name, ix in indexes.items()}, "sync": sync_status,
+            "finance_missing_files": missing_finance_files()}
 
 
 # ---------------------------------------------------------------- service endpoints
@@ -248,6 +296,19 @@ def email(body: EmailRequest):
         raise HTTPException(502, f"LLM call failed: {e}")
 
 
+class SupervisorSearch(BaseModel):
+    query: str = Field(min_length=1, max_length=4000)
+    k: int = Field(default=8, ge=1, le=20)
+
+
+@app.post("/api/search-supervisors", dependencies=[Depends(require_service_key)])
+def search_supervisors(body: SupervisorSearch):
+    """Supervisors that fit a text (e.g. a student's note), search only, no LLM. For the coordinator's suggestions."""
+    hits = indexes["supervisors"].search(body.query, k=body.k)
+    return {"matches": [{"record_id": h.get("record_id"), "name": _name(h), "position": h.get("position", ""),
+                         "research_group": h.get("research_group", ""), "score": h["score"]} for h in hits]}
+
+
 class GapRequest(BaseModel):
     queries: list[str] = Field(max_length=2000)
     similarity: float = Field(default=GROUP_SIMILARITY, ge=0.5, le=0.99)
@@ -274,6 +335,12 @@ def query_gaps(body: GapRequest):
                        "best_now": hits[0]["score"] if hits else None,
                        "best_now_name": _name(hits[0]) if hits else None})
     return {"similarity": body.similarity, "groups": groups}
+
+
+@app.get("/api/finance/overview", dependencies=[Depends(require_service_key)])
+def finance_overview():
+    """Finance documents with their status today, and FAQ entries with their review status (admin page)."""
+    return finance.overview(fin)
 
 
 # ---------------------------------------------------------------- files and page

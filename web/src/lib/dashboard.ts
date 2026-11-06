@@ -31,7 +31,8 @@ export type SupRow = {
 export type ReqRow = {
   id: number; status: string; type: string; createdAt: string; answeredAt: string | null; waitingDays: number
   stuck: boolean; synthetic: boolean
-  student: { id: number; name: string; programme: string }; supervisor: { id: number; name: string }
+  student: { id: number; name: string; programme: string }; supervisor: { id: number | null; name: string }
+  viaCoordinator: boolean
 }
 
 export async function loadDashboard(payload: Payload, user: SessionUser) {
@@ -49,14 +50,16 @@ export async function loadDashboard(payload: Payload, user: SessionUser) {
     const waitingDays = daysSince(r.createdAt) ?? 0
     return {
       id: r.id, status: r.status, type: r.type, createdAt: r.createdAt, answeredAt: r.answeredAt || null, waitingDays,
-      stuck: isOpen(r.status) && waitingDays > STUCK_DAYS, synthetic: !!r.synthetic,
+      stuck: isOpen(r.status) && waitingDays > STUCK_DAYS, synthetic: !!r.synthetic, viaCoordinator: !!r.viaCoordinator,
       student: { id: rel(r.student), name: s?.name ?? 'Unknown student', programme: s?.programme ?? '' },
-      supervisor: { id: rel(r.supervisor), name: supName.get(rel(r.supervisor)) ?? 'Unknown supervisor' },
+      supervisor: r.supervisor
+        ? { id: rel(r.supervisor), name: supName.get(rel(r.supervisor)) ?? 'Unknown supervisor' }
+        : { id: null, name: 'Coordinator (not assigned yet)' },
     }
   })
 
   const bySup = new Map<number, ReqRow[]>()
-  for (const r of requests) bySup.set(r.supervisor.id, [...(bySup.get(r.supervisor.id) || []), r])
+  for (const r of requests) if (r.supervisor.id !== null) bySup.set(r.supervisor.id, [...(bySup.get(r.supervisor.id) || []), r])
 
   const supervisors: SupRow[] = sups.docs.map((s) => {
     const rs = bySup.get(s.id) || []

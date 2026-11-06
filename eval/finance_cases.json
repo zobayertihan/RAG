@@ -1,0 +1,846 @@
+{
+ "version": 3,
+ "_about": "Finance test questions. 'context' is the gold reading of the question (dates, named document), so search can be tested apart from how well the LLM reads dates. 'accept' = the document versions a correct answer may come from. 'expect' / 'forbid' = text the answer must / must not contain (numbers are compared without thousands separators). 'version' = the policy version the question is about; 'faq_gold' says, per version, which FAQ entries are outdated (written by hand from the policy text, not computed by the code under test). Synthetic cases were checked against the synthetic policy (scripts/make_synthetic_policy.py). Real-document cases are added only after a person has checked the answer in the document itself, ideally confirmed by the finance office.",
+ "cases": [
+  {
+   "id": "hotel-v1",
+   "scenario": "historical rule",
+   "synthetic": true,
+   "question": "What was the maximum hotel amount per night in Denmark for a stay on 10 June 2025?",
+   "context": {
+    "event_date": "2025-06-10"
+   },
+   "rule_id": "AC-301",
+   "accept": [
+    "demo-policy-v1.0"
+   ],
+   "expect": [
+    "1200"
+   ],
+   "forbid": [
+    "1350",
+    "1300"
+   ],
+   "version": "v1.0"
+  },
+  {
+   "id": "hotel-correction",
+   "scenario": "correction applies back in time",
+   "synthetic": true,
+   "question": "What is the hotel limit in Denmark for a night on 20 September 2025?",
+   "context": {
+    "event_date": "2025-09-20"
+   },
+   "rule_id": "AC-301",
+   "accept": [
+    "demo-policy-v2.1"
+   ],
+   "expect": [
+    "1300"
+   ],
+   "forbid": [
+    "1200"
+   ],
+   "version": "v2.1"
+  },
+  {
+   "id": "hotel-as-published",
+   "scenario": "what a document said on a date",
+   "synthetic": true,
+   "question": "What hotel limit did the policy state on 10 September 2025, before the correction?",
+   "context": {
+    "as_published_on": "2025-09-10"
+   },
+   "rule_id": "AC-301",
+   "accept": [
+    "demo-policy-v2.0"
+   ],
+   "expect": [
+    "1350"
+   ],
+   "forbid": [
+    "1200"
+   ],
+   "version": "v2.0"
+  },
+  {
+   "id": "hotel-named-version",
+   "scenario": "named document",
+   "synthetic": true,
+   "question": "What hotel limit is printed in version v2.0 of the policy?",
+   "context": {
+    "doc_ref": "v2.0"
+   },
+   "rule_id": "AC-301",
+   "accept": [
+    "demo-policy-v2.0"
+   ],
+   "expect": [
+    "1350"
+   ],
+   "forbid": [
+    "1200"
+   ],
+   "version": "v2.0"
+  },
+  {
+   "id": "hotel-v3",
+   "scenario": "current rule",
+   "synthetic": true,
+   "question": "I am booking a hotel in Denmark for 20 March 2026. What is the limit?",
+   "context": {
+    "event_date": "2026-03-20"
+   },
+   "rule_id": "AC-301",
+   "accept": [
+    "demo-policy-v3.0"
+   ],
+   "expect": [
+    "1350",
+    "approval"
+   ],
+   "forbid": [
+    "1200",
+    "1300"
+   ],
+   "version": "v3.0"
+  },
+  {
+   "id": "taxi-v1",
+   "scenario": "historical rule",
+   "synthetic": true,
+   "question": "On a trip in May 2025 I took a taxi although a bus was available. Is it reimbursed?",
+   "context": {
+    "event_date": "2025-05-15"
+   },
+   "rule_id": "TR-201",
+   "accept": [
+    "demo-policy-v1.0"
+   ],
+   "expect": [
+    "receipt"
+   ],
+   "forbid": [
+    "prior approval"
+   ],
+   "version": "v1.0"
+  },
+  {
+   "id": "taxi-v2",
+   "scenario": "changed permission",
+   "synthetic": true,
+   "question": "In October 2025 I want to take a taxi to a meeting although a train goes there. Can I?",
+   "context": {
+    "event_date": "2025-10-10"
+   },
+   "rule_id": "TR-201",
+   "accept": [
+    "demo-policy-v2.1"
+   ],
+   "expect": [
+    "approval"
+   ],
+   "forbid": [],
+   "version": "v2.1"
+  },
+  {
+   "id": "taxi-night-v3",
+   "scenario": "stale FAQ, new exception",
+   "synthetic": true,
+   "question": "My train arrives at 00:30 on 5 April 2026 and buses still run. Can I take a taxi home without approval?",
+   "context": {
+    "event_date": "2026-04-05"
+   },
+   "rule_id": "TR-201",
+   "accept": [
+    "demo-policy-v3.0"
+   ],
+   "expect": [
+    "23:00"
+   ],
+   "forbid": [],
+   "version": "v3.0"
+  },
+  {
+   "id": "taxi-safety-v3",
+   "scenario": "exception",
+   "synthetic": true,
+   "question": "In May 2026 public transport at my destination is unsafe. Do I need approval for a taxi?",
+   "context": {
+    "event_date": "2026-05-12"
+   },
+   "rule_id": "TR-201",
+   "accept": [
+    "demo-policy-v3.0"
+   ],
+   "expect": [
+    "unsafe"
+   ],
+   "forbid": [],
+   "version": "v3.0"
+  },
+  {
+   "id": "receipt-lost-v2",
+   "scenario": "historical rule, FAQ still valid",
+   "synthetic": true,
+   "question": "I lost a receipt from a trip in December 2025. Can it still be reimbursed?",
+   "context": {
+    "event_date": "2025-12-03"
+   },
+   "rule_id": "EX-401",
+   "accept": [
+    "demo-policy-v2.1"
+   ],
+   "expect": [],
+   "forbid": [
+    "declaration"
+   ],
+   "version": "v2.1"
+  },
+  {
+   "id": "receipt-lost-v3",
+   "scenario": "stale FAQ",
+   "synthetic": true,
+   "question": "I lost a receipt from a trip in May 2026. Can it still be reimbursed?",
+   "context": {
+    "event_date": "2026-05-20"
+   },
+   "rule_id": "EX-401",
+   "accept": [
+    "demo-policy-v3.0"
+   ],
+   "expect": [
+    "declaration"
+   ],
+   "forbid": [],
+   "version": "v3.0"
+  },
+  {
+   "id": "receipt-small-v1",
+   "scenario": "historical rule",
+   "synthetic": true,
+   "question": "In July 2025 I paid DKK 80 for parking and have no receipt. Can I claim it?",
+   "context": {
+    "event_date": "2025-07-08"
+   },
+   "rule_id": "EX-401",
+   "accept": [
+    "demo-policy-v1.0"
+   ],
+   "expect": [
+    "100"
+   ],
+   "forbid": [],
+   "version": "v1.0"
+  },
+  {
+   "id": "receipt-small-v2",
+   "scenario": "changed rule",
+   "synthetic": true,
+   "question": "In October 2025 I paid DKK 80 for parking and have no receipt. Can I claim it?",
+   "context": {
+    "event_date": "2025-10-08"
+   },
+   "rule_id": "EX-401",
+   "accept": [
+    "demo-policy-v2.1"
+   ],
+   "expect": [],
+   "forbid": [],
+   "version": "v2.1"
+  },
+  {
+   "id": "meals-v1",
+   "scenario": "historical amount",
+   "synthetic": true,
+   "question": "What was the daily meal cap without daily allowance in May 2025?",
+   "context": {
+    "event_date": "2025-05-20"
+   },
+   "rule_id": "ME-501",
+   "accept": [
+    "demo-policy-v1.0"
+   ],
+   "expect": [
+    "300"
+   ],
+   "forbid": [
+    "350"
+   ],
+   "version": "v1.0"
+  },
+  {
+   "id": "meals-v3",
+   "scenario": "current amount with condition",
+   "synthetic": true,
+   "question": "At a conference in June 2026 lunch was free. What meal cap applies that day?",
+   "context": {
+    "event_date": "2026-06-10"
+   },
+   "rule_id": "ME-501",
+   "accept": [
+    "demo-policy-v3.0"
+   ],
+   "expect": [
+    "350",
+    "30"
+   ],
+   "forbid": [
+    "300 per day"
+   ],
+   "version": "v3.0"
+  },
+  {
+   "id": "deadline-v1",
+   "scenario": "unchanged across two versions",
+   "synthetic": true,
+   "question": "My trip ended on 20 November 2025. How long do I have to submit the settlement?",
+   "context": {
+    "event_date": "2025-11-20"
+   },
+   "rule_id": "ST-701",
+   "accept": [
+    "demo-policy-v2.1",
+    "demo-policy-v2.0",
+    "demo-policy-v1.0"
+   ],
+   "expect": [
+    "60"
+   ],
+   "forbid": [
+    "30 days"
+   ],
+   "version": "v2.1"
+  },
+  {
+   "id": "deadline-v3",
+   "scenario": "changed rule, valid FAQ",
+   "synthetic": true,
+   "question": "My trip ended on 15 April 2026. How long do I have to submit the settlement?",
+   "context": {
+    "event_date": "2026-04-15"
+   },
+   "rule_id": "ST-701",
+   "accept": [
+    "demo-policy-v3.0"
+   ],
+   "expect": [
+    "30"
+   ],
+   "forbid": [
+    "60"
+   ],
+   "version": "v3.0"
+  },
+  {
+   "id": "card-unchanged",
+   "scenario": "unchanged rule, valid old FAQ",
+   "synthetic": true,
+   "question": "In April 2026 I paid for a train ticket with my own card. Is that reimbursed?",
+   "context": {
+    "event_date": "2026-04-02"
+   },
+   "rule_id": "CC-601",
+   "accept": [
+    "demo-policy-v1.0",
+    "demo-policy-v2.0",
+    "demo-policy-v2.1",
+    "demo-policy-v3.0"
+   ],
+   "expect": [],
+   "forbid": [],
+   "version": "v3.0"
+  },
+  {
+   "id": "scope-student",
+   "scenario": "unchanged rule",
+   "synthetic": true,
+   "question": "Does the travel policy cover a student travelling for their department in 2026?",
+   "context": {
+    "event_date": "2026-05-01"
+   },
+   "rule_id": "GEN-101",
+   "accept": [
+    "demo-policy-v1.0",
+    "demo-policy-v2.0",
+    "demo-policy-v2.1",
+    "demo-policy-v3.0"
+   ],
+   "expect": [
+    "approval"
+   ],
+   "forbid": [],
+   "version": "v3.0"
+  },
+  {
+   "id": "before-policy",
+   "scenario": "no version applies",
+   "synthetic": true,
+   "question": "What was the hotel limit for a night on 15 January 2025?",
+   "context": {
+    "event_date": "2025-01-15"
+   },
+   "rule_id": "AC-301",
+   "accept": [],
+   "expect": [],
+   "forbid": [
+    "1200",
+    "1350",
+    "1300"
+   ],
+   "version": "none"
+  },
+  {
+   "id": "unsupported",
+   "scenario": "not in the documents",
+   "synthetic": true,
+   "question": "Can I claim a gym membership as a travel expense in 2026?",
+   "context": {
+    "event_date": "2026-05-01"
+   },
+   "rule_id": null,
+   "accept": [],
+   "expect": [],
+   "forbid": [],
+   "version": "v3.0"
+  },
+  {
+   "id": "r-mileage-2025",
+   "scenario": "real yearly change",
+   "synthetic": false,
+   "question": "What was the ordinary mileage rate for an approved trip in my own car in May 2025?",
+   "context": {
+    "event_date": "2025-05-15"
+   },
+   "annex": "Bilag 1",
+   "accept": [
+    "056-25"
+   ],
+   "expect": [
+    [
+     "2.23",
+     "2,23"
+    ]
+   ],
+   "forbid": [
+    "2.28",
+    "2,28"
+   ],
+   "version": "none",
+   "source": "Values read from the circular PDFs on 30 Oct 2026 (Medst. 056-25, 119-25, 002-26, 006-26, 007-26)."
+  },
+  {
+   "id": "r-mileage-2026",
+   "scenario": "real yearly change",
+   "synthetic": false,
+   "question": "What is the ordinary mileage rate for an approved trip in my own car in May 2026?",
+   "context": {
+    "event_date": "2026-05-15"
+   },
+   "annex": "Bilag 1",
+   "accept": [
+    "119-25",
+    "002-26",
+    "006-26",
+    "007-26"
+   ],
+   "expect": [
+    [
+     "2.28",
+     "2,28"
+    ]
+   ],
+   "forbid": [
+    "2.23",
+    "2,23"
+   ],
+   "version": "none",
+   "source": "Values read from the circular PDFs on 30 Oct 2026 (Medst. 056-25, 119-25, 002-26, 006-26, 007-26)."
+  },
+  {
+   "id": "r-bicycle-2025",
+   "scenario": "small real change",
+   "synthetic": false,
+   "question": "What was the mileage allowance for using a bicycle on an official trip in 2025?",
+   "context": {
+    "event_date": "2025-07-01",
+    "date_precision": "year"
+   },
+   "annex": "Bilag 1",
+   "accept": [
+    "056-25"
+   ],
+   "expect": [
+    [
+     "0.63",
+     "0,63"
+    ]
+   ],
+   "forbid": [
+    "0.64",
+    "0,64"
+   ],
+   "version": "none",
+   "source": "Values read from the circular PDFs on 30 Oct 2026 (Medst. 056-25, 119-25, 002-26, 006-26, 007-26)."
+  },
+  {
+   "id": "r-bicycle-2026",
+   "scenario": "small real change",
+   "synthetic": false,
+   "question": "What is the mileage allowance for using a bicycle on an official trip in 2026?",
+   "context": {
+    "event_date": "2026-07-01",
+    "date_precision": "year"
+   },
+   "annex": "Bilag 1",
+   "accept": [
+    "119-25",
+    "002-26",
+    "006-26",
+    "007-26"
+   ],
+   "expect": [
+    [
+     "0.64",
+     "0,64"
+    ]
+   ],
+   "forbid": [
+    "0.63",
+    "0,63"
+   ],
+   "version": "none",
+   "source": "Values read from the circular PDFs on 30 Oct 2026 (Medst. 056-25, 119-25, 002-26, 006-26, 007-26)."
+  },
+  {
+   "id": "r-daily-dk-2025",
+   "scenario": "real yearly change",
+   "synthetic": false,
+   "question": "What was the full daily allowance for a trip in Denmark in September 2025?",
+   "context": {
+    "event_date": "2025-09-10"
+   },
+   "annex": "Bilag 2",
+   "accept": [
+    "056-25"
+   ],
+   "expect": [
+    "513"
+   ],
+   "forbid": [
+    "538"
+   ],
+   "version": "none",
+   "source": "Values read from the circular PDFs on 30 Oct 2026 (Medst. 056-25, 119-25, 002-26, 006-26, 007-26)."
+  },
+  {
+   "id": "r-daily-dk-2026",
+   "scenario": "real yearly change",
+   "synthetic": false,
+   "question": "What is the full daily allowance for a trip in Denmark in September 2026?",
+   "context": {
+    "event_date": "2026-09-10"
+   },
+   "annex": "Bilag 2",
+   "accept": [
+    "119-25",
+    "002-26",
+    "006-26",
+    "007-26"
+   ],
+   "expect": [
+    "538"
+   ],
+   "forbid": [
+    "513"
+   ],
+   "version": "none",
+   "source": "Values read from the circular PDFs on 30 Oct 2026 (Medst. 056-25, 119-25, 002-26, 006-26, 007-26)."
+  },
+  {
+   "id": "r-abroad-default-2026",
+   "scenario": "real yearly change",
+   "synthetic": false,
+   "question": "What is the standard daily allowance abroad in 2026 for a country without its own rate?",
+   "context": {
+    "event_date": "2026-07-01",
+    "date_precision": "year"
+   },
+   "annex": "Bilag 3",
+   "accept": [
+    "119-25",
+    "002-26",
+    "006-26",
+    "007-26"
+   ],
+   "expect": [
+    "625"
+   ],
+   "forbid": [
+    "597"
+   ],
+   "version": "none",
+   "source": "Values read from the circular PDFs on 30 Oct 2026 (Medst. 056-25, 119-25, 002-26, 006-26, 007-26)."
+  },
+  {
+   "id": "r-hotel-germany-2025",
+   "scenario": "amount went down",
+   "synthetic": false,
+   "question": "What was the hotel allowance per night in Germany in June 2025?",
+   "context": {
+    "event_date": "2025-06-15"
+   },
+   "annex": "Bilag 5",
+   "accept": [
+    "056-25"
+   ],
+   "expect": [
+    "165"
+   ],
+   "forbid": [
+    "157"
+   ],
+   "version": "none",
+   "source": "Values read from the circular PDFs on 30 Oct 2026 (Medst. 056-25, 119-25, 002-26, 006-26, 007-26)."
+  },
+  {
+   "id": "r-hotel-germany-2026",
+   "scenario": "amount went down",
+   "synthetic": false,
+   "question": "What is the hotel allowance per night in Germany in June 2026?",
+   "context": {
+    "event_date": "2026-06-15"
+   },
+   "annex": "Bilag 5",
+   "accept": [
+    "119-25",
+    "002-26",
+    "006-26",
+    "007-26"
+   ],
+   "expect": [
+    "157"
+   ],
+   "forbid": [
+    "165"
+   ],
+   "version": "none",
+   "source": "Values read from the circular PDFs on 30 Oct 2026 (Medst. 056-25, 119-25, 002-26, 006-26, 007-26)."
+  },
+  {
+   "id": "r-hotel-italy-unchanged",
+   "scenario": "unchanged across years",
+   "synthetic": false,
+   "question": "What is the hotel allowance per night in Italy in 2026, and did it change from 2025?",
+   "context": {
+    "event_date": "2026-07-01",
+    "date_precision": "year"
+   },
+   "annex": "Bilag 5",
+   "accept": [
+    "119-25",
+    "002-26",
+    "006-26",
+    "007-26"
+   ],
+   "expect": [
+    "166"
+   ],
+   "forbid": [],
+   "version": "none",
+   "source": "Values read from the circular PDFs on 30 Oct 2026 (Medst. 056-25, 119-25, 002-26, 006-26, 007-26)."
+  },
+  {
+   "id": "r-hotel-uk-2026",
+   "scenario": "real yearly change",
+   "synthetic": false,
+   "question": "What is the hotel allowance per night in the United Kingdom in 2026?",
+   "context": {
+    "event_date": "2026-07-01",
+    "date_precision": "year"
+   },
+   "annex": "Bilag 5",
+   "accept": [
+    "119-25",
+    "002-26",
+    "006-26",
+    "007-26"
+   ],
+   "expect": [
+    "189"
+   ],
+   "forbid": [
+    "177"
+   ],
+   "version": "none",
+   "source": "Values read from the circular PDFs on 30 Oct 2026 (Medst. 056-25, 119-25, 002-26, 006-26, 007-26)."
+  },
+  {
+   "id": "r-hotel-dk-named-006",
+   "scenario": "named superseded document",
+   "synthetic": false,
+   "question": "What full Danish hotel amount is printed in circular 006-26?",
+   "context": {
+    "doc_ref": "006-26"
+   },
+   "annex": "Bilag 5",
+   "accept": [
+    "006-26"
+   ],
+   "expect": [
+    "1900"
+   ],
+   "forbid": [
+    "1956"
+   ],
+   "version": "none",
+   "source": "Values read from the circular PDFs on 30 Oct 2026 (Medst. 056-25, 119-25, 002-26, 006-26, 007-26)."
+  },
+  {
+   "id": "r-hotel-dk-named-007",
+   "scenario": "named correcting document",
+   "synthetic": false,
+   "question": "What full Danish hotel amount is printed in circular 007-26?",
+   "context": {
+    "doc_ref": "007-26"
+   },
+   "annex": "Bilag 5",
+   "accept": [
+    "007-26"
+   ],
+   "expect": [
+    "1956"
+   ],
+   "forbid": [],
+   "version": "none",
+   "source": "Values read from the circular PDFs on 30 Oct 2026 (Medst. 056-25, 119-25, 002-26, 006-26, 007-26)."
+  },
+  {
+   "id": "r-hotel-dk-as-published",
+   "scenario": "what a document said on a date",
+   "synthetic": false,
+   "question": "What Danish hotel amount did the rules state on 25 March 2026?",
+   "context": {
+    "as_published_on": "2026-03-25"
+   },
+   "annex": "Bilag 5",
+   "accept": [
+    "006-26"
+   ],
+   "expect": [
+    "1900"
+   ],
+   "forbid": [],
+   "version": "none",
+   "source": "Values read from the circular PDFs on 30 Oct 2026 (Medst. 056-25, 119-25, 002-26, 006-26, 007-26)."
+  },
+  {
+   "id": "r-hotel-dk-may-2026",
+   "scenario": "correction recognised",
+   "synthetic": false,
+   "question": "What is the hotel amount for a night in Denmark on 12 May 2026?",
+   "context": {
+    "event_date": "2026-05-12"
+   },
+   "annex": "Bilag 5",
+   "accept": [
+    "007-26"
+   ],
+   "expect": [
+    "1956"
+   ],
+   "forbid": [
+    "1844"
+   ],
+   "version": "none",
+   "source": "Values read from the circular PDFs on 30 Oct 2026 (Medst. 056-25, 119-25, 002-26, 006-26, 007-26)."
+  },
+  {
+   "id": "r-hotel-dk-feb-2026",
+   "scenario": "open: mid-year adjustment",
+   "synthetic": false,
+   "needs_check": true,
+   "check_note": "All 2026 circulars say they apply from 1 Jan 2026, but the Danish hotel amount follows the hotel agreement adjusted on 15 March. Which amount applies to a night on 10 Feb 2026 (1,900 or 1,956)? Ask the finance office, then set accept/expect.",
+   "question": "What is the hotel amount for a night in Denmark on 10 February 2026?",
+   "context": {
+    "event_date": "2026-02-10"
+   },
+   "annex": "Bilag 5",
+   "accept": [
+    "007-26"
+   ],
+   "expect": [],
+   "forbid": [],
+   "version": "none",
+   "source": "Values read from the circular PDFs on 30 Oct 2026 (Medst. 056-25, 119-25, 002-26, 006-26, 007-26)."
+  },
+  {
+   "id": "r-hotel-dk-feb-2025",
+   "scenario": "open: corpus gap",
+   "synthetic": false,
+   "needs_check": true,
+   "check_note": "For 2025 the corpus only has 056-25 (published 4 Apr 2025). A night on 10 Feb 2025 was probably governed by an earlier 2025 circular (before 040-25 of 20 Mar 2025), which is not in the corpus. Decide whether to add it or treat the answer as 'cannot verify'.",
+   "question": "What was the hotel amount for a night in Denmark on 10 February 2025?",
+   "context": {
+    "event_date": "2025-02-10"
+   },
+   "annex": "Bilag 5",
+   "accept": [
+    "056-25"
+   ],
+   "expect": [],
+   "forbid": [],
+   "version": "none",
+   "source": "Values read from the circular PDFs on 30 Oct 2026 (Medst. 056-25, 119-25, 002-26, 006-26, 007-26)."
+  },
+  {
+   "id": "r-au-train",
+   "scenario": "AU policy",
+   "synthetic": false,
+   "question": "When does Aarhus University expect me to take the train instead of flying?",
+   "context": {},
+   "rule_id": null,
+   "annex": null,
+   "accept": [
+    "au-travel-policy-2022"
+   ],
+   "expect": [
+    [
+     "five hours",
+     "5 hours"
+    ]
+   ],
+   "forbid": [],
+   "version": "none",
+   "source": "AU travel policy PDF (24 Aug 2023), p. 2."
+  }
+ ],
+ "faq_gold": {
+  "_how": "An FAQ entry is outdated under a version when the rule it answers reads differently there than in the version it was decided under. Checked by hand against data/finance/synthetic/*.md. FAQ-003 (CC-601) never changes.",
+  "v1.0": [
+   "FAQ-004",
+   "FAQ-005",
+   "FAQ-006",
+   "FAQ-007"
+  ],
+  "v2.0": [
+   "FAQ-001",
+   "FAQ-002",
+   "FAQ-006"
+  ],
+  "v2.1": [
+   "FAQ-001",
+   "FAQ-002",
+   "FAQ-006",
+   "FAQ-007"
+  ],
+  "v3.0": [
+   "FAQ-001",
+   "FAQ-002",
+   "FAQ-004",
+   "FAQ-005",
+   "FAQ-007"
+  ],
+  "none": []
+ }
+}

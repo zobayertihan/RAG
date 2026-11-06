@@ -6,7 +6,7 @@ const STATUS: Record<string, { label: string; cls: string }> = {
   accepted: { label: 'Accepted', cls: 'pill good' },
   rejected: { label: 'Declined', cls: 'pill bad' },
 }
-const TYPE: Record<string, string> = { discuss: 'Discuss an idea', supervision: 'Supervision' }
+const TYPE: Record<string, string> = { discuss: 'Discuss an idea', supervision: 'Supervision', coordinator: 'Asked the coordinator' }
 const day = (d?: string | null) => (d ? new Date(d).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '')
 
 export default async function MyRequestsPage() {
@@ -41,12 +41,18 @@ export default async function MyRequestsPage() {
               <li key={r.id} className="req">
                 <div className="req-head">
                   <div>
-                    <h2>{sup?.name ?? 'Supervisor'}</h2>
-                    <p className="muted">{TYPE[r.type] ?? r.type} · sent {day(r.createdAt)}{r.answeredAt ? ` · answered ${day(r.answeredAt)}` : ''}</p>
+                    <h2>{sup?.name ?? 'Thesis coordinator'}</h2>
+                    <p className="muted">{r.viaCoordinator ? 'Suggested by the coordinator' : TYPE[r.type] ?? r.type} · sent {day(r.createdAt)}{r.answeredAt ? ` · answered ${day(r.answeredAt)}` : ''}</p>
                   </div>
                   <span className={st.cls}>{st.label}</span>
                 </div>
                 <p className="req-note">{r.note}</p>
+                {r.type === 'coordinator' && !sup && (
+                  <p className="hint">The coordinator is looking for a supervisor who fits. You will see their name here when one is suggested.</p>
+                )}
+                {r.viaCoordinator && r.status === 'pending' && (
+                  <p className="hint">The coordinator suggested {sup?.name}. They will now accept or decline, like any other request.</p>
+                )}
                 {r.status === 'info_requested' && (
                   <p className="hint">{sup?.name ?? 'The supervisor'} asked for more details. Check your email for their message.</p>
                 )}

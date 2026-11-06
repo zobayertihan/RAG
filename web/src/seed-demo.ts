@@ -112,6 +112,21 @@ for (const p of plans) {
   await payload.update({ collection: 'requests', id: doc.id, data: { createdAt: sent, answeredAt: answered } as any, overrideAccess: true, context: ctx })
 }
 
+// 4b. two students who asked the thesis coordinator to find a supervisor (no supervisor yet)
+const openCount = (id: number) => plans.filter((p) => p.student.id === id && ['pending', 'info_requested'].includes(p.status)).length
+const askers = students.filter((st) => openCount(st.id) <= 1).slice(-2)
+const coordNotes = [
+  'I want to write about digital marketing for small Danish webshops, but I could not find a supervisor who works on marketing. Can you suggest someone?',
+  'My idea combines food waste reduction with data from restaurant ordering systems. None of the suggestions fit both parts.',
+]
+for (const [i, st] of askers.entries()) {
+  const doc = await payload.create({
+    collection: 'requests', overrideAccess: true, context: ctx,
+    data: { student: st.id, type: 'coordinator', note: coordNotes[i], status: 'pending', synthetic: true } as any,
+  })
+  await payload.update({ collection: 'requests', id: doc.id, data: { createdAt: ago(2 + i * 3) } as any, overrideAccess: true, context: ctx })
+}
+
 // 5. searches, spread over the last 30 days
 let logs = 0
 for (const [q, times] of SEARCHES) {
@@ -125,6 +140,7 @@ for (const [q, times] of SEARCHES) {
   }
 }
 
+console.log(`demo coordinator requests: ${askers.length}`)
 console.log(`demo requests: ${plans.length} (${plans.filter((p) => p.status === 'pending' && p.days > 7).length} waiting over 7 days)`)
 console.log(`demo slots set for ${capacity.size} supervisors; demo searches: ${logs}`)
 process.exit(0)

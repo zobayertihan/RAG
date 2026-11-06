@@ -2,6 +2,8 @@
 
 import React, { useRef, useState } from 'react'
 
+import { FinanceChat } from '../FinanceChat'
+
 type Source = {
   record_id?: string
   supervisorId?: number
@@ -22,6 +24,7 @@ type Reply = {
   message: string | null
   supervisors: CardT[]
   mentions?: Mention[]
+  others?: Mention[]
   matches?: Source[]
   history: string
 }
@@ -52,6 +55,7 @@ export function StudentChat() {
   const [history, setHistory] = useState<Msg[]>([])
   const [text, setText] = useState('')
   const [busy, setBusy] = useState(false)
+  const [slow, setSlow] = useState(false) // the search service may be waking up
   const [mode, setMode] = useState<'supervisors' | 'finance'>('supervisors')
   const [positions, setPositions] = useState<string[]>([])
   const [groups, setGroups] = useState<string[]>([])
@@ -82,6 +86,7 @@ export function StudentChat() {
       research_group: groups,
       type: [] as string[],
     }
+    const slowTimer = setTimeout(() => setSlow(true), 7000)
     try {
       const res = await fetch('/student/chat', {
         method: 'POST',
@@ -96,6 +101,8 @@ export function StudentChat() {
     } catch (err) {
       setTurns((t) => t.map((x) => (x.id === id ? { ...x, error: (err as Error).message } : x)))
     } finally {
+      clearTimeout(slowTimer)
+      setSlow(false)
       setBusy(false)
     }
   }
@@ -113,11 +120,12 @@ export function StudentChat() {
               <input type="radio" name="mode" checked={mode === 'supervisors'} onChange={() => { setMode('supervisors'); newChat() }} />
               Find a supervisor
             </label>
-            <label className="opt disabled">
-              <input type="radio" name="mode" disabled />
-              Travel and expense questions <span className="soon">coming soon</span>
+            <label className="opt">
+              <input type="radio" name="mode" checked={mode === 'finance'} onChange={() => { setMode('finance'); newChat() }} />
+              Travel and expense questions
             </label>
           </fieldset>
+          {mode === 'supervisors' && (<>
           <fieldset>
             <legend>Position</legend>
             {POSITIONS.map((p) => (
@@ -139,9 +147,11 @@ export function StudentChat() {
             <p className="hint">Only supervisors with a known group are matched when you tick one.</p>
           </fieldset>
           <button type="button" className="ghost" onClick={newChat}>New chat</button>
+          </>)}
         </div>
       </aside>
 
+      {mode === 'finance' ? <FinanceChat key="finance" /> : (<>
       <section className="chat" aria-live="polite">
         {turns.length === 0 && (
           <div className="empty">
@@ -157,8 +167,11 @@ export function StudentChat() {
             <div className="you"><div>{t.text}</div></div>
             <div className="reply">
               {!t.reply && !t.error && <div className="typing" aria-label="Finding supervisors"><span /><span /><span /></div>}
-              {t.error && <p className="error">Couldn&apos;t get an answer: {t.error} Send your message again.</p>}
-              {t.reply && <ReplyView reply={t.reply} />}
+              {!t.reply && !t.error && slow && (
+                <p className="hint" role="status">Waking up the search service. After a quiet period this takes up to a minute.</p>
+              )}
+              {t.error && <p className="error">Couldn&apos;t get an answer. {t.error}</p>}
+              {t.reply && <ReplyView reply={t.reply} question={t.text} />}
             </div>
           </div>
         ))}
@@ -180,11 +193,15 @@ export function StudentChat() {
         </div>
         <p className="hint center">Suggestions come from the staff list. Check a supervisor&apos;s profile before contacting them.</p>
       </form>
+      </>)}
     </div>
   )
 }
 
-function ReplyView({ reply }: { reply: Reply }) {
+const openSlots = (s: Source) => (typeof s.capacity === 'number' ? Math.max(0, s.capacity - (s.slotsUsed ?? 0)) : null)
+const isFull = (s: Source) => openSlots(s) === 0
+
+function ReplyView({ reply, question }: { reply: Reply; question: string }) {
   if (reply.message === null) {
     return (
       <>
@@ -209,8 +226,88 @@ function ReplyView({ reply }: { reply: Reply }) {
           ))}
         </div>
       )}
-      {reply.supervisors.map((c, i) => <Card key={i} c={c} first={i === 0} many={reply.supervisors.length > 1} />)}
+      {reply.supervisors.map((c, i) => (
+        <React.Fragment key={i}>
+          <Card c={c} first={i === 0} many={reply.supervisors.length > 1} />
+          {isFull(c) && <Alternatives full={c} reply={reply} />}
+        </React.Fragment>
+      ))}
+      <AskCoordinator question={question} strong={reply.supervisors.length === 0} />
     </>
+  )
+}
+
+/** Under a full supervisor: the next matches from the same search that still have free slots. */
+function Alternatives({ full, reply }: { full: CardT; reply: Reply }) {
+  const shown = new Set(reply.supervisors.map((s) => s.record_id))
+  const free = (reply.others || []).filter((o) => o.supervisorId && !shown.has(o.record_id) && (openSlots(o) ?? 0) > 0).slice(0, 2)
+  return (
+    <div className="alts">
+      <h3>{full.name} has no supervision slots left</h3>
+      {free.length ? (
+        <>
+          <p className="hint">Similar supervisors from your search who still have free slots. You can also ask {full.name} to discuss your idea, or ask one of them about co-supervision.</p>
+          {free.map((o) => (
+            <div key={o.record_id} className="alt">
+              <strong>{o.name}</strong>
+              <CardFoot s={o} name={o.name} />
+            </div>
+          ))}
+        </>
+      ) : (
+        <p className="hint">None of the other matches has known free slots. You can still ask {full.name} to discuss your idea, or ask the thesis coordinator below.</p>
+      )}
+    </div>
+  )
+}
+
+/**
+ * At BTECH the thesis coordinator assigns supervisors based on topic and capacity. When none of the
+ * suggestions fits, the student can hand the question to the coordinator. Shown after every answer;
+ * prominent when the answer suggested nobody.
+ */
+function AskCoordinator({ question, strong }: { question: string; strong: boolean }) {
+  const [open, setOpen] = useState(strong)
+  const [note, setNote] = useState(question)
+  const [state, setState] = useState<{ busy?: boolean; error?: string; sent?: boolean }>({})
+
+  async function send(e: React.FormEvent) {
+    e.preventDefault()
+    if (!note.trim()) return setState({ error: 'Describe your idea first.' })
+    setState({ busy: true })
+    try {
+      const res = await fetch('/api/requests', {
+        method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'coordinator', note: note.trim() }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data?.errors?.[0]?.message || 'The request could not be sent.')
+      setState({ sent: true })
+    } catch (err) {
+      setState({ error: (err as Error).message })
+    }
+  }
+
+  if (state.sent) {
+    return <p className="sent">Sent to the thesis coordinator. You can follow it under <a href="/student/requests">My requests</a>.</p>
+  }
+  return (
+    <div className={`coord-cta${strong ? ' strong' : ''}`}>
+      {!open ? (
+        <button type="button" className="ghost" onClick={() => setOpen(true)}>None of these fit? Ask the thesis coordinator</button>
+      ) : (
+        <form className="contact" onSubmit={send}>
+          <p>
+            {strong ? 'Nobody in the staff list fits well. ' : ''}The thesis coordinator can suggest a supervisor based on
+            your idea and who has free slots. The supervisor still has to accept.
+          </p>
+          <label htmlFor="coord-note">Your idea and background</label>
+          <textarea id="coord-note" rows={4} maxLength={2000} value={note} onChange={(e) => setNote(e.target.value)} />
+          {state.error && <p className="error" role="alert">{state.error}</p>}
+          <button className="btn" disabled={state.busy}>{state.busy ? 'Sending…' : 'Ask the coordinator'}</button>
+        </form>
+      )}
+    </div>
   )
 }
 

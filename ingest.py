@@ -8,7 +8,7 @@ Each collection gets its own search index. Only new or changed files are process
 the rest come from cache.
 """
 
-from rag import FINANCE_DIR, SUPERVISORS_JSON, build_index
+from rag import FINANCE_DIR, SUPERVISORS_JSON, build_index, missing_finance_files
 
 if __name__ == "__main__":
     FINANCE_DIR.mkdir(parents=True, exist_ok=True)
@@ -21,4 +21,7 @@ if __name__ == "__main__":
             else:
                 print(f"{name}: {st['chunks']} chunks from {st['files']} file(s) "
                       f"({st['new']} new/changed, {st['cached']} from cache)")
+        missing = missing_finance_files()
+        if missing:
+            print(f"finance: {len(missing)} listed file(s) not in data/finance yet, skipped: {', '.join(missing)}")
         print("Restart the server to use the new index.")

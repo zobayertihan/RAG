@@ -36,9 +36,16 @@ export const Requests: CollectionConfig = {
   },
   fields: [
     { name: 'student', type: 'relationship', relationTo: 'students', required: true, access: { update: adminField } },
-    { name: 'supervisor', type: 'relationship', relationTo: 'supervisors', required: true, access: { update: adminField } },
+    // Empty only while a coordinator request waits for the coordinator to pick someone.
+    { name: 'supervisor', type: 'relationship', relationTo: 'supervisors', access: { update: adminField },
+      validate: (value: unknown, { siblingData }: { siblingData: Record<string, unknown> }) =>
+        value || siblingData?.type === 'coordinator' ? true : 'Choose a supervisor.' },
     { name: 'type', type: 'select', required: true, access: { update: adminField },
-      options: [{ label: 'Discuss an idea', value: 'discuss' }, { label: 'Request supervision', value: 'supervision' }] },
+      options: [
+        { label: 'Discuss an idea', value: 'discuss' },
+        { label: 'Request supervision', value: 'supervision' },
+        { label: 'Ask the coordinator to find a supervisor', value: 'coordinator' },
+      ] },
     { name: 'note', type: 'textarea', required: true, maxLength: 2000, access: { update: adminField },
       admin: { description: 'Preliminary idea, or why the student chose this supervisor.' } },
     { name: 'status', type: 'select', required: true, defaultValue: 'pending',
@@ -50,15 +57,22 @@ export const Requests: CollectionConfig = {
       ] },
     { name: 'noteSummary', type: 'textarea', admin: { readOnly: true, description: 'Two-sentence LLM summary for the supervisor. It never decides.' } },
     { name: 'answeredAt', type: 'date', admin: { readOnly: true } },
+    { name: 'viaCoordinator', type: 'checkbox', defaultValue: false, access: { update: adminField },
+      admin: { readOnly: true, description: 'The coordinator chose this supervisor for the student.' } },
+    { name: 'coordinatorNote', type: 'textarea', maxLength: 1000, access: { update: adminField },
+      admin: { description: "The coordinator's reason for the choice, shown to the supervisor." } },
     { name: 'synthetic', type: 'checkbox', defaultValue: false, access: { update: adminField },
       admin: { position: 'sidebar', description: 'Made up by npm run seed:demo.' } },
   ],
   hooks: {
     afterChange: [
-      async ({ doc, operation, req, context }) => {
+      async ({ doc, previousDoc, operation, req, context }) => {
         // Tell the supervisor a new request has arrived. Without an email setup (the prototype),
         // Payload prints the email in the terminal instead of sending it.
-        if (operation !== 'create' || context.skipSideEffects) return doc
+        if (context.skipSideEffects) return doc
+        // Notify when a request reaches a supervisor: on creation, or when the coordinator assigns one.
+        const assigned = operation === 'update' && doc.viaCoordinator && !relId(previousDoc?.supervisor) && relId(doc.supervisor)
+        if (!(operation === 'create' && relId(doc.supervisor)) && !assigned) return doc
         try {
           const sup = await req.payload.findByID({ collection: 'supervisors', id: relId(doc.supervisor) as number, depth: 0, overrideAccess: true, req })
           const stu = await req.payload.findByID({ collection: 'students', id: relId(doc.student) as number, depth: 0, overrideAccess: true, req })
@@ -66,7 +80,9 @@ export const Requests: CollectionConfig = {
             const base = process.env.WEB_URL || 'http://localhost:3000'
             await req.payload.sendEmail({
               to: sup.email,
-              subject: `New ${doc.type === 'supervision' ? 'supervision request' : 'request to discuss an idea'} from ${stu.name}`,
+              subject: assigned
+                ? `The thesis coordinator suggests you supervise ${stu.name}`
+                : `New ${doc.type === 'supervision' ? 'supervision request' : 'request to discuss an idea'} from ${stu.name}`,
               text: `${stu.name} (${stu.programme || 'programme not given'}) wrote:\n\n${doc.note}\n\n` +
                 `${doc.noteSummary ? `Summary: ${doc.noteSummary}\n\n` : ''}Answer it here: ${base}/supervisor`,
             })
@@ -86,31 +102,62 @@ export const Requests: CollectionConfig = {
           if (roleOf(req) === 'student') data.student = studentIdOf(req)
           data.status = 'pending'
           const studentId = relId(data.student)
+          if (data.type === 'coordinator') {
+            data.supervisor = null // the coordinator picks; a student can't preset one
+            data.viaCoordinator = false
+            data.coordinatorNote = null
+          }
           const supervisorId = relId(data.supervisor)
 
           const open = await payload.find({
             collection: 'requests', depth: 0, limit: 100, overrideAccess: true, req,
             where: { and: [{ student: { equals: studentId } }, { status: { in: OPEN } }] },
           })
-          if (open.docs.some((d) => relId(d.supervisor) === supervisorId)) {
+          if (data.type === 'coordinator' && open.docs.some((d) => d.type === 'coordinator' && !relId(d.supervisor))) {
+            throw fail('You have already asked the coordinator. You will hear back when a supervisor is suggested.')
+          }
+          if (supervisorId && open.docs.some((d) => relId(d.supervisor) === supervisorId)) {
             throw fail('You already have an open request to this supervisor.')
           }
           if (open.totalDocs >= MAX_OPEN_REQUESTS) {
             throw fail(`You can have at most ${MAX_OPEN_REQUESTS} open requests. Wait for an answer first.`)
           }
 
-          const sup = await payload.findByID({ collection: 'supervisors', id: supervisorId as number, depth: 0, overrideAccess: true, req })
-          if (data.type === 'supervision' && typeof sup.capacity === 'number' && (sup.slotsUsed ?? 0) >= sup.capacity) {
-            throw fail(`${sup.name} has no supervision slots left. You can still ask to discuss an idea.`)
+          const sup = supervisorId
+            ? await payload.findByID({ collection: 'supervisors', id: supervisorId as number, depth: 0, overrideAccess: true, req })
+            : null
+          if (sup && data.type === 'supervision' && typeof sup.capacity === 'number' && (sup.slotsUsed ?? 0) >= sup.capacity) {
+            throw fail(`${sup.name} has no supervision slots left. You can still ask to discuss an idea, or ask the coordinator.`)
           }
 
           if (!context.skipSideEffects) {
             try {
-              data.noteSummary = (await summarizeNote(data.note, sup.recordId, data.type)).summary ?? ''
+              data.noteSummary = (await summarizeNote(data.note, sup?.recordId ?? '', data.type === 'coordinator' ? 'supervision' : data.type)).summary ?? ''
             } catch (e) {
               payload.logger.warn(`No note summary: ${(e as Error).message}`)
             }
           }
+          return data
+        }
+
+        // the coordinator assigns a supervisor: it becomes a normal supervision request the supervisor answers
+        const assigning = originalDoc?.type === 'coordinator' && !relId(originalDoc?.supervisor) && relId(data.supervisor)
+        if (assigning) {
+          if (roleOf(req) !== 'admin') throw fail('Only the coordinator can assign a supervisor.')
+          const supervisorId = relId(data.supervisor)
+          const sup = await payload.findByID({ collection: 'supervisors', id: supervisorId as number, depth: 0, overrideAccess: true, req })
+          if (typeof sup.capacity === 'number' && (sup.slotsUsed ?? 0) >= sup.capacity) {
+            throw fail(`${sup.name} has no supervision slots left. Choose someone else, or raise their slots first.`)
+          }
+          const dup = await payload.find({
+            collection: 'requests', depth: 0, limit: 1, overrideAccess: true, req,
+            where: { and: [{ student: { equals: relId(originalDoc?.student) } }, { supervisor: { equals: supervisorId } },
+              { status: { in: OPEN } }, { id: { not_equals: originalDoc?.id } }] },
+          })
+          if (dup.totalDocs) throw fail('The student already has an open request to this supervisor.')
+          data.type = 'supervision'
+          data.viaCoordinator = true
+          data.status = 'pending'
           return data
         }
 

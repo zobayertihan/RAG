@@ -1,0 +1,268 @@
+{
+ "_about": "Every finance document, with the facts version-aware search needs. Dates for official documents are taken from the documents themselves; null means not yet checked. effective_from = from when the content applies (as the document states). published_at = when it was issued. supersedes = ids this document repeals or replaces. A listed file that is not in the folder yet is skipped when indexing.",
+ "documents": [
+  {
+   "id": "056-25",
+   "file": "official/056-25.pdf",
+   "family": "state-travel-rates",
+   "authority": "state",
+   "title": "Cirkulaere om satsregulering pr. 1. januar 2025 for tjenesterejser (Medst. 056-25)",
+   "language": "da",
+   "synthetic": false,
+   "url": "https://cirkulaere.medst.dk/media/luebp3nz/056-25.pdf",
+   "published_at": "2025-04-04",
+   "effective_from": "2025-01-01",
+   "supersedes": [
+    "040-25"
+   ],
+   "note": "Checked in the PDF on 30 Oct 2026: dated 4 April 2025, applies from 1 Jan 2025, repeals circular 9216 of 20 March 2025 (Medst. 040-25, not in this corpus). Denmark hotel 1,900 DKK (reduced 1,425), mileage 2.23/3.81 DKK per km, Danish daily allowance 513.00, hourly 21.38, daily allowance abroad 597. Footnote: the Danish hotel amount follows the state hotel agreement, adjusted 15 March each year.",
+   "checked": "2026-10-30"
+  },
+  {
+   "id": "119-25",
+   "file": "official/119-25.pdf",
+   "family": "state-travel-rates",
+   "authority": "state",
+   "title": "Cirkulaere om satsregulering pr. 1. januar 2026 for tjenesterejser (Medst. 119-25)",
+   "language": "da",
+   "synthetic": false,
+   "url": "https://cirkulaere.medst.dk/media/3ilh30m2/119-25.pdf",
+   "published_at": "2025-12-19",
+   "effective_from": "2026-01-01",
+   "supersedes": [
+    "056-25"
+   ],
+   "note": "Checked in the PDF on 30 Oct 2026: dated 19 Dec 2025, applies from 1 Jan 2026, repeals 056-25. Denmark hotel 1,844 DKK (reduced 1,383), mileage 2.28/3.94, daily 538.00, hourly 22.42, abroad 625.",
+   "checked": "2026-10-30"
+  },
+  {
+   "id": "001-26",
+   "file": "official/001-26.pdf",
+   "family": "state-travel-rates",
+   "authority": "state",
+   "title": "Cirkulaere om satsregulering pr. 1. januar 2026 for tjenesterejser (Medst. 001-26)",
+   "language": "da",
+   "synthetic": false,
+   "url": null,
+   "published_at": "2026-01-16",
+   "effective_from": "2026-01-01",
+   "supersedes": [],
+   "note": "File not received yet. Dated 16 Jan 2026 according to 002-26, which repeals it. What 001-26 repeals, and its amounts, are unknown until the file is added."
+  },
+  {
+   "id": "002-26",
+   "file": "official/002-26.pdf",
+   "family": "state-travel-rates",
+   "authority": "state",
+   "title": "Cirkulaere om satsregulering pr. 1. januar 2026 for tjenesterejser (Medst. 002-26)",
+   "language": "da",
+   "synthetic": false,
+   "url": "https://cdn1.gopublic.dk/skimintra/Media/639056291499708853/satsregulering-pr-1-januar-2026-for-tjenesterejser.pdf",
+   "published_at": "2026-01-28",
+   "effective_from": "2026-01-01",
+   "supersedes": [
+    "001-26"
+   ],
+   "note": "Checked in the PDF on 30 Oct 2026 (copy hosted by a third party, identical identifiers): dated 28 Jan 2026, applies from 1 Jan 2026, repeals 001-26. Denmark hotel 1,900 DKK (reduced 1,425); other rates as 119-25.",
+   "checked": "2026-10-30"
+  },
+  {
+   "id": "006-26",
+   "file": "official/006-26.pdf",
+   "family": "state-travel-rates",
+   "authority": "state",
+   "title": "Cirkulaere om satsregulering pr. 1. januar 2026 for tjenesterejser (Medst. 006-26)",
+   "language": "da",
+   "synthetic": false,
+   "url": "https://cirkulaere.medst.dk/media/3gvbxcmg/006-26.pdf",
+   "published_at": "2026-03-23",
+   "effective_from": "2026-01-01",
+   "supersedes": [
+    "002-26"
+   ],
+   "note": "Checked in the PDF on 30 Oct 2026: dated 23 March 2026, applies from 1 Jan 2026, repeals 002-26. Denmark hotel printed as 1,900 DKK, but the reduced rate is 1,467 (= 3/4 of 1,956): the document contradicts itself. 007-26 corrects the full rate four days later.",
+   "checked": "2026-10-30"
+  },
+  {
+   "id": "007-26",
+   "file": "official/007-26.pdf",
+   "family": "state-travel-rates",
+   "authority": "state",
+   "title": "Cirkulaere om satsregulering pr. 1. januar 2026 for tjenesterejser (Medst. 007-26)",
+   "language": "da",
+   "synthetic": false,
+   "url": "https://cirkulaere.medst.dk/media/aldjyknh/007-26.pdf",
+   "published_at": "2026-03-27",
+   "effective_from": "2026-01-01",
+   "supersedes": [
+    "006-26"
+   ],
+   "note": "Checked in the PDF on 30 Oct 2026: dated 27 March 2026, applies from 1 Jan 2026, repeals 006-26. Denmark hotel 1,956 DKK (reduced 1,467, p. 15); footnotes: the amount follows the state hotel agreement adjusted 15 March each year, and hotels on the state agreement above the amount can also be reimbursed. Whether 1,956 applies to nights before mid-March 2026 is for the finance office to confirm.",
+   "checked": "2026-10-30"
+  },
+  {
+   "id": "au-travel-policy-2022",
+   "file": "official/au-travel-policy-2022.pdf",
+   "family": "au-travel-policy",
+   "authority": "au-policy",
+   "title": "Aarhus University travel policy (PDF, file dated Nov 2023)",
+   "language": "en",
+   "synthetic": false,
+   "url": "https://medarbejdere.au.dk/fileadmin/www.medarbejdere.au.dk/oekonomi_bygninger/Rejser/Rejseregler/Aarhus_University_travel_policy_2022_nov23.pdf",
+   "published_at": "2023-08-24",
+   "effective_from": null,
+   "supersedes": [],
+   "note": "Checked in the PDF on 30 Oct 2026: every page is headed 'AU Finance 24 Aug 2023' (the file was created 24 Nov 2023). The policy states no date from which it applies; effective_from stays empty.",
+   "checked": "2026-10-30"
+  },
+  {
+   "id": "au-faq-trips",
+   "file": "official/au-faq-trips-2026-10-31.txt",
+   "family": "au-faq-trips",
+   "authority": "au-guidance",
+   "title": "AU FAQ about official trips, less than 28 days (page snapshot)",
+   "language": "en",
+   "synthetic": false,
+   "url": "https://medarbejdere.au.dk/en/administration/finance/travel-booking/official-trips-less-than-28-days/faq-about-official-trips-less-than-28-days-1",
+   "published_at": "2026-07-03",
+   "effective_from": null,
+   "captured_at": "2026-10-31",
+   "supersedes": [],
+   "note": "published_at = the page's 'Revised' date. A snapshot shows what the page said when captured, not its history."
+  },
+  {
+   "id": "au-travel-policy-page",
+   "file": "official/au-travel-policy-page-2026-10-31.txt",
+   "family": "au-travel-policy-page",
+   "authority": "au-guidance",
+   "title": "Aarhus University's travel policy (web page snapshot)",
+   "language": "en",
+   "synthetic": false,
+   "url": "https://medarbejdere.au.dk/en/administration/finance/travel-booking/aarhus-universitys-travel-policy",
+   "published_at": "2026-07-03",
+   "effective_from": null,
+   "captured_at": "2026-10-31",
+   "supersedes": [],
+   "note": "Links its per diem rates to circular 119-25, which later circulars replaced."
+  },
+  {
+   "id": "au-accommodation",
+   "file": "official/au-accommodation-2026-10-31.txt",
+   "family": "au-accommodation",
+   "authority": "au-guidance",
+   "title": "AU accommodation guidance (web page snapshot)",
+   "language": "en",
+   "synthetic": false,
+   "url": "https://medarbejdere.au.dk/en/administration/finance/travel-booking/accommodation",
+   "published_at": null,
+   "effective_from": null,
+   "captured_at": "2026-10-31",
+   "supersedes": []
+  },
+  {
+   "id": "au-settlement-requirements",
+   "file": "official/au-settlement-requirements-2026-10-31.txt",
+   "family": "au-settlement-requirements",
+   "authority": "au-guidance",
+   "title": "Four important requirements for completing a settlement report (web page snapshot)",
+   "language": "en",
+   "synthetic": false,
+   "url": "https://medarbejdere.au.dk/en/administration/finance/expense-and-travel-reimbursement/four-important-requirements-for-completing-a-settlement-report-1",
+   "published_at": null,
+   "effective_from": null,
+   "captured_at": "2026-10-31",
+   "supersedes": []
+  },
+  {
+   "id": "au-news-changed-rates-2016",
+   "file": "official/au-news-changed-rates-2016.txt",
+   "family": "au-news-changed-rates-2016",
+   "authority": "au-guidance",
+   "title": "AU news: Changed rates in connection with official travel (2016)",
+   "language": "en",
+   "synthetic": false,
+   "url": "https://medarbejdere.au.dk/en/news-articles/news/artikel/changed-rates-in-connection-with-official-travel",
+   "published_at": "2016-01-26",
+   "effective_from": "2016-01-01",
+   "captured_at": "2026-10-31",
+   "supersedes": [],
+   "note": "Shows the yearly pattern: the Danish hotel rate changed on 15 Feb 2016, the old rate applied until then."
+  },
+  {
+   "id": "demo-policy-v1.0",
+   "file": "synthetic/demo-policy-v1-0.md",
+   "family": "demo-travel-policy",
+   "authority": "synthetic-policy",
+   "title": "Demonstration Travel and Expense Policy v1.0 (synthetic)",
+   "version": "v1.0",
+   "language": "en",
+   "synthetic": true,
+   "url": null,
+   "published_at": "2025-03-14",
+   "effective_from": "2025-04-01",
+   "supersedes": []
+  },
+  {
+   "id": "demo-policy-v2.0",
+   "file": "synthetic/demo-policy-v2-0.md",
+   "family": "demo-travel-policy",
+   "authority": "synthetic-policy",
+   "title": "Demonstration Travel and Expense Policy v2.0 (synthetic)",
+   "version": "v2.0",
+   "language": "en",
+   "synthetic": true,
+   "url": null,
+   "published_at": "2025-08-01",
+   "effective_from": "2025-09-01",
+   "supersedes": [
+    "demo-policy-v1.0"
+   ]
+  },
+  {
+   "id": "demo-policy-v2.1",
+   "file": "synthetic/demo-policy-v2-1.md",
+   "family": "demo-travel-policy",
+   "authority": "synthetic-policy",
+   "title": "Demonstration Travel and Expense Policy v2.1, correction (synthetic)",
+   "version": "v2.1",
+   "language": "en",
+   "synthetic": true,
+   "url": null,
+   "published_at": "2025-09-15",
+   "effective_from": "2025-09-01",
+   "supersedes": [
+    "demo-policy-v2.0"
+   ]
+  },
+  {
+   "id": "demo-policy-v3.0",
+   "file": "synthetic/demo-policy-v3-0.md",
+   "family": "demo-travel-policy",
+   "authority": "synthetic-policy",
+   "title": "Demonstration Travel and Expense Policy v3.0 (synthetic)",
+   "version": "v3.0",
+   "language": "en",
+   "synthetic": true,
+   "url": null,
+   "published_at": "2026-02-10",
+   "effective_from": "2026-03-01",
+   "supersedes": [
+    "demo-policy-v2.1"
+   ]
+  },
+  {
+   "id": "demo-faq",
+   "file": "synthetic/demo-faq.json",
+   "family": "demo-faq",
+   "authority": "synthetic-faq",
+   "title": "Demonstration Finance Office FAQ decisions (synthetic)",
+   "language": "en",
+   "synthetic": true,
+   "url": null,
+   "published_at": null,
+   "effective_from": null,
+   "supersedes": [],
+   "faq_for": "demo-travel-policy"
+  }
+ ]
+}

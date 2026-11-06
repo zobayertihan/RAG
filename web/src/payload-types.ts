@@ -256,8 +256,8 @@ export interface Student {
 export interface Request {
   id: number;
   student: number | Student;
-  supervisor: number | Supervisor;
-  type: 'discuss' | 'supervision';
+  supervisor?: (number | null) | Supervisor;
+  type: 'discuss' | 'supervision' | 'coordinator';
   /**
    * Preliminary idea, or why the student chose this supervisor.
    */
@@ -268,6 +268,14 @@ export interface Request {
    */
   noteSummary?: string | null;
   answeredAt?: string | null;
+  /**
+   * The coordinator chose this supervisor for the student.
+   */
+  viaCoordinator?: boolean | null;
+  /**
+   * The coordinator's reason for the choice, shown to the supervisor.
+   */
+  coordinatorNote?: string | null;
   /**
    * Made up by npm run seed:demo.
    */
@@ -527,6 +535,8 @@ export interface RequestsSelect<T extends boolean = true> {
   status?: T;
   noteSummary?: T;
   answeredAt?: T;
+  viaCoordinator?: T;
+  coordinatorNote?: T;
   synthetic?: T;
   updatedAt?: T;
   createdAt?: T;
