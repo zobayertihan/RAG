@@ -328,3 +328,8 @@ a.tile:hover { border-color: var(--muted); }
 .msg-body { margin: 0; white-space: pre-wrap; }
 .sent-msgs { margin-top: 12px; }
 .sent-msgs summary { cursor: pointer; color: var(--muted); font-size: .9rem; }
+.thread { display: grid; gap: 8px; margin-top: 12px; }
+.thread .msg { margin-top: 0; }
+.msg.mine { border-left: 3px solid var(--line); }
+.msg-box { margin-top: 12px; }
+.pills { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }

@@ -1,3 +1,4 @@
+import { messagesOf } from '@/lib/messages'
 import { idOf, requireRole } from '@/lib/session'
 import { RequestList, type RequestItem } from './RequestList'
 
@@ -19,7 +20,7 @@ export default async function SupervisorPage() {
       id: r.id, type: r.type === 'discuss' ? 'discuss' : 'supervision', status: r.status, note: r.note, summary: r.noteSummary || '',
       viaCoordinator: !!r.viaCoordinator, coordinatorNote: r.coordinatorNote || '',
       createdAt: r.createdAt, answeredAt: r.answeredAt || null,
-      replies: (r.replies || []).map((m) => ({ subject: m.subject || '', message: m.message, sentAt: m.sentAt })),
+      replies: messagesOf(r.replies),
       student: { name: st?.name ?? 'Student', email: st?.email ?? '', programme: st?.programme ?? '',
         skills: (st?.skills || []).map((s: { value: string }) => s.value) },
     }

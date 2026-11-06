@@ -277,10 +277,11 @@ export interface Request {
    */
   coordinatorNote?: string | null;
   /**
-   * Messages from the supervisor, shown to the student under My requests.
+   * Messages between the supervisor and the student, oldest first.
    */
   replies?:
     | {
+        from: 'supervisor' | 'student';
         subject?: string | null;
         message: string;
         /**
@@ -555,6 +556,7 @@ export interface RequestsSelect<T extends boolean = true> {
   replies?:
     | T
     | {
+        from?: T;
         subject?: T;
         message?: T;
         status?: T;

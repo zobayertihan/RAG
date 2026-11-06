@@ -3,6 +3,10 @@
 import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 
+import type { Message } from '@/lib/messages'
+import { MessageBox } from '../MessageBox'
+import { Thread } from '../Thread'
+
 export type RequestItem = {
   id: number
   type: 'discuss' | 'supervision'
@@ -14,9 +18,8 @@ export type RequestItem = {
   viaCoordinator: boolean
   coordinatorNote: string
   student: { name: string; email: string; programme: string; skills: string[] }
-  replies: Sent[]
+  replies: Message[]
 }
-type Sent = { subject: string; message: string; sentAt: string }
 type Action = 'accept' | 'reject' | 'ask_details'
 type Draft = { to: string; subject: string; body: string; personalized: boolean }
 
@@ -27,7 +30,6 @@ const STATUS: Record<string, { label: string; cls: string }> = {
   rejected: { label: 'Declined', cls: 'pill bad' },
 }
 const day = (d?: string | null) => (d ? new Date(d).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) : '')
-const when = (d: string) => new Date(d).toLocaleString('en-GB', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })
 const isOpen = (s: string) => s === 'pending' || s === 'info_requested'
 
 export function RequestList({ items: initial }: { items: RequestItem[] }) {
@@ -90,7 +92,8 @@ function RequestRow({ r, onStatus, onDone }: { r: RequestItem; onStatus: (s: Req
   // the draft as the supervisor edits it; the original stays in `draft` for "Restore draft"
   const [subject, setSubject] = useState('')
   const [body, setBody] = useState('')
-  const [sent, setSent] = useState<Sent[]>(r.replies)
+  const [sent, setSent] = useState<Message[]>(r.replies)
+  const studentWaiting = sent[sent.length - 1]?.from === 'student' // the student wrote last
   const [sending, setSending] = useState(false)
   const [sentNow, setSentNow] = useState('') // the text sent from this draft, to tell when it was edited again
   const st = STATUS[r.status]
@@ -143,7 +146,7 @@ function RequestRow({ r, onStatus, onDone }: { r: RequestItem; onStatus: (s: Req
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.detail || 'The message could not be sent.')
-      setSent((s) => [...s, { subject, message: body.trim(), sentAt: data.sentAt }])
+      setSent((s) => [...s, { from: 'supervisor', subject, message: body.trim(), sentAt: data.sentAt }])
       setSentNow(`${subject}\n${body}`)
     } catch (e) {
       setError((e as Error).message)
@@ -172,7 +175,10 @@ function RequestRow({ r, onStatus, onDone }: { r: RequestItem; onStatus: (s: Req
             {r.student.programme}{r.student.programme ? ' · ' : ''}{r.type === 'supervision' ? 'Requests supervision' : 'Wants to discuss an idea'} · {day(r.createdAt)}
           </p>
         </div>
-        <span className={st.cls}>{st.label}</span>
+        <span className="pills">
+          {studentWaiting && <span className="pill warn">Student replied</span>}
+          <span className={st.cls}>{st.label}</span>
+        </span>
       </div>
       {r.viaCoordinator && (
         <p className="summary coord"><span>Suggested by the thesis coordinator</span>{r.coordinatorNote || 'The student asked the coordinator to find a supervisor, and the coordinator chose you.'}</p>
@@ -181,16 +187,11 @@ function RequestRow({ r, onStatus, onDone }: { r: RequestItem; onStatus: (s: Req
       <p className="req-note">{r.note}</p>
       {!!r.student.skills.length && <ul className="chips">{r.student.skills.map((s) => <li key={s}>{s}</li>)}</ul>}
 
-      {!!sent.length && (
-        <details className="sent-msgs">
-          <summary>Your messages to {r.student.name} ({sent.length})</summary>
-          {sent.map((m) => (
-            <div key={m.sentAt} className="msg">
-              <p className="sub">{when(m.sentAt)}{m.subject ? ` · ${m.subject}` : ''}</p>
-              <p className="msg-body">{m.message}</p>
-            </div>
-          ))}
-        </details>
+      <Thread messages={sent} viewer="supervisor" names={{ student: r.student.name, supervisor: 'You' }} />
+      {!draft && !!sent.length && r.status !== 'rejected' && (
+        <MessageBox url="/supervisor/reply" requestId={r.id} to={r.student.name}
+          label={studentWaiting ? `Reply to ${r.student.name}` : `Write to ${r.student.name}`}
+          onSent={(m) => setSent((s) => [...s, { from: 'supervisor', subject: '', ...m }])} />
       )}
 
       {isOpen(r.status) && !draft && (
