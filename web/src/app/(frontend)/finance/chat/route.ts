@@ -1,6 +1,7 @@
 import { NextResponse, after } from 'next/server'
 
 import { chat } from '@/lib/python'
+import { financeEnabled } from '@/lib/features'
 import { getSession } from '@/lib/session'
 
 export const maxDuration = 300 // room for a sleeping search service to wake up
@@ -13,6 +14,7 @@ const SYSTEMS = ['plain', 'newest', 'versioned', 'versioned_faq'] as const
  * everyone else always gets the full version-aware system.
  */
 export async function POST(req: Request) {
+  if (!financeEnabled()) return NextResponse.json({ detail: 'Travel and expense questions are switched off.' }, { status: 404 })
   const { payload, user } = await getSession()
   if (!user) return NextResponse.json({ detail: 'Sign in first.' }, { status: 401 })
   const body = await req.json().catch(() => null)

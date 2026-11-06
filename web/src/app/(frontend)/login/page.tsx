@@ -3,6 +3,8 @@ import { redirect } from 'next/navigation'
 import { getSession, homeFor } from '@/lib/session'
 import { LoginForm } from './LoginForm'
 
+export const metadata = { title: 'Sign in' }
+
 export default async function LoginPage() {
   const { user } = await getSession()
   if (user) redirect(homeFor(user.role))

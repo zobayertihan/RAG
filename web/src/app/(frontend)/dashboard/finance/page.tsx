@@ -1,6 +1,11 @@
 import { day } from '@/lib/dashboard'
 import { financeOverview, type FinanceOverview } from '@/lib/python'
+import { notFound } from 'next/navigation'
+
+import { financeEnabled } from '@/lib/features'
 import { requireRole } from '@/lib/session'
+
+export const metadata = { title: 'Finance documents' }
 
 const AUTHORITY: Record<string, string> = {
   state: 'Government circular', 'au-policy': 'AU policy', 'au-guidance': 'AU guidance page',
@@ -13,6 +18,7 @@ const iso = (d?: string | null) => (d ? day(`${d}T12:00:00`) : '–')
 
 export default async function FinancePage() {
   await requireRole('admin')
+  if (!financeEnabled()) notFound()
   let data: FinanceOverview | null = null
   let error = ''
   try {

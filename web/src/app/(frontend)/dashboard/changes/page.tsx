@@ -1,6 +1,8 @@
 import { day } from '@/lib/dashboard'
 import { requireRole } from '@/lib/session'
 
+export const metadata = { title: 'Changes' }
+
 const LABEL: Record<string, string> = {
   name: 'Name', position: 'Position', interests: 'Research areas', requirements: 'Expectations', capacity: 'Slots',
   type: 'Type', researchGroup: 'Research group', room: 'Room', email: 'Email', profileUrl: 'Profile link',

@@ -7,6 +7,8 @@ const HOME: Record<string, string> = { student: '/student', supervisor: '/superv
 export function LoginForm() {
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
+  const [show, setShow] = useState(false)
+  const [caps, setCaps] = useState(false)
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -29,12 +31,22 @@ export function LoginForm() {
     }
   }
 
+  const capsCheck = (e: React.KeyboardEvent<HTMLInputElement>) => setCaps(e.getModifierState?.('CapsLock') ?? false)
+
   return (
     <form onSubmit={onSubmit} className="login-form">
       <label htmlFor="email">Email</label>
-      <input id="email" name="email" type="email" autoComplete="username" required />
+      <input id="email" name="email" type="email" autoComplete="username" autoFocus required />
       <label htmlFor="password">Password</label>
-      <input id="password" name="password" type="password" autoComplete="current-password" required />
+      <div className="pw">
+        <input id="password" name="password" type={show ? 'text' : 'password'} autoComplete="current-password" required
+          onKeyDown={capsCheck} onKeyUp={capsCheck} aria-describedby={caps ? 'caps' : undefined} />
+        <button type="button" className="pw-toggle" onClick={() => setShow((s) => !s)}
+          aria-label={show ? 'Hide password' : 'Show password'} aria-pressed={show} aria-controls="password">
+          {show ? 'Hide' : 'Show'}
+        </button>
+      </div>
+      {caps && <p id="caps" className="hint warn-text">Caps Lock is on.</p>}
       {error && <p className="error" role="alert">{error}</p>}
       <button className="btn" disabled={busy}>{busy ? 'Signing in…' : 'Sign in'}</button>
       <p className="hint">Demo: student@example.com, supervisor@example.com or admin@example.com</p>

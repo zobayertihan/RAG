@@ -2,6 +2,8 @@ import { requireRole } from '@/lib/session'
 import { COLUMNS, LIST_SEP } from '@/lib/supervisorCsv'
 import { ImportForm } from './ImportForm'
 
+export const metadata = { title: 'Import and export' }
+
 export default async function DataPage() {
   await requireRole('admin')
   return (

@@ -1,6 +1,8 @@
 import { STALE_DAYS, day, loadDashboard, type SupRow } from '@/lib/dashboard'
 import { requireRole } from '@/lib/session'
 
+export const metadata = { title: 'Supervisors' }
+
 const VIEWS = {
   all: 'All',
   slots: 'Slots set',

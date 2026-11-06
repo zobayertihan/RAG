@@ -2,6 +2,8 @@ import { GAP_THRESHOLD, day } from '@/lib/dashboard'
 import { queryGaps } from '@/lib/python'
 import { requireRole } from '@/lib/session'
 
+export const metadata = { title: 'Demand' }
+
 type Topic = { label: string; queries: string[]; count: number; loggedBest: number; bestNow: number | null; bestNowName: string | null; last: string }
 
 const f2 = (n: number | null) => (n === null ? '–' : n.toFixed(2))

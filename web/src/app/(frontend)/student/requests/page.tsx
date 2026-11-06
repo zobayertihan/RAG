@@ -1,5 +1,7 @@
 import { idOf, requireRole } from '@/lib/session'
 
+export const metadata = { title: 'My requests' }
+
 const STATUS: Record<string, { label: string; cls: string }> = {
   pending: { label: 'Waiting for an answer', cls: 'pill' },
   info_requested: { label: 'More details asked', cls: 'pill warn' },

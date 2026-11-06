@@ -2,6 +2,8 @@ import { STUCK_DAYS, loadDashboard } from '@/lib/dashboard'
 import { requireRole } from '@/lib/session'
 import { RequestTable } from '../RequestTable'
 
+export const metadata = { title: 'Requests' }
+
 const VIEWS = {
   assigned: 'Assignments',
   open: 'Open',

@@ -1,6 +1,8 @@
 import { idOf, requireRole } from '@/lib/session'
 import { RequestList, type RequestItem } from './RequestList'
 
+export const metadata = { title: 'Requests' }
+
 export default async function SupervisorPage() {
   const { payload, user } = await requireRole('supervisor')
   const supervisorId = idOf(user.supervisor)

@@ -10,10 +10,18 @@ export function AssignForm({ requestId, suggestions, all }: { requestId: number;
   const [choice, setChoice] = useState<number | ''>(firstFree?.id ?? '')
   const [note, setNote] = useState('')
   const [state, setState] = useState<{ busy?: boolean; error?: string; done?: string; emailed?: boolean }>({})
+  const [confirming, setConfirming] = useState(false) // asked first, sent only on "Yes, send"
+  const chosen = [...suggestions, ...all].find((o) => o.id === choice)
 
-  async function assign(e: React.FormEvent) {
+  function ask(e: React.FormEvent) {
     e.preventDefault()
     if (!choice) return setState({ error: 'Choose a supervisor.' })
+    setState({})
+    setConfirming(true)
+  }
+
+  async function assign() {
+    setConfirming(false)
     setState({ busy: true })
     try {
       const res = await fetch('/dashboard/coordinator/assign', {
@@ -37,13 +45,13 @@ export function AssignForm({ requestId, suggestions, all }: { requestId: number;
     )
   }
   return (
-    <form className="assign" onSubmit={assign}>
+    <form className="assign" onSubmit={ask}>
       <fieldset className="field">
         <legend>Suggested by search</legend>
         {suggestions.length === 0 && <p className="hint">No suggestions. Pick someone from the full list below.</p>}
         {suggestions.map((s) => (
           <label key={s.id} className={`opt${s.full ? ' disabled' : ''}`}>
-            <input type="radio" name={`sup-${requestId}`} checked={choice === s.id} disabled={s.full} onChange={() => setChoice(s.id)} />
+            <input type="radio" name={`sup-${requestId}`} checked={choice === s.id} disabled={s.full || confirming} onChange={() => setChoice(s.id)} />
             <span><strong>{s.name}</strong> <span className="muted">{s.position} · {s.full ? 'full' : s.slots}</span></span>
           </label>
         ))}
@@ -62,7 +70,17 @@ export function AssignForm({ requestId, suggestions, all }: { requestId: number;
           placeholder="e.g. Fits the student's interest in supply chain analytics; has free slots." />
       </div>
       {state.error && <p className="error" role="alert">{state.error}</p>}
-      <button className="btn" disabled={state.busy}>{state.busy ? 'Sending…' : 'Suggest this supervisor'}</button>
+      {confirming && chosen ? (
+        <div className="confirm" role="alertdialog" aria-label="Confirm the suggestion">
+          <p>Send this request to {chosen.name}? They get it as a supervision request to accept or decline{note.trim() ? ', with your reason' : ''}.</p>
+          <div className="actions">
+            <button type="button" className="btn" autoFocus onClick={assign}>Yes, send to {chosen.name}</button>
+            <button type="button" className="ghost" onClick={() => setConfirming(false)}>Cancel</button>
+          </div>
+        </div>
+      ) : (
+        <button className="btn" disabled={state.busy}>{state.busy ? 'Sending…' : 'Suggest this supervisor'}</button>
+      )}
     </form>
   )
 }

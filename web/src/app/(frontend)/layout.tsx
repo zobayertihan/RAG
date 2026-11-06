@@ -6,7 +6,7 @@ import './styles.css'
 
 export const metadata = {
   description: 'Find a thesis or project supervisor at BTECH, Aarhus University.',
-  title: 'Supervisor Finder',
+  title: { default: 'Supervisor Finder', template: '%s · Supervisor Finder' },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

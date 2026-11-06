@@ -3,6 +3,8 @@ import { searchSupervisors } from '@/lib/python'
 import { requireRole } from '@/lib/session'
 import { AssignForm, type Option } from './AssignForm'
 
+export const metadata = { title: 'Coordinator' }
+
 /**
  * Students who asked the thesis coordinator to find a supervisor (at BTECH the coordinator
  * assigns supervisors based on topic and capacity). Search suggests who fits; the coordinator

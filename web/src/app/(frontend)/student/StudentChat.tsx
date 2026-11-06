@@ -50,7 +50,7 @@ function slotsText(s: Source) {
   return open === 0 ? 'No supervision slots left' : `${open} of ${s.capacity} slots open`
 }
 
-export function StudentChat() {
+export function StudentChat({ finance = false }: { finance?: boolean }) {
   const [turns, setTurns] = useState<Turn[]>([])
   const [history, setHistory] = useState<Msg[]>([])
   const [text, setText] = useState('')
@@ -114,7 +114,7 @@ export function StudentChat() {
           {panelOpen ? 'Hide options' : 'Search options'}
         </button>
         <div className="panel-body">
-          <fieldset>
+          {finance && (<fieldset>
             <legend>What do you need?</legend>
             <label className="opt">
               <input type="radio" name="mode" checked={mode === 'supervisors'} onChange={() => { setMode('supervisors'); newChat() }} />
@@ -124,7 +124,7 @@ export function StudentChat() {
               <input type="radio" name="mode" checked={mode === 'finance'} onChange={() => { setMode('finance'); newChat() }} />
               Travel and expense questions
             </label>
-          </fieldset>
+          </fieldset>)}
           {mode === 'supervisors' && (<>
           <fieldset>
             <legend>Position</legend>
@@ -136,22 +136,14 @@ export function StudentChat() {
             ))}
             <p className="hint">None ticked means everyone.</p>
           </fieldset>
-          <fieldset>
-            <legend>Research group</legend>
-            {GROUPS.map((g) => (
-              <label key={g} className="opt">
-                <input type="checkbox" checked={groups.includes(g)} onChange={() => toggle(groups, setGroups, g)} />
-                {g}
-              </label>
-            ))}
-            <p className="hint">Only supervisors with a known group are matched when you tick one.</p>
-          </fieldset>
+          {/* Research group filter hidden for now: most supervisors have no group recorded yet, so ticking
+              one left almost nobody. Bring it back once groups are filled in (GROUPS, groups state). */}
           <button type="button" className="ghost" onClick={newChat}>New chat</button>
           </>)}
         </div>
       </aside>
 
-      {mode === 'finance' ? <FinanceChat key="finance" /> : (<>
+      {finance && mode === 'finance' ? <FinanceChat key="finance" /> : (<>
       <section className="chat" aria-live="polite">
         {turns.length === 0 && (
           <div className="empty">

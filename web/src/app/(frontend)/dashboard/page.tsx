@@ -2,6 +2,8 @@ import { GAP_THRESHOLD, STALE_DAYS, STUCK_DAYS, loadDashboard } from '@/lib/dash
 import { requireRole } from '@/lib/session'
 import { RequestTable } from './RequestTable'
 
+export const metadata = { title: 'Overview' }
+
 export default async function Overview() {
   const { payload, user } = await requireRole('admin')
   const { eligible, requests } = await loadDashboard(payload, user)

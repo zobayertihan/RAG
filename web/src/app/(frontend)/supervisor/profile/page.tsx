@@ -1,6 +1,8 @@
 import { idOf, requireRole } from '@/lib/session'
 import { ProfileForm } from './ProfileForm'
 
+export const metadata = { title: 'My profile' }
+
 export default async function ProfilePage() {
   const { payload, user } = await requireRole('supervisor')
   const id = idOf(user.supervisor)
