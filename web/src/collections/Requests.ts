@@ -61,6 +61,14 @@ export const Requests: CollectionConfig = {
       admin: { readOnly: true, description: 'The coordinator chose this supervisor for the student.' } },
     { name: 'coordinatorNote', type: 'textarea', maxLength: 1000, access: { update: adminField },
       admin: { description: "The coordinator's reason for the choice, shown to the supervisor." } },
+    // Messages the supervisor sent to the student in the app (the prototype sends no real emails).
+    { name: 'replies', type: 'array', admin: { description: 'Messages from the supervisor, shown to the student under My requests.' },
+      fields: [
+        { name: 'subject', type: 'text', maxLength: 200 },
+        { name: 'message', type: 'textarea', required: true, maxLength: 5000 },
+        { name: 'status', type: 'text', admin: { description: 'The request status when the message was sent.' } },
+        { name: 'sentAt', type: 'date', required: true },
+      ] },
     { name: 'synthetic', type: 'checkbox', defaultValue: false, access: { update: adminField },
       admin: { position: 'sidebar', description: 'Made up by npm run seed:demo.' } },
   ],

@@ -277,6 +277,21 @@ export interface Request {
    */
   coordinatorNote?: string | null;
   /**
+   * Messages from the supervisor, shown to the student under My requests.
+   */
+  replies?:
+    | {
+        subject?: string | null;
+        message: string;
+        /**
+         * The request status when the message was sent.
+         */
+        status?: string | null;
+        sentAt: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
    * Made up by npm run seed:demo.
    */
   synthetic?: boolean | null;
@@ -537,6 +552,15 @@ export interface RequestsSelect<T extends boolean = true> {
   answeredAt?: T;
   viaCoordinator?: T;
   coordinatorNote?: T;
+  replies?:
+    | T
+    | {
+        subject?: T;
+        message?: T;
+        status?: T;
+        sentAt?: T;
+        id?: T;
+      };
   synthetic?: T;
   updatedAt?: T;
   createdAt?: T;

@@ -10,6 +10,7 @@ const STATUS: Record<string, { label: string; cls: string }> = {
 }
 const TYPE: Record<string, string> = { discuss: 'Discuss an idea', supervision: 'Supervision', coordinator: 'Asked the coordinator' }
 const day = (d?: string | null) => (d ? new Date(d).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '')
+const when = (d: string) => new Date(d).toLocaleString('en-GB', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Copenhagen' })
 
 export default async function MyRequestsPage() {
   const { payload, user } = await requireRole('student', 'admin')
@@ -55,8 +56,17 @@ export default async function MyRequestsPage() {
                 {r.viaCoordinator && r.status === 'pending' && (
                   <p className="hint">The coordinator suggested {sup?.name}. They will now accept or decline, like any other request.</p>
                 )}
-                {r.status === 'info_requested' && (
+                {r.status === 'info_requested' && !r.replies?.length && (
                   <p className="hint">{sup?.name ?? 'The supervisor'} asked for more details. Check your email for their message.</p>
+                )}
+                {[...(r.replies || [])].reverse().map((m) => (
+                  <div key={m.id ?? m.sentAt} className="msg from">
+                    <p className="sub">Message from {sup?.name ?? 'the supervisor'} · {when(m.sentAt)}{m.subject ? ` · ${m.subject}` : ''}</p>
+                    <p className="msg-body">{m.message}</p>
+                  </div>
+                ))}
+                {r.status === 'info_requested' && !!r.replies?.length && sup?.email && (
+                  <p className="hint">To answer, email {sup.name} at <a href={`mailto:${sup.email}`}>{sup.email}</a>.</p>
                 )}
               </li>
             )

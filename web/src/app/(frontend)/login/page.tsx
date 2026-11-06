@@ -1,5 +1,6 @@
 import { redirect } from 'next/navigation'
 
+import { APP_NAME, APP_TAGLINE } from '@/lib/brand'
 import { getSession, homeFor } from '@/lib/session'
 import { LoginForm } from './LoginForm'
 
@@ -11,8 +12,8 @@ export default async function LoginPage() {
   return (
     <div className="login-wrap">
       <div className="login-card">
-        <h1>Supervisor Finder</h1>
-        <p className="muted">Sign in with your AU account. In this prototype, use one of the demo logins.</p>
+        <h1>{APP_NAME}</h1>
+        <p className="muted">{APP_TAGLINE} Sign in with your AU account. In this prototype, use one of the demo logins.</p>
         <LoginForm />
       </div>
     </div>

@@ -1,12 +1,13 @@
 import { after } from 'next/server'
 import React from 'react'
 
+import { APP_NAME, APP_TAGLINE } from '@/lib/brand'
 import { wakePython } from '@/lib/python'
 import './styles.css'
 
 export const metadata = {
-  description: 'Find a thesis or project supervisor at BTECH, Aarhus University.',
-  title: { default: 'Supervisor Finder', template: '%s · Supervisor Finder' },
+  description: APP_TAGLINE,
+  title: { default: APP_NAME, template: `%s · ${APP_NAME}` },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

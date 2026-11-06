@@ -311,3 +311,20 @@ a.tile:hover { border-color: var(--muted); }
 .confirm { margin-top: 14px; padding: 12px 14px; border-radius: 10px; border: 1px solid var(--accent); background: var(--accent-soft); }
 .confirm p { margin: 0; max-width: 68ch; }
 .confirm .actions { margin-top: 10px; }
+
+/* import page */
+.small-list { padding-left: 20px; margin: 0 0 8px; max-width: 900px; }
+.small-list li { margin: 4px 0; }
+.missing summary { cursor: pointer; color: var(--muted); font-size: .9rem; }
+.missing p { margin: 6px 0 0; }
+
+/* student chat: the answer was updated for a new filter */
+.filter-note { margin: 4px 0 0; text-align: right; font-size: .82rem; color: var(--muted); }
+
+/* messages between supervisor and student */
+.msg { margin-top: 12px; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--paper); }
+.msg.from { border-left: 3px solid var(--accent); }
+.msg .sub { margin: 0 0 4px; }
+.msg-body { margin: 0; white-space: pre-wrap; }
+.sent-msgs { margin-top: 12px; }
+.sent-msgs summary { cursor: pointer; color: var(--muted); font-size: .9rem; }

@@ -101,6 +101,8 @@ def main():
 
     doc = json.loads(CASES.read_text(encoding="utf-8"))
     FAQ_GOLD.update(doc.get("faq_gold") or {})
+    # build (or update) the finance index here, so this works even while FINANCE_ENABLED is off in the app
+    rag.build_index(("finance",))
     fi = finance.FinanceIndex(rag.Index("finance"))
     known = set(fi.doc_of)
     cases = [c for c in doc["cases"] if (not c["accept"] or set(c["accept"]) & known)

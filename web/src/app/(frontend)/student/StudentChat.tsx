@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 
 import { FinanceChat } from '../FinanceChat'
 
@@ -28,7 +28,7 @@ type Reply = {
   matches?: Source[]
   history: string
 }
-type Turn = { id: number; text: string; reply?: Reply; error?: string }
+type Turn = { id: number; text: string; reply?: Reply; error?: string; filterNote?: string }
 type Msg = { role: 'user' | 'assistant'; content: string }
 
 const POSITIONS = ['Professor', 'Associate Professor', 'Assistant Professor', 'Postdoc']
@@ -71,14 +71,40 @@ export function StudentChat({ finance = false }: { finance?: boolean }) {
     setHistory([])
   }
 
-  async function send(e?: React.FormEvent) {
+  // Changing the position filter asks the latest question again with the new filter,
+  // replacing the last answer (after a short pause, so ticking several boxes asks once).
+  const filtersChanged = useRef(false)
+  function togglePosition(p: string) {
+    filtersChanged.current = true
+    toggle(positions, setPositions, p)
+  }
+  useEffect(() => {
+    if (!filtersChanged.current || busy || mode !== 'supervisors' || !turns.length) return
+    const timer = setTimeout(() => {
+      filtersChanged.current = false
+      const last = turns[turns.length - 1]
+      ask(last.text, true)
+    }, 600)
+    return () => clearTimeout(timer)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [positions, busy])
+
+  function send(e?: React.FormEvent) {
     e?.preventDefault()
     const q = text.trim()
     if (!q || busy) return
-    const id = nextId.current++
-    const msgs: Msg[] = [...history, { role: 'user', content: q }]
-    setTurns((t) => [...t, { id, text: q }])
     setText('')
+    ask(q)
+  }
+
+  async function ask(q: string, replaceLast = false) {
+    const id = nextId.current++
+    const last = turns[turns.length - 1]
+    // when replacing, the earlier conversation without the last question (and its answer, if it got one)
+    const base = replaceLast && last ? (last.reply ? history.slice(0, -2) : history) : history
+    const msgs: Msg[] = [...base, { role: 'user', content: q }]
+    const filterNote = replaceLast ? (positions.length ? `Filtered: ${positions.join(', ')}` : 'Filter removed: all positions') : undefined
+    setTurns((t) => [...(replaceLast ? t.slice(0, -1) : t), { id, text: q, filterNote }])
     setBusy(true)
     setTimeout(() => endRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' }), 50)
     const filters = {
@@ -130,11 +156,11 @@ export function StudentChat({ finance = false }: { finance?: boolean }) {
             <legend>Position</legend>
             {POSITIONS.map((p) => (
               <label key={p} className="opt">
-                <input type="checkbox" checked={positions.includes(p)} onChange={() => toggle(positions, setPositions, p)} />
+                <input type="checkbox" checked={positions.includes(p)} onChange={() => togglePosition(p)} />
                 {p}
               </label>
             ))}
-            <p className="hint">None ticked means everyone.</p>
+            <p className="hint">None ticked means everyone. Changing this updates the last answer.</p>
           </fieldset>
           {/* Research group filter hidden for now: most supervisors have no group recorded yet, so ticking
               one left almost nobody. Bring it back once groups are filled in (GROUPS, groups state). */}
@@ -157,6 +183,7 @@ export function StudentChat({ finance = false }: { finance?: boolean }) {
         {turns.map((t) => (
           <div className="turn" key={t.id}>
             <div className="you"><div>{t.text}</div></div>
+            {t.filterNote && <p className="filter-note">{t.filterNote}</p>}
             <div className="reply">
               {!t.reply && !t.error && <div className="typing" aria-label="Finding supervisors"><span /><span /><span /></div>}
               {!t.reply && !t.error && slow && (

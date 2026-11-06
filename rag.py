@@ -50,7 +50,13 @@ def missing_finance_files() -> list[str]:
     return [d["file"] for d in docs if not (FINANCE_DIR / d["file"]).exists()]
 
 
-COLLECTIONS = ("supervisors", "finance")
+# Travel and expense assistant (Phase 8). Exactly one of the two lines is active; keep it the same
+# as web/src/lib/features.ts. Off: ingest.py skips the finance documents and the search service
+# never loads the finance model (it needs about 770 MB in total, the free Render plan has 512 MB).
+FINANCE_ENABLED = False
+# FINANCE_ENABLED = True
+
+COLLECTIONS = ("supervisors", "finance") if FINANCE_ENABLED else ("supervisors",)
 
 
 def manifest_path(name: str) -> Path:

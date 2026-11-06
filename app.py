@@ -19,6 +19,7 @@ SERVICE_KEY is not set:
   POST /api/query-gaps                group weak student queries into topics, with today's best match
   GET  /api/finance/overview          finance documents and FAQ review status (admin page)
   POST /api/search-supervisors        supervisors matching a text, search only (coordinator suggestions)
+  POST /api/parse-staff-pdf           read a staff list PDF into supervisor rows (admin upload, no saving)
 
 /api/chat with mode "finance" answers travel and expense questions with version-aware search
 (Phase 8, see finance.py). It accepts "system" (plain, newest, versioned, versioned_faq) and "role".
@@ -32,14 +33,15 @@ import urllib.request
 from datetime import datetime, timezone
 from typing import Literal
 
-from fastapi import Depends, FastAPI, Header, HTTPException
+from fastapi import Depends, FastAPI, Header, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
 import finance
-from rag import (BASE_DIR, COLLECTIONS, FINANCE_DIR, GROUP_SIMILARITY, Index, answer, draft_email,
+import staffpdf
+from rag import (BASE_DIR, COLLECTIONS, FINANCE_DIR, FINANCE_ENABLED, GROUP_SIMILARITY, Index, answer, draft_email,
                  group_queries, history_text, missing_finance_files, record_to_chunk, save_supervisor_record, search_query, summarize_note)
 
 app = FastAPI(title="Supervisor Finder")
@@ -178,6 +180,8 @@ def others(hits: list[dict], sources: dict, used: set[str]) -> list[dict]:
 
 
 def finance_chat(messages: list[dict], body: Chat) -> dict:
+    if not FINANCE_ENABLED:
+        raise HTTPException(404, "Travel and expense questions are switched off (FINANCE_ENABLED in rag.py).")
     if fin is None:
         raise HTTPException(503, "The finance documents are not indexed yet. Run: python ingest.py")
     try:
@@ -210,7 +214,8 @@ def finance_chat(messages: list[dict], body: Chat) -> dict:
 @app.get("/api/health")
 def health():
     return {"collections": {name: len(ix.chunks) for name, ix in indexes.items()}, "sync": sync_status,
-            "finance_missing_files": missing_finance_files()}
+            "finance": "on" if FINANCE_ENABLED else "off",
+            **({"finance_missing_files": missing_finance_files()} if FINANCE_ENABLED else {})}
 
 
 # ---------------------------------------------------------------- service endpoints
@@ -309,6 +314,27 @@ def search_supervisors(body: SupervisorSearch):
                          "research_group": h.get("research_group", ""), "score": h["score"]} for h in hits]}
 
 
+MAX_PDF_BYTES = 15 * 1024 * 1024
+
+
+@app.post("/api/parse-staff-pdf", dependencies=[Depends(require_service_key)])
+async def parse_staff_pdf(request: Request):
+    """
+    Reads a staff list PDF (a table with name, position and research areas, like the BTECH list)
+    into supervisor rows. Saves nothing: the web app compares the rows with the database and
+    shows the admin what is new or changed before anything is saved.
+    """
+    data = await request.body()
+    if not data:
+        raise HTTPException(400, "No file.")
+    if len(data) > MAX_PDF_BYTES:
+        raise HTTPException(413, "The PDF is larger than 15 MB.")
+    try:
+        return staffpdf.parse(data)
+    except Exception as e:  # not a PDF, or a damaged one
+        raise HTTPException(400, f"The PDF could not be read: {str(e)[:200]}")
+
+
 class GapRequest(BaseModel):
     queries: list[str] = Field(max_length=2000)
     similarity: float = Field(default=GROUP_SIMILARITY, ge=0.5, le=0.99)
@@ -339,6 +365,8 @@ def query_gaps(body: GapRequest):
 
 @app.get("/api/finance/overview", dependencies=[Depends(require_service_key)])
 def finance_overview():
+    if not FINANCE_ENABLED:
+        raise HTTPException(404, "Travel and expense questions are switched off (FINANCE_ENABLED in rag.py).")
     """Finance documents with their status today, and FAQ entries with their review status (admin page)."""
     return finance.overview(fin)
 

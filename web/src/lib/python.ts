@@ -28,8 +28,10 @@ async function waitUntilAwake(maxMs = WAKE_WAIT_MS) {
   return false
 }
 
-async function attempt<T>(path: string, init: RequestInit & { service?: boolean }, timeoutMs: number): Promise<T> {
-  const headers: Record<string, string> = { 'Content-Type': 'application/json' }
+type CallInit = RequestInit & { service?: boolean; contentType?: string }
+
+async function attempt<T>(path: string, init: CallInit, timeoutMs: number): Promise<T> {
+  const headers: Record<string, string> = { 'Content-Type': init.contentType ?? 'application/json' }
   if (init.service) headers['X-Service-Key'] = KEY
   let res: Response
   try {
@@ -54,7 +56,7 @@ async function attempt<T>(path: string, init: RequestInit & { service?: boolean 
 }
 
 // Long timeouts: a free Render service takes up to about a minute to wake up.
-async function call<T>(path: string, init: RequestInit & { service?: boolean }, timeoutMs = 90000): Promise<T> {
+async function call<T>(path: string, init: CallInit, timeoutMs = 90000): Promise<T> {
   try {
     return await attempt<T>(path, init, timeoutMs)
   } catch (e) {
@@ -150,3 +152,12 @@ export const searchSupervisors = (query: string, k = 6) =>
   call<{ matches: { record_id: string; name: string; position: string; research_group: string; score: number }[] }>(
     '/api/search-supervisors', { method: 'POST', service: true, body: JSON.stringify({ query: query.slice(0, 4000), k }) },
   )
+
+/** One row read from a staff list PDF by the search service. Nothing is saved by this call. */
+export type StaffPdfRow = { name: string; position: string; interests: string[]; profile_url: string; email: string; page: number }
+
+/** Admin upload: reads a staff list PDF (a table with name, position and research areas) into rows. */
+export const parseStaffPdf = (pdf: ArrayBuffer) =>
+  call<{ rows: StaffPdfRow[]; warnings: string[] }>('/api/parse-staff-pdf', {
+    method: 'POST', service: true, contentType: 'application/pdf', body: pdf,
+  })

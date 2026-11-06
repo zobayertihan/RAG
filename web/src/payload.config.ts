@@ -11,6 +11,7 @@ import { Requests } from './collections/Requests'
 import { Students } from './collections/Students'
 import { Supervisors } from './collections/Supervisors'
 import { Users } from './collections/Users'
+import { APP_NAME } from './lib/brand'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -20,7 +21,7 @@ export default buildConfig({
   admin: {
     user: Users.slug,
     importMap: { baseDir: path.resolve(dirname) },
-    meta: { titleSuffix: ' | Supervisor Finder' },
+    meta: { titleSuffix: ` | ${APP_NAME}` },
     avatar: 'default', // the built-in avatar, not Gravatar (no outside request, nothing broken offline)
     components: {
       graphics: { Logo: '/components/admin/Logo#Logo', Icon: '/components/admin/Icon#Icon' },

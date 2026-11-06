@@ -14,7 +14,9 @@ export type RequestItem = {
   viaCoordinator: boolean
   coordinatorNote: string
   student: { name: string; email: string; programme: string; skills: string[] }
+  replies: Sent[]
 }
+type Sent = { subject: string; message: string; sentAt: string }
 type Action = 'accept' | 'reject' | 'ask_details'
 type Draft = { to: string; subject: string; body: string; personalized: boolean }
 
@@ -25,6 +27,7 @@ const STATUS: Record<string, { label: string; cls: string }> = {
   rejected: { label: 'Declined', cls: 'pill bad' },
 }
 const day = (d?: string | null) => (d ? new Date(d).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) : '')
+const when = (d: string) => new Date(d).toLocaleString('en-GB', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })
 const isOpen = (s: string) => s === 'pending' || s === 'info_requested'
 
 export function RequestList({ items: initial }: { items: RequestItem[] }) {
@@ -87,6 +90,9 @@ function RequestRow({ r, onStatus, onDone }: { r: RequestItem; onStatus: (s: Req
   // the draft as the supervisor edits it; the original stays in `draft` for "Restore draft"
   const [subject, setSubject] = useState('')
   const [body, setBody] = useState('')
+  const [sent, setSent] = useState<Sent[]>(r.replies)
+  const [sending, setSending] = useState(false)
+  const [sentNow, setSentNow] = useState('') // the text sent from this draft, to tell when it was edited again
   const st = STATUS[r.status]
   const acceptLabel = r.type === 'supervision' ? 'Accept' : 'Agree to meet'
 
@@ -127,8 +133,29 @@ function RequestRow({ r, onStatus, onDone }: { r: RequestItem; onStatus: (s: Req
     }
   }
 
+  async function sendInApp() {
+    setSending(true)
+    setError('')
+    try {
+      const res = await fetch('/supervisor/reply', {
+        method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ requestId: r.id, subject, message: body }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.detail || 'The message could not be sent.')
+      setSent((s) => [...s, { subject, message: body.trim(), sentAt: data.sentAt }])
+      setSentNow(`${subject}\n${body}`)
+    } catch (e) {
+      setError((e as Error).message)
+    } finally {
+      setSending(false)
+    }
+  }
+  const sentThis = sentNow === `${subject}\n${body}`
+
   // Closes the draft. The answer itself was saved on Confirm and stays saved.
   function done() {
+    setSentNow('')
     setDraft(null)
     setSubject('')
     setBody('')
@@ -153,6 +180,18 @@ function RequestRow({ r, onStatus, onDone }: { r: RequestItem; onStatus: (s: Req
       {r.summary && <p className="summary"><span>Summary</span>{r.summary}</p>}
       <p className="req-note">{r.note}</p>
       {!!r.student.skills.length && <ul className="chips">{r.student.skills.map((s) => <li key={s}>{s}</li>)}</ul>}
+
+      {!!sent.length && (
+        <details className="sent-msgs">
+          <summary>Your messages to {r.student.name} ({sent.length})</summary>
+          {sent.map((m) => (
+            <div key={m.sentAt} className="msg">
+              <p className="sub">{when(m.sentAt)}{m.subject ? ` · ${m.subject}` : ''}</p>
+              <p className="msg-body">{m.message}</p>
+            </div>
+          ))}
+        </details>
+      )}
 
       {isOpen(r.status) && !draft && (
         <div className="actions">
@@ -186,13 +225,19 @@ function RequestRow({ r, onStatus, onDone }: { r: RequestItem; onStatus: (s: Req
               onChange={(e) => { setBody(e.target.value); setCopied(false) }} />
           </label>
           <div className="actions">
-            {draft.to && mailto && <a className="btn" href={mailto}>Open in Outlook</a>}
+            <button type="button" className="btn" onClick={sendInApp} disabled={!body.trim() || sending || sentThis}>
+              {sending ? 'Sending…' : sentThis ? 'Sent in the app' : 'Send in the app'}
+            </button>
+            {draft.to && mailto && <a className="ghost" href={mailto}>Open in Outlook</a>}
             <button className="ghost" type="button" onClick={copy} disabled={!body.trim()}>{copied ? 'Copied' : 'Copy text'}</button>
             <button className="ghost" type="button" onClick={() => { setBody(''); setCopied(false) }} disabled={!body}>Clear text</button>
             {edited && <button className="ghost" type="button" onClick={() => { setSubject(draft.subject); setBody(draft.body); setCopied(false) }}>Restore draft</button>}
             <button className="ghost" type="button" onClick={done}>Done</button>
           </div>
-          <p className="hint">Done closes the draft. Your answer ({st.label.toLowerCase()}) is already saved.</p>
+          <p className="hint">
+            {sentThis ? `${r.student.name} sees this message under My requests. ` : 'Send in the app: the student sees it under My requests. '}
+            Done closes the draft. Your answer ({st.label.toLowerCase()}) is already saved.
+          </p>
         </div>
       )}
     </li>

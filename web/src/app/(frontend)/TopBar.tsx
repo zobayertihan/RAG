@@ -3,6 +3,8 @@
 import { usePathname } from 'next/navigation'
 import React from 'react'
 
+import { APP_NAME } from '@/lib/brand'
+
 /** The link for the current page: the longest href that is the path itself or a parent of it. */
 function currentHref(path: string, hrefs: string[]) {
   return hrefs
@@ -20,7 +22,7 @@ export function TopBar({ name, links }: { name: string; links: { href: string; l
   return (
     <header className={links.length > 5 ? 'top many' : 'top'}>
       <div className="top-inner">
-        <span className="brand">Supervisor Finder</span>
+        <span className="brand">{APP_NAME}</span>
         <nav className="nav" aria-label="Main">
           {links.map((l) => (
             <a key={l.href} href={l.href} className={l.active || l.href === current ? 'active' : undefined}
