@@ -1,21 +1,13 @@
-# Supervisor Finder: what we built, how, and why
+# BTECHub
 
-This page explains the project: the problem it solves, how each part works, and the reasons behind
-the design choices. For installing and running it, see [README.md](README.md) and `web/README.md`.
+**BTECHub helps students at BTECH (Aarhus University) find a thesis supervisor, contact them and agree on supervision, in one place.**
+A student describes their interest in plain words and gets matching supervisors, with the reason each one fits. Supervisors
+answer requests and talk to students in the app. The admin keeps the staff data current and sees where students can't find a match.
 
-Supervisor Finder is the prototype for our M.Sc. thesis in Technology-Based Business Development
-(Aarhus University, BTECH). It is a retrieval-augmented generation (RAG) system for two kinds of
-university questions:
+Live prototype: https://supervisor-finder.vercel.app
 
-1. **"Who should supervise my thesis?"** A student describes an interest in plain words and gets
-   matching supervisors, with the reason each one fits, and can send a request.
-2. **"What are the travel and expense rules for my trip?"** A finance assistant that answers from
-   official documents and knows *which version* of a rule applies to the date in question.
-
-The second part is the thesis contribution. The first part is the working application around it.
-
-> Status: research prototype. It is not official Aarhus University advice, the students and
-> requests in the demo are made up, and no real emails are sent.
+> BTECHub is the prototype for an M.Sc. thesis in Technology-Based Business Development (Aarhus University, BTECH).
+> It is a research prototype, not an official AU service. Students and requests in the demo are made up, and no real emails are sent.
 
 ---
 
@@ -23,39 +15,34 @@ The second part is the thesis contribution. The first part is the working applic
 
 1. [The problem](#1-the-problem)
 2. [Who uses it](#2-who-uses-it)
-3. [How the system is put together](#3-how-the-system-is-put-together)
-4. [Finding a supervisor](#4-finding-a-supervisor)
-5. [Requests and the coordinator](#5-requests-and-the-coordinator)
-6. [Profile changes stay searchable and traceable](#6-profile-changes-stay-searchable-and-traceable)
-7. [The admin dashboard](#7-the-admin-dashboard)
-8. [The finance assistant (thesis contribution)](#8-the-finance-assistant-thesis-contribution)
-9. [Evaluation](#9-evaluation)
-10. [Rules the whole system follows](#10-rules-the-whole-system-follows)
-11. [Where it runs](#11-where-it-runs)
-12. [Known limits and open questions](#12-known-limits-and-open-questions)
-13. [Repository map](#13-repository-map)
+3. [A request from start to finish](#3-a-request-from-start-to-finish)
+4. [How the system is put together](#4-how-the-system-is-put-together)
+5. [Finding a supervisor](#5-finding-a-supervisor)
+6. [Requests, messages and the coordinator](#6-requests-messages-and-the-coordinator)
+7. [Keeping the staff data current](#7-keeping-the-staff-data-current)
+8. [The admin dashboard](#8-the-admin-dashboard)
+9. [Rules the whole system follows](#9-rules-the-whole-system-follows)
+10. [Evaluation and quality assurance](#10-evaluation-and-quality-assurance)
+11. [The travel and expense module (paused)](#11-the-travel-and-expense-module-paused)
+12. [Where it runs](#12-where-it-runs)
+13. [Run it on your own computer](#13-run-it-on-your-own-computer)
+14. [Known limits](#14-known-limits)
+15. [Repository map](#15-repository-map)
 
 ---
 
 ## 1. The problem
 
-**Finding a supervisor.** Students pick supervisors from staff pages and PDF lists of research
-interests. Those lists use the researchers' own vocabulary, so a student who writes "AI for
-factories" may not find the person who lists "predictive maintenance" and "digital twins". Students
-also don't know who still has free slots, and supervisors get vague requests that take time to read.
+Choosing a supervisor is slow and uncertain for both sides.
 
-**Rules that change over time.** Travel and expense rules come from yearly government circulars,
-AU policy and AU guidance pages. New versions replace old ones, corrections appear weeks later, and
-FAQ answers written under an old version stay online. A standard RAG system puts every version into
-one search index and returns whatever text looks most similar to the question. Old and new versions
-of a rule look almost identical, so the system can confidently quote a rate that no longer applies,
-or one that doesn't apply *yet*. Picking "the newest document" is not a fix either: a trip in 2025
-must be answered from the 2025 rules.
+- **Students** pick supervisors from staff pages and PDF lists written in the researchers' own vocabulary. A student who
+  writes "AI for factories" may not find the person who lists "predictive maintenance" and "digital twins". Students also
+  don't know who still has room for another thesis.
+- **Supervisors** get vague emails that take time to read, with no overview of who asked what and when.
+- **The department** has no view of what students look for, which topics nobody covers, or which requests wait too long.
+  Staff lists go out of date as people change their research.
 
-A real example from the corpus: the Danish hotel amount appears in five circulars between April 2025
-and March 2026. Circular 006-26 printed an inconsistent reduced rate, and 007-26, published four days
-later, corrected it. A question about a hotel night in February 2026 has exactly one right source,
-and plain similarity search has no way to know which one it is.
+BTECHub puts the search, the request, the answer and the conversation in one place, and keeps the staff data current.
 
 ---
 
@@ -63,380 +50,350 @@ and plain similarity search has no way to know which one it is.
 
 | Role | What they can do |
 |---|---|
-| **Student** | Describe a thesis interest in a chat, refine it ("what about robotics too?"), see 2 to 3 matching supervisors with reasons and thesis ideas, send a request, ask the coordinator for help, see their requests, ask finance questions |
-| **Supervisor** | See incoming requests with a short summary, accept, agree to meet, ask for details or decline (each with a confirm step), get a drafted reply email, edit their own profile, lower their slots, ask finance questions |
-| **Admin / coordinator** | Dashboard with numbers, demand gaps, profile change history, all requests, coordinator requests (assign a supervisor), data import and export, finance document overview and the finance assistant with all four search systems |
+| **Student** | Describe a thesis interest in a chat and refine it ("what about robotics too?"); see 2 to 3 matching supervisors with reasons, thesis ideas and free slots; filter by position; send a request; ask the coordinator for help; follow their requests and reply to supervisors |
+| **Supervisor** | See incoming requests with a short summary; accept, agree to meet, ask for details or decline (each with a confirm step); edit an email draft; message the student in the app; edit their own research areas; lower their slots |
+| **Admin / coordinator** | See an overview of requests and slots; find topics students search for that nobody covers; see every profile change; assign a supervisor to students who asked the coordinator; upload staff list PDFs and CSV files; export the data |
 
-Each role only sees its own data. A supervisor sees only requests sent to them; a student sees only
-their own. This is enforced in the database access rules, not just hidden in the interface.
+Each role sees only its own data. A supervisor sees only requests sent to them; a student sees only their own. This is
+enforced by the database access rules, not just hidden in the interface.
 
 ---
 
-## 3. How the system is put together
+## 3. A request from start to finish
+
+```mermaid
+flowchart TD
+  A[Student describes their interest] --> B[BTECHub suggests 2 to 3 supervisors]
+  B -->|Contact| C[Request: discuss an idea or request supervision]
+  B -->|None fit| D[Request to the coordinator]
+  D --> E[Admin picks a supervisor, with a reason]
+  E --> C
+  C --> F[Supervisor sees the request with a short summary]
+  F -->|Ask for details| G[Message to the student in the app]
+  G --> H[Student replies in the app]
+  H --> F
+  F -->|Accept| I[Accepted: one slot is used]
+  F -->|Decline| J[Declined: the request is closed]
+```
+
+Every answer is a person's decision. The language model summarizes notes and drafts emails; it never accepts, declines or assigns.
+
+---
+
+## 4. How the system is put together
 
 ```mermaid
 flowchart LR
   B[Browser] --> W[Web app<br/>Next.js + Payload CMS<br/>Vercel]
-  W --> DB[(Postgres<br/>Neon)]
-  W -- X-Service-Key --> P[Search service<br/>Python FastAPI<br/>Render]
-  P --> L[LLM<br/>Groq gpt-oss-120b]
+  W --> DB[(Postgres database<br/>Neon)]
+  W -- service key --> P[Search service<br/>Python + FastAPI<br/>Render]
+  P --> L[Language model<br/>Groq, gpt-oss-120b]
   P -. at startup: all supervisor records .-> W
 ```
 
 There are two programs:
 
-- **The web app** (`web/`, Next.js with Payload CMS) handles logins, roles, pages, the database and
-  the admin panel. It is the single source of truth for supervisors, students and requests.
-- **The search service** (`app.py`, `rag.py`, `finance.py`, Python with FastAPI) does everything
-  with embeddings and the language model: indexing, search, answers, note summaries, email drafts and
-  the finance assistant.
+- **The web app** (`web/`, Next.js with Payload CMS) handles logins, roles, pages, requests, messages, the database
+  and the admin panel. It is the single source of truth for supervisors, students and requests.
+- **The search service** (`app.py`, `rag.py`, `staffpdf.py`, Python with FastAPI) does everything with embeddings and
+  the language model: the search index, supervisor search, note summaries, email drafts, demand grouping and reading
+  staff list PDFs.
 
-**Why two programs instead of one?** The machine learning tools (embedding models, PDF parsing) are
-best in Python. Logins, access rules, forms and an admin panel are much less work in a web framework
-with a CMS. Splitting them means each side uses the tool that fits it.
+**Why two programs?** The machine learning tools (embedding models, PDF reading) are best in Python. Logins, access
+rules, forms and an admin panel are much less work in a web framework with a CMS. Each side uses the tool that fits it.
 
-**How they talk.** The browser never calls the search service directly. The web app calls it from
-the server with a shared secret in the `X-Service-Key` header, so the key and the LLM quota can't be
-reached from a browser.
+**How they talk.** The browser never calls the search service directly. The web app calls it from the server with a
+shared secret (the `X-Service-Key` header), so the key and the language model quota can't be reached from a browser.
 
-**Why the web app owns the data.** The free search service host wipes its disk on every restart.
-So at startup the search service downloads every supervisor record from the web app
-(`/service/supervisors`) and rebuilds its index. A profile edit is also pushed to the search
-service right away (see section 6). Nothing important lives only on the search side.
+**Why the web app owns the data.** The free search service host wipes its disk on every restart. So at startup the
+search service loads every supervisor record from the web app and rebuilds its index, and every profile change is
+pushed to the search service right away. Nothing important lives only on the search side.
 
 ---
 
-## 4. Finding a supervisor
+## 5. Finding a supervisor
 
 ### The data
 
-The supervisor list comes from the BTECH research interest PDF and staff records, turned into one
-JSON record per person (name, position, research areas, research group, email, profile link).
-**Each person becomes one search chunk.** We tried splitting PDFs by size first, and two people
-regularly ended up in one chunk, which made the LLM mix up who does what.
+The staff list comes from the BTECH research interest list and the staff pages: one record per person, with name,
+position, research areas, research group, email, room and profile link. Search covers the positions that can supervise a
+thesis: professors (including Distinguished Professor and Professor (Docent)), associate and assistant professors, and
+postdocs. PhD students and research assistants stay in the data but are not suggested.
+
+**Each person is one search unit.** Splitting PDFs by size put two people in one piece of text, and the language model
+then mixed up who does what.
 
 ### The search
 
 ```mermaid
 flowchart LR
-  Q[Chat so far] --> R[LLM rewrites the latest<br/>message into one search query]
-  R --> K[Keyword search BM25]
+  Q[Conversation so far] --> R[Language model rewrites the latest<br/>message into one search query]
+  R --> K[Keyword search<br/>BM25]
   R --> E[Meaning search<br/>embeddings]
-  K --> F[Combine rankings<br/>reciprocal rank fusion]
+  K --> F[Rankings combined<br/>reciprocal rank fusion]
   E --> F
-  F --> A[LLM picks 2 to 3 supervisors<br/>and explains the fit]
-  A --> C[App adds contact details<br/>from the records]
+  F --> X[Position filter]
+  X --> A[Language model picks 2 to 3 supervisors<br/>and explains the fit]
+  A --> C[App adds email, room, links and slots<br/>from the records]
 ```
 
-1. **Query rewriting.** In a conversation, the latest message often has no topic ("tell me more about
-   the first one"). The LLM turns the conversation into one standalone query, replaces "her" or
-   "the first one" with names, and expands abbreviations (ML, CV, LLM, IoT).
-   *Why:* searching for "tell me more about the first one" finds nothing useful.
-2. **Hybrid search.** Two searches run side by side: BM25 keyword search, which is good at exact
-   terms like "YOLO" or "ERP", and embedding search (`BAAI/bge-small-en-v1.5`), which finds related
-   meaning ("AI for factories" to "predictive maintenance"). The two rankings are combined with
-   reciprocal rank fusion (k = 60).
-   *Why:* each method fails where the other is strong; fusing ranks avoids having to tune
-   score weights.
-3. **The answer.** The LLM gets the numbered sources and returns structured JSON: a short message
-   plus supervisor cards (name, title, focus, why they fit, three thesis ideas).
+1. **Query rewriting.** In a conversation, the latest message often has no topic ("tell me more about the first one").
+   The language model turns the conversation into one standalone query, replaces "her" or "the first one" with names,
+   and expands abbreviations such as ML, CV and LLM.
+2. **Hybrid search.** Keyword search (BM25) is good at exact terms such as "YOLO" or "ERP". Meaning search
+   (`BAAI/bge-small-en-v1.5` embeddings) finds related wording, such as "AI for factories" and "predictive maintenance".
+   The two rankings are combined with reciprocal rank fusion (k = 60), which needs no tuning of score weights.
+3. **Position filter.** Ticking Professor, Associate Professor, Assistant Professor or Postdoc limits the search. When
+   the student changes the filter after an answer, the last question is asked again and the answer is replaced.
+4. **The answer.** The language model returns structured output: a short message plus supervisor cards (name, title,
+   research areas, why they fit, three thesis ideas). Follow-up questions about a person get paragraphs instead of cards.
 
-### Keeping the LLM honest
+### Keeping the language model honest
 
-The answer prompt separates two kinds of content:
+- **Facts about a person** (name, title, research areas) may only come from the staff records.
+- **Guidance** (why someone fits, thesis ideas) may use general knowledge, and is presented as suggestions.
+- **Contact details** are never written by the language model. The app adds email, room and profile link from the
+  records, because an invented email address is the most damaging mistake this system could make.
 
-- **Facts about a person** (name, title, research areas) may only come from the sources.
-- **Guidance** (why someone fits, thesis ideas) may use general knowledge, and is presented as
-  suggestions.
-
-The LLM is not allowed to write emails, links or contact details at all. The app adds them from
-the records. *Why:* an invented email address is the most damaging mistake this system could make,
-and the easiest way to prevent it is to never let the model produce one.
-
-Without an API key, the app still works in search-only mode and shows the best-matching records.
+Without a language model key, BTECHub still works in search-only mode and shows the best-matching records.
 
 ### Full supervisors
 
-Each supervisor has a number of slots per semester (0 to 7, set by the admin). When the best match
-has no free slot, the student still sees that person, plus alternatives from the same search that
-do have free slots. *Why:* hiding a full supervisor would hide a correct match; showing only them
-would leave the student stuck.
+Each supervisor has a number of supervision slots per semester (0 to 7, set by the admin). When a good match has no free
+slot, the student still sees that person, plus alternatives with free slots. A student can still ask a full supervisor to
+discuss an idea.
 
 ---
 
-## 5. Requests and the coordinator
+## 6. Requests, messages and the coordinator
 
-A student can send three kinds of request:
-
-| Type | Meaning |
+| Request type | Meaning |
 |---|---|
-| Discuss an idea | An informal first contact, not a supervision agreement |
-| Request supervision | A formal request, which uses a slot when accepted |
-| Ask the coordinator | "I didn't find anyone, please help": no supervisor chosen yet |
+| Discuss an idea | Informal first contact; doesn't use a slot when accepted |
+| Request supervision | A formal request; uses one slot when accepted |
+| Ask the coordinator | "I didn't find anyone": no supervisor chosen yet |
 
-Statuses: pending, more details asked, accepted, rejected. A student can have at most
-3 open requests at a time (a value to confirm with the supervisors).
+Statuses: waiting for an answer, more details asked, accepted, declined.
 
-**What the LLM does here, and what it doesn't.** When a request arrives, the LLM writes a
-two-sentence summary of the student's note for the supervisor. When the supervisor answers, it
-drafts a reply email they can edit and send themselves. **The LLM never decides anything.** Accepting
-or declining is always a person's click, with a confirm step ("Yes, accept" / Cancel) so a mis-click
-doesn't send an answer.
+**Limits.** A student has at most 3 open requests, and one open request per supervisor. Accepting a supervision request
+is checked on the server against the supervisor's free slots, so two acceptances can't overbook.
 
-**The coordinator flow.** A coordinator request has no supervisor. The admin sees it with
-suggestions from the same supervisor search (preferring people with known free slots), assigns one,
-and it becomes a normal pending request that the supervisor still accepts or declines. *Why:* the
-coordinator helps, but the supervisor keeps the final say over their own students.
+**Answering.** Every answer has a confirm step ("Yes, accept" / Cancel). After confirming, the supervisor gets an email
+draft written for this student. They can edit it, clear it and write their own, copy it, open it in Outlook, or send it in
+the app.
 
----
+**Messages.** Each request has a conversation in the app. When a supervisor asks for details, the student sees the message
+under My requests with the reply box open, and the supervisor sees a "Student replied" tag when the answer arrives. Either
+side can write until the request is declined. Each new message also creates an email notice to the other person, which
+is written to the server log until an email service is connected.
 
-## 6. Profile changes stay searchable and traceable
-
-When a supervisor edits their profile (for example adds a research area):
-
-1. The web app saves it and writes a **profile version**: which fields changed, the old and new
-   values, who changed them and when.
-2. It sends the new record to the search service, which re-embeds only that person.
-3. The next student search finds the new area right away.
-
-*Why:* a matching system is only as good as how current its data is, and the admin needs to see
-what changed and when. Unchanged fields (including lists in a different order) don't create
-versions, so the history only holds real changes.
+**The coordinator.** A coordinator request has no supervisor. The admin sees it with suggestions from the same search,
+preferring people with free slots, picks one, adds a reason and confirms. It then becomes a normal supervision request
+that the supervisor accepts or declines. The coordinator helps, but the supervisor keeps the final say.
 
 ---
 
-## 7. The admin dashboard
+## 7. Keeping the staff data current
+
+A matching system is only as good as its data. BTECHub keeps it current in three ways.
+
+**1. Supervisors edit their own profile.** Research areas, what they expect from students, room, and their slots
+(lower only). Saving:
+
+- writes a **profile version**: which fields changed, old and new values, who changed them and when;
+- re-indexes only that person, so the next student search finds the change right away.
+
+**2. The admin uploads files.** On Import/export, the admin chooses one or more staff list PDFs, CSV files, or both.
+
+- **PDFs** are read as a table with name, position (or designation) and research areas, like the BTECH list. People are
+  matched to existing records by profile link, then by name.
+- **CSV files** use the exported format and are matched by `record_id`.
+- The admin sees who is **new**, who **changed** and which fields, and which file and page each row came from, before
+  anything is saved.
+- **Research areas a supervisor edited themselves are kept**, unless the admin ticks a box to replace them. Otherwise an
+  older PDF would undo the supervisor's own edits.
+- **Nobody is deleted.** People missing from the uploaded files are only listed, because one PDF may cover only part of
+  the department.
+- Saved changes go through the same path as profile edits: versioned and searchable right away.
+
+**3. The data can be exported.** CSV for Excel, and JSON in the same format as `data/supervisors.json`, so the file in the
+repository can be refreshed from the live data.
+
+---
+
+## 8. The admin dashboard
 
 | Page | What it shows | Why |
 |---|---|---|
-| Overview | Open requests, requests waiting too long, slots used, searches with a weak match, and a "needs attention" list | A quick health check of the semester |
-| Supervisors | Who is full, who has had no requests, empty or old profiles, slots not set | Finds profiles and slots that need updating |
-| Demand | What students search for, grouped into topics, and how well the best supervisor matches now | Shows research areas with student demand but no good match (gaps) |
-| Changes | The profile version history | Traceability |
-| Requests | Assigned, open and stuck requests, longest waiting first | Follow-up on unanswered requests |
-| Coordinator | Requests without a supervisor, with suggestions | The coordinator flow |
-| Data | Import and export supervisors as CSV | Bulk updates without editing one by one |
-| Finance | Which finance documents are loaded, their dates and versions, and the assistant with all four search systems | Checking the corpus and comparing systems |
+| Overview | Open requests, requests waiting over 7 days, slots used, searches with a weak match, a "needs attention" list | A quick check of the semester |
+| Supervisors | Who is full, who has had no requests, empty or old profiles, slots not set | Finds profiles and slots to update |
+| Requests | Assignments, open requests, requests waiting longest | Follow-up on unanswered requests |
+| Coordinator | Students waiting for the coordinator, with suggestions | The coordinator flow |
+| Demand | What students search for, grouped into topics, and how well the best supervisor matches today | Shows topics with student demand but no good match |
+| Changes | Every profile change, old value next to new | Traceability |
+| Import/export | PDF and CSV upload with preview; CSV and JSON export | Bulk updates |
+| Admin panel | The Payload admin panel | Direct access to all records |
 
-**Demand gaps** come from query logs that store *what* was searched and the best match score, but
-**not who searched**. Similar queries (cosine similarity 0.80 or higher) are grouped as one topic,
-and each topic is searched again against the index as it is today, so a gap that a profile edit has
-since closed shows the better score.
+**Demand without surveillance.** Search logs store what was searched and how well the best match scored, but not who
+searched. Similar searches (cosine similarity of 0.80 or more) are grouped into one topic. Each topic is searched again
+against today's data, so a gap that a profile edit has since closed shows the better score.
 
 ---
 
-## 8. The finance assistant (thesis contribution)
+## 9. Rules the whole system follows
 
-### The idea
+- **The language model never decides.** It summarizes, suggests and drafts. People accept, decline and assign.
+- **Facts only from the records.** Names, titles and research areas come from the staff data.
+- **No generated contact details.** Emails and links are added by the app.
+- **Confirm before anything irreversible.** Answering a request and assigning a supervisor both have a confirm step.
+- **Nothing is lost silently.** Every profile change is versioned; imports never delete; supervisors' own edits are protected.
+- **Made-up data is labeled.** Demo students, requests and searches are marked "demo" everywhere.
+- **Privacy by default.** Search logs don't store who searched. Keys stay on the servers.
 
-Version-awareness is decided **before** the search, not after. Every document in the finance corpus
-has an entry in `data/finance/sources.json`:
+---
 
-| Field | Example | Meaning |
+## 10. Evaluation and quality assurance
+
+### Search quality
+
+`eval/supervisor_cases.json` holds test questions with the supervisors that should be found, some labeled by
+supervisors themselves. `eval/run_eval.py` runs every case with each search mode and saves the run to `eval/results/`,
+so each number in the thesis traces back to a run.
+
+Results of 30 October 2026, 19 scored cases, search only (no language model):
+
+| Search mode | Right person ranked first | Expected people in the top 10 |
 |---|---|---|
-| `family` | `state-travel-rates` | What the document is a version of |
-| `published_at` | `2026-03-27` | When it was published |
-| `effective_from` | `2026-01-01` | From when its rules apply |
-| `supersedes` | `["006-26"]` | Which version it replaces |
-| `authority` | `state`, `au-policy`, `au-guidance` | Who issued it |
-| `checked` | `2026-10-30` | When we verified the entry against the document |
+| Keyword (BM25) | 0.95 | 0.80 |
+| Meaning (embeddings) | 0.95 | 0.92 |
+| Hybrid (used by BTECHub) | 0.84 | 0.97 |
 
-From the question, the system works out the date it is about, then decides per family which
-version(s) may be searched at all. Then the normal hybrid search runs, limited to those versions.
+Hybrid search finds almost everyone who fits, but ranks the single best person first less often. With 19 cases, one case
+moves a score by about 0.05, so these differences are indicative, not conclusive. The test set is being extended, and
+the thesis adds a check that answers don't invent facts about people and a small user test with students and supervisors.
 
-### Four systems to compare
+### Quality assurance
 
-All four use the same documents, embeddings, LLM and number of passages. Only the choice of which
-versions may be searched differs, so any difference in results comes from that choice.
-
-| System | Searches | Represents |
-|---|---|---|
-| `plain` | Every version of everything | Conventional RAG |
-| `newest` | Only the most recently published version per family | The obvious shortcut |
-| `versioned` | The version that applies to the date in question | Our approach |
-| `versioned_faq` | `versioned` plus an FAQ check | Our approach, full |
-
-Students and supervisors always get `versioned_faq`. The admin can switch between all four.
-
-### Which version applies
-
-The rule in `finance.py` (`version_for`), in order:
-
-1. **The question names a document** ("what does 006-26 say?"): use that document.
-2. **The question asks what the documents said on a past date** ("what did the rules say on
-   1 March 2026?"): the newest version *published* by that date, even if it was later corrected.
-3. **Otherwise** use the date of the trip or expense (or today if none is given): among the versions
-   *in force* on that date, the one published most recently.
-
-Rule 3 is what handles corrections. Circular 007-26 applies from 1 January 2026, like the 006-26 it
-corrects, but was published later, so for any 2026 trip it wins, including trips that happened
-before the correction was published.
-
-### Reading the date from the question
-
-Before searching, the LLM reads the conversation and returns: a short English search query, the same
-query in Danish circular terms (for example "hoteldispositionsbeloeb" for hotel allowance), the event
-date, how precise it is (day, month, year), an "as published on" date and a named document, if any.
-Without an LLM, simple patterns pick up dates and document numbers from the message.
-
-The answer tells the user which date it assumed ("For a trip or expense on 10 Jun 2025", or "No date
-given: based on the rules in force today"), so a wrong assumption is visible.
-
-### The FAQ check
-
-FAQ answers are tied to a rule ID and the policy version they were decided under. When an FAQ entry
-shows up in the search results, the system compares that rule's text in the FAQ's version with the
-rule's text in the version that applies now:
-
-- **Same text:** the FAQ is still valid and stays in the evidence, even if the policy version changed.
-- **Different text:** the FAQ is taken out of the evidence and shown to the user as "outdated FAQ
-  left out", with the reason.
-
-*Why compare the rule text and not just the version number?* Most rules don't change between versions.
-Flagging every FAQ older than the current version would throw away correct answers.
-
-### Real and synthetic documents, never mixed
-
-The corpus has two parts:
-
-- **Real:** six Danish government rate circulars (056-25, 119-25, 001-26, 002-26, 006-26, 007-26),
-  the AU travel policy and AU guidance pages.
-- **Synthetic:** a made-up demonstration policy in four versions (v1.0, v2.0, v2.1 correction, v3.0)
-  with rule IDs and seven FAQ entries, some of which go stale.
-
-*Why a synthetic policy?* The real documents only have a few kinds of change (yearly rates, one
-correction). The synthetic policy lets us test cases the real corpus doesn't have yet: a stale FAQ,
-an exception added in a later version, a rule that stayed the same across versions, a question no
-version answers.
-
-*Why never mix them?* A real question must never be answered from made-up rules. The user picks the
-corpus in the interface, the search is limited to it, synthetic sources are labeled in the evidence,
-and the LLM is told to say "in the demonstration policy (synthetic)" whenever it uses one.
-
-### Danish documents
-
-The circulars are in Danish, while questions are mostly in English. The finance search uses a
-multilingual embedding model (`paraphrase-multilingual-MiniLM-L12-v2`) and the Danish keyword query
-from the understanding step. Annex headings like "Bilag 5 Hoteldispositionsbeløb i Danmark" get a
-fixed English label that is carried over to the following pages, so a table that continues onto the
-next page is still recognized as the hotel table. *Why not translate the PDFs?* A translation would
-not be the official document anymore, and every citation would point to text nobody published.
-
-### The answer
-
-The LLM answers only from the numbered sources, cites every claim ([S1], [S2]), names the version and
-the date it applies from, treats amounts as maximum rates under conditions, and never guesses an
-amount. Each answer has a status:
-
-| Status | Meaning |
-|---|---|
-| Answered from the sources | The sources answer it |
-| Depends on details | A date or condition is missing |
-| Outdated guidance found | An outdated FAQ or two sources disagree |
-| Not found in the sources | The user is sent to the finance office |
-
-Every source in the answer shows its authority, version, dates, page and the passage itself, with a
-link to the document.
+Before each release, the system is checked against a QA checklist (about 170 checks: login, each role's tasks, imports,
+access control, the search service, error states, phones and accessibility). A shorter live QA sheet covers what users
+see on the live site and is run by a second person.
 
 ---
 
-## 9. Evaluation
+## 11. The travel and expense module (paused)
 
-`eval/finance_cases.json` holds 39 test cases: 21 synthetic and 18 real. Each case has a question,
-the date context, the rule or annex it is about, which document versions are acceptable, and texts the
-answer must contain or must not contain (for example the right amount must appear and the outdated
-amount must not).
+BTECHub also contains a **version-aware assistant for travel and expense rules**, built as the first extension beyond
+supervisors. It is switched off for now to keep the focus on students and supervisors.
 
-The scenarios include: a historical rule, the current rule, a correction that applies back in time,
-a named superseded document, what a document said on a given date, an amount that went down, a rule
-unchanged across years, a stale FAQ, a valid old FAQ, and questions no document answers.
+**The idea.** Rules such as hotel allowances and mileage rates come from yearly government circulars and AU pages. New
+versions replace old ones, corrections appear weeks later, and FAQ answers outlive the rules they were based on. A
+standard search returns whatever text looks most similar, so it can quote last year's rate. The module decides **which
+version applies to the date in question before searching**, and leaves out FAQ answers whose rule has changed since.
+It compares four search strategies on 39 test cases (21 synthetic, 18 based on real Danish circulars).
 
-`eval/run_finance_eval.py` runs all four systems on every case and reports real and synthetic
-results separately:
+**Why it is off.** It needs a second, multilingual embedding model for the Danish circulars. With both models loaded,
+the search service needs about 770 MB of memory, and the free hosting plan allows 512 MB.
 
-| Metric | Question it answers |
-|---|---|
-| `right_version_top` | Is the first passage for the rule from an acceptable version? |
-| `wrong_version_in` | Does the evidence contain the same rule from a version with different text (something the LLM could wrongly repeat)? |
-| `stale_faq_in` | Does the evidence contain an FAQ that is outdated for this case? |
-| FAQ check precision and recall | Does `versioned_faq` flag the right FAQ entries, against a hand-written table? |
-| Answer checks (`--answers`) | Does the answer contain every expected text and no forbidden one? |
+**How to switch it on.** Change the active line in **both** files, then redeploy the search service on a host with at
+least 1 GB of memory:
 
-By default the evaluation uses the hand-labeled dates, so it measures version selection on its own.
-With `--understand`, the LLM reads the dates from the questions, which measures the full pipeline.
-Every run is saved to `eval/results/`, so each number in the thesis can be traced to a run.
+```python
+# rag.py
+FINANCE_ENABLED = False
+# FINANCE_ENABLED = True
+```
 
-Two real cases are marked `needs_check`: the Danish hotel amount for February 2025 and February 2026.
-Their correct answer depends on how the finance office applies the yearly hotel agreement adjustment,
-and we are waiting for their confirmation instead of guessing.
+```ts
+// web/src/lib/features.ts
+const FINANCE_ENABLED = false
+// const FINANCE_ENABLED = true
+```
 
----
-
-## 10. Rules the whole system follows
-
-- **The LLM never decides.** It summarizes, suggests and drafts. People accept, decline and assign.
-- **Facts only from sources.** Names, titles, research areas, amounts and rules come from the
-  records and documents. The LLM's own knowledge is only used for clearly marked guidance.
-- **No generated contact details.** Emails and links are added by the app from the records.
-- **Show the evidence.** Every finance answer shows its sources, versions and dates; every match
-  links to the profile.
-- **Say when unsure.** "Not found in the sources" and "depends on details" are valid answers.
-- **Made-up data is labeled.** Demo students, demo requests and the synthetic policy are marked as
-  such everywhere they appear.
-- **Privacy by default.** Query logs store what was searched, not who searched. Secrets stay on the
-  servers.
+The code, documents and evaluation (`finance.py`, `data/finance/`, `eval/run_finance_eval.py`) stay in the repository.
+The finance evaluation runs locally even while the module is switched off.
 
 ---
 
-## 11. Where it runs
+## 12. Where it runs
 
 | Part | Host | Note |
 |---|---|---|
-| Web app | Vercel (Hobby, Frankfurt region) | Deploys from GitHub |
-| Database | Neon Postgres (free) | Local development uses SQLite |
-| Search service | Render (free) | Sleeps after 15 minutes without traffic |
-| LLM | Groq | `openai/gpt-oss-120b` |
+| Web app | Vercel (Hobby plan, Frankfurt) | Deploys on every push to `main` |
+| Database | Neon Postgres (free plan) | Local development uses SQLite |
+| Search service | Render (free plan) | Deployed by hand; sleeps after 15 minutes without traffic |
+| Language model | Groq | `openai/gpt-oss-120b` |
 
-The search service waking up takes up to about a minute. The web app handles this: if the service
-answers with a gateway error or can't be reached, it waits until `/api/health` responds (up to
-75 seconds) and tries again once, and the page tells the user that the service is waking up.
-
----
-
-## 12. Known limits and open questions
-
-- **Circular 001-26 is listed but its file is missing**, so the 2026 chain is incomplete for anything
-  that relied on it.
-- **Two real evaluation cases wait for the finance office** (see section 9).
-- **Results with the real embedding model** still need to be run and reported.
-- **Values to confirm with the supervisors:** who owns the slot numbers, the limit of 3 open
-  requests, and whether the coordinator suggests or assigns.
-- **No real emails yet.** Drafts are shown to the supervisor to copy; notifications are logged.
-- **The research group filter is hidden** because most supervisors don't have a group recorded yet.
-- **Finance documents are managed as files**, not yet through the admin panel.
-- **The free search host sleeps and has monthly limits**, which suits a prototype, not real use.
-- **Scope:** only travel and expense rules. Study rules are a possible next step.
+Waking the search service takes up to about a minute. The web app handles this: if the service doesn't answer, it waits
+until `/api/health` responds (up to 75 seconds) and tries once more, and the page tells the user it is waking up.
 
 ---
 
-## 13. Repository map
+## 13. Run it on your own computer
+
+You need Python 3.12 and Node.js. Never commit a `.env` file.
+
+**Search service** (repository root):
+
+```
+python -m venv .venv
+.venv\Scripts\activate          (macOS/Linux: source .venv/bin/activate)
+pip install -r requirements.txt
+copy .env.example .env          (fill in LLM_API_KEY and SERVICE_KEY; set SEARCH_MODE=hybrid)
+python ingest.py
+uvicorn app:app --reload
+```
+
+**Web app** (`web/` folder, in a second terminal):
+
+```
+copy .env.example .env          (fill in PAYLOAD_SECRET, and the same SERVICE_KEY)
+npm install
+npm run seed                    (creates the database and the three demo logins)
+npm run seed:demo               (optional: demo requests, slots and searches)
+npm run dev
+```
+
+Then open http://localhost:3000 and log in as `student@example.com`, `supervisor@example.com` or `admin@example.com`
+with the `SEED_PASSWORD` from `web/.env`.
+
+**After changing database fields** (files in `web/src/collections/`), run `npm run seed` against the database again.
+Against the live database this also rewrites every supervisor from `data/supervisors.json`, so live profile edits are lost.
+
+---
+
+## 14. Known limits
+
+- **No real emails.** Messages live in the app; email notices are written to the server log.
+- **Database changes use the seed script,** which overwrites live supervisor data. Before real use, this should move to
+  database migrations.
+- **The free search service sleeps,** so the first search after a quiet period takes up to a minute.
+- **Six staff members have no research areas** in the data and can't be found until someone fills them in.
+- **PDF import expects a table** with name, position and research areas, like the BTECH list. Other layouts are reported,
+  not guessed.
+- **Open decisions with the department:** who sets supervision slots, the limit of 3 open requests, and whether the
+  coordinator suggests or assigns.
+- **Login is a demo login,** not AU single sign-on.
+
+---
+
+## 15. Repository map
 
 | Path | What it is |
 |---|---|
-| `app.py` | Search service API: chat, finance chat, reindexing, summaries, email drafts, demand gaps, health |
-| `rag.py` | Reading PDFs and records into chunks, embeddings, hybrid search, supervisor prompts |
-| `finance.py` | Version-aware finance search: the four systems, version selection, FAQ check, answers |
-| `ingest.py` | Builds the search indexes |
-| `data/finance/sources.json` | The finance document catalogue with dates and versions |
-| `data/finance/official/` | The real circulars and AU documents |
-| `data/finance/synthetic/` | The demonstration policy (four versions) and its FAQ |
-| `scripts/make_synthetic_policy.py` | Generates the synthetic policy files |
-| `eval/finance_cases.json` | The 39 evaluation cases and the FAQ gold table |
-| `eval/run_finance_eval.py` | Runs the evaluation and saves the results |
-| `web/src/collections/` | Database collections: users, students, supervisors, requests, profile versions, query logs |
+| `app.py` | Search service API: chat, re-indexing, note summaries, email drafts, demand groups, staff PDF reading, health |
+| `rag.py` | Turning records into search units, embeddings, hybrid search, prompts, the finance switch |
+| `staffpdf.py` | Reads a staff list PDF (a table) into supervisor rows |
+| `ingest.py` | Builds the search index |
+| `finance.py` | The travel and expense module (paused) |
+| `data/supervisors.json` | The staff records used to fill a new database |
+| `data/finance/` | Circulars, AU pages and the synthetic test policy for the finance module |
+| `eval/` | Test cases, evaluation scripts and saved results |
+| `web/src/collections/` | Database collections: users, students, supervisors, requests (with messages), profile versions, search logs |
 | `web/src/access.ts` | Who can read and change what |
 | `web/src/lib/python.ts` | Calls from the web app to the search service, including the wake-up retry |
-| `web/src/app/(frontend)/` | The student, supervisor and dashboard pages |
+| `web/src/lib/brand.ts` | The app's name, in one place |
+| `web/src/lib/features.ts` | The finance switch for the web app |
+| `web/src/app/(frontend)/` | Student, supervisor and dashboard pages |
 | `web/src/seed.ts`, `web/src/seed-demo.ts` | Create the logins and supervisors, and the demo data |
 
 ---
